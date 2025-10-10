@@ -1,0 +1,183 @@
+rule_name: Detect Unauthorized requests
+target: all
+
+transform:
+  headers:
+    remove:
+      - Authorization
+
+match_on:
+  status: 200
+  response_contains: "unauthorized"
+
+report:
+  title: "Unauthorized Without Token"
+  description: "Endpoint returns 200 when Authorization header is removed — potential broken auth/ACL."
+  severity: "high"
+  cvssScore: 7.5
+
+
+
+---
+rule_name: SQLi - boolean tautology in params
+target: all
+
+transform:
+  replace_all_param_values: "' OR '1'='1' -- "
+
+match_on:
+  status: [200, 302]
+  response_contains:
+    - "syntax error"
+    - "sql"
+    - "mysql"
+    - "postgres"
+    - "database"
+    - "logged in"
+    - "welcome"
+
+report:
+  title: "Possible SQL Injection (boolean)"
+  description: "All parameter values replaced with SQL tautology; DB-like response or authenticated behavior observed."
+  severity: "critical"
+  cvssScore: 9.0
+
+---
+
+
+rule_name: SQLi - error based injection (all params)
+target: all
+
+transform:
+  replace_all_param_values: "1' UNION SELECT NULL,version(),NULL-- "
+
+match_on:
+  response_contains:
+    - "syntax"
+    - "SQL"
+    - "ORA-"
+    - "MySQL"
+    - "PostgreSQL"
+
+report:
+  title: "SQL Error Output"
+  description: "Injection into all params caused DB error or leaked DB info in response."
+  severity: "critical"
+  cvssScore: 9.0
+
+
+
+---
+rule_name: Reflected XSS in response (all params)
+target: all
+
+transform:
+  replace_all_param_values: "<script>alert('x')</script>"
+
+match_on:
+  status: 200
+  response_contains: "<script>alert('x')</script>"
+
+report:
+  title: "Reflected XSS Detected"
+  description: "User-supplied input reflected in response without sanitization (payload sent in all params)."
+  severity: "high"
+  cvssScore: 8.0
+---
+
+rule_name: SSRF via url param (all params)
+target: all
+
+transform:
+  replace_all_param_values: "http://169.254.169.254/latest/meta-data/iam/security-credentials/"
+
+match_on:
+  status: [200, 302]
+  response_contains:
+    - "latest"
+    - "meta-data"
+    - "iam"
+
+report:
+  title: "Possible SSRF - internal metadata access"
+  description: "URL probe sent in all params triggered responses referencing instance metadata — SSRF risk."
+  severity: "critical"
+  cvssScore: 9.0
+
+---
+
+rule_name: Command Injection - shell metacharacters (all params)
+target: all
+
+transform:
+  replace_all_param_values: "test; cat /etc/passwd"
+
+match_on:
+  status: 200
+  response_contains:
+    - "root:"
+    - "/bin/bash"
+
+report:
+  title: "Possible Command Injection"
+  description: "Shell metacharacters added to all params produced command output or leaked file content."
+  severity: "critical"
+  cvssScore: 9.5
+
+
+---
+
+rule_name: Path Traversal - file read (all params)
+target: all
+
+transform:
+  replace_all_param_values: "../../../../etc/passwd"
+
+match_on:
+  status: 200
+  response_contains:
+    - "root:x:"
+    - "/etc/passwd"
+
+report:
+  title: "Path Traversal / File Disclosure"
+  description: "Path traversal string supplied to all params returned sensitive file content."
+  severity: "critical"
+  cvssScore: 9.0
+
+
+---
+rule_name: NoSQLi - operator injection (all params)
+target: all
+
+transform:
+  replace_all_param_values: '{"$ne": null}'
+match_on:
+  status: [200, 302]
+  response_contains:
+    - "mongo"
+    - "error"
+    - "{"
+report:
+  title: "NoSQL Injection (operator)"
+  description: "Operator-style payload sent in all params may have altered query results."
+  severity: "critical"
+  cvssScore: 9.0
+
+---
+
+rule_name: SSTI - template expression in all params
+target: all
+
+transform:
+  replace_all_param_values: "{{7*7}}"
+match_on:
+  status: 200
+  response_contains:
+    - "49"
+report:
+  title: "Server-side Template Injection"
+  description: "Template expression was evaluated on server — possible RCE or data leak."
+  severity: "critical"
+  cvssScore: 9.5
+
