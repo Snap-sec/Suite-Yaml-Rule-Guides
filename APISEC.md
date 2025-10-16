@@ -1,5 +1,3 @@
-<img width="1555" height="1006" alt="image" src="https://github.com/user-attachments/assets/f377e6b1-fdd5-4aa7-9c6a-e8476605da74" /># 📘 API Engine Rule Guide
-
 This document explains how to create transformation rules and matching conditions to test API endpoints using YAML files.
 
 ---
