@@ -185,8 +185,6 @@ transform:
   - `?foo=1&bar=payload&baz=3`
   - `?foo=1&bar=2&baz=payload`
 
-```
-Yes, I'll provide sample YAML for all the new transformers we created:
 
 ## Query Parameter Transformers:
 
@@ -250,10 +248,6 @@ add_body_params:
   __proto__: polluted
   constructor: overridden
   isAdmin: true
-```
-
-Would you like me to create complete rule examples using these transformers?
-
 ```
 
 ### Method Transformations
