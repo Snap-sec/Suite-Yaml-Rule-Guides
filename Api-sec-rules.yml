@@ -1,5 +1,4 @@
 rule_name: Detect Unauthorized requests
-target: all
 
 transform:
   headers:
@@ -20,7 +19,6 @@ report:
 
 ---
 rule_name: SQLi - boolean tautology in params
-target: all
 
 transform:
   replace_all_param_values: "' OR '1'='1' -- "
@@ -46,7 +44,6 @@ report:
 
 
 rule_name: SQLi - error based injection (all params)
-target: all
 
 transform:
   replace_all_param_values: "1' UNION SELECT NULL,version(),NULL-- "
@@ -69,7 +66,6 @@ report:
 
 ---
 rule_name: Reflected XSS in response (all params)
-target: all
 
 transform:
   replace_all_param_values: "<script>alert('x')</script>"
@@ -86,7 +82,6 @@ report:
 ---
 
 rule_name: SSRF via url param (all params)
-target: all
 
 transform:
   replace_all_param_values: "http://169.254.169.254/latest/meta-data/iam/security-credentials/"
@@ -107,7 +102,6 @@ report:
 ---
 
 rule_name: Command Injection - shell metacharacters (all params)
-target: all
 
 transform:
   replace_all_param_values: "test; cat /etc/passwd"
@@ -128,7 +122,6 @@ report:
 ---
 
 rule_name: Path Traversal - file read (all params)
-target: all
 
 transform:
   replace_all_param_values: "../../../../etc/passwd"
@@ -148,7 +141,6 @@ report:
 
 ---
 rule_name: NoSQLi - operator injection (all params)
-target: all
 
 transform:
   replace_all_param_values: '{"$ne": null}'
@@ -167,7 +159,6 @@ report:
 ---
 
 rule_name: SSTI - template expression in all params
-target: all
 
 transform:
   replace_all_param_values: "{{7*7}}"
