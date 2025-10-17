@@ -1,331 +1,743 @@
-This document explains how to create transformation rules and matching conditions to test API endpoints using YAML files.
+# Security Rule Documentation
+
+Complete guide to writing YAML security rules with transform and match conditions.
 
 ---
 
-## 🧹 Structure of a Rule
+## Table of Contents
 
-Each rule is a `.yaml` file placed inside the `rules/` folder. A rule contains 3 main parts:
+- [Rule Structure](#rule-structure)
+- [Transform Section](#transform-section)
+- [Match On Section](#match-on-section)
+- [Report Section](#report-section)
+- [Placeholders](#placeholders)
+- [Complete Examples](#complete-examples)
+
+---
+
+## Rule Structure
+
+Every security rule follows this structure:
 
 ```yaml
-rule_name: "Meaningful Rule Name"
-target: all
+rule_name: My Security Rule
 
 transform:
-  # Transformation logic
+  # Request transformation rules
 
 match_on:
-  # Conditions to trigger a report
+  # Response matching criteria
 
 report:
-  title: "Report Title"
-  description: "What this rule checks"
-  severity: "low | medium | high | critical"
-  cvssScore: 0.0 - 10.0
+  title: ""
+  description: ""
+  cwe: ""
+  cvssScore: ""
+  mitigation: ""
+  stepsToReproduce: ""
+  tags: ""
+  impact: ""
 ```
 
 ---
 
-## ⚛️ Transform Section
+## Transform Section
 
-### ✅ Add or Remove Headers
+The `transform` section modifies the request before sending it. All transformations are optional.
+
+### Headers Transformations
+
+#### Remove Headers
+
+Remove specific headers from the request:
+
+```yaml
+transform:
+  headers:
+    remove:
+      - Authorization
+      - X-API-Key
+      - Cookie
+```
+
+#### Add Headers
+
+Add new headers to the request:
 
 ```yaml
 transform:
   headers:
     add:
-      X-Debug: true
-    remove:
-      - Authorization
+      X-Forwarded-For: 127.0.0.1
+      X-Custom-Header: test-value
+      User-Agent: Mozilla/5.0
 ```
 
-### 🍪 Add or Remove Cookies
+#### Replace All Header Values
+
+Set all headers to the same value (useful for testing header handling):
+
+```yaml
+transform:
+  headers:
+    replace_all_values: "placeholder"
+```
+
+### Cookie Transformations
+
+#### Remove Cookies
+
+Remove specific cookies:
+
+```yaml
+transform:
+  cookies:
+    remove:
+      - session_id
+      - auth_token
+      - tracking_id
+```
+
+#### Add Cookies
+
+Add new cookies:
 
 ```yaml
 transform:
   cookies:
     add:
-      test_auth: "1"
-    remove:
-      - session_id
+      admin: "true"
+      role: "superuser"
+      bypass: "enabled"
 ```
 
-### 🏡 Override Host
+### URL/Host Transformations
+
+#### Override Host
+
+Change the hostname:
 
 ```yaml
 transform:
-  override_host: "evil.example.com"
+  override_host: "attacker.com"
 ```
 
-### 🪨 Replace Param Values
+#### Override Protocol
+
+Change the protocol (http/https):
+
+```yaml
+transform:
+  override_protocol: "http:"
+```
+
+#### Override Port
+
+Change the port:
+
+```yaml
+transform:
+  override_port: "8080"
+```
+
+### Query Parameter Transformations
+
+#### Replace Specific Parameter Values
+
+Replace values for specific parameters:
 
 ```yaml
 transform:
   replace_param_value:
-    username: xxyyzz
-
-  replace_all_param_values: xxyyzz
+    user_id: "999"
+    product_id: "1"
+    page: "admin"
 ```
 
-### 📉 Replace All Header Values
+Only replaces if the parameter exists in the original request.
+
+#### Replace All Parameter Values
+
+Set all query parameters to the same value:
 
 ```yaml
 transform:
-  headers:
-    replace_all_values: xxyyzz
+  replace_all_param_values: "test"
 ```
 
-### ➕ Add New Query Parameters
+**Example:**
+- Original: `?foo=1&bar=2&baz=3`
+- After: `?foo=test&bar=test&baz=test`
+
+#### Replace Parameters One-By-One
+
+Create a separate request for each parameter, replacing one at a time:
+
+```yaml
+transform:
+  replace_params_one_by_one: "payload"
+```
+
+**Example:**
+- Original URL: `?foo=1&bar=2&baz=3`
+- Generates 3 requests:
+  - `?foo=payload&bar=2&baz=3`
+  - `?foo=1&bar=payload&baz=3`
+  - `?foo=1&bar=2&baz=payload`
+
+#### Add Query Parameters
+
+Add new query parameters:
 
 ```yaml
 transform:
   add_query_params:
-    mode: "test"
+    debug: "true"
+    trace: "enabled"
+    admin: "1"
 ```
 
-### 🔄 Repeat Request with Multiple Methods
+### Method Transformations
+
+#### Repeat with Multiple Methods
+
+Send the same request with different HTTP methods:
 
 ```yaml
 transform:
   repeat_with_methods:
     - GET
     - POST
+    - PUT
     - DELETE
+    - PATCH
 ```
 
----
-
-## ⚖️ match_on Section
-
-### ✅ Match Status Code
-```yaml
-match_on:
-  status: 403
-```
-
-### 📃 Match String in Response Body
-```yaml
-match_on:
-  response_contains: "unauthorized"
-```
-
-### ⚡️ Match on Response Time (in ms)
-```yaml
-match_on:
-  response_time_gt: 3000
-```
-
-### 🛋️ Match on Response Size (bytes)
-```yaml
-match_on:
-  response_size_gt: 500
-```
-
-### 📄 Header Exists
-```yaml
-match_on:
-  header_exists: X-Custom-Token
-```
-
-### 🍿 Header Value Match
-```yaml
-match_on:
-  header_value:
-    Content-Type: application/json
-```
-
-### 📃 Content Type Match
-```yaml
-match_on:
-  content_type: "application/json"
-```
-
----
-
-## 📅 Report Section
-
-Describes what happens if the rule matches:
+### Complete Transform Example
 
 ```yaml
-report:
-  title: "Auth Removed Test"
-  description: "Check how the API behaves when no auth is present"
-  severity: "high"
-  cvssScore: 7.5
-```
-
----
-
-### 🚀 Example Rule
-
-```yaml
-rule_name: Remove Auth Test
-
-target: all
-
 transform:
   headers:
     remove:
       - Authorization
-
-match_on:
-  status: 403
-  response_contains: "unauthorized"
-
-report:
-  title: "Unauthorized Without Token"
-  description: "Endpoint returns 403 when token is removed"
-  severity: "medium"
-  cvssScore: 6.3
+    add:
+      X-Forwarded-For: 127.0.0.1
+  cookies:
+    add:
+      admin: "true"
+  override_host: "internal.local"
+  replace_param_value:
+    user_id: "1"
+  add_query_params:
+    debug: "true"
+  repeat_with_methods:
+    - GET
+    - POST
 ```
 
 ---
 
-## ⚛️ Response Matching Section Section
+## Match On Section
 
-## 🧪 Matcher Section
+The `match_on` section defines criteria for response validation. A response matches if **at least one** criterion is true.
 
-The `match_on` section defines how a response is validated. If the response matches all specified criteria, the rule is considered triggered, and a report is sent.
+### Status Code Matching
 
-Each matcher supports flexible options to handle real-world testing scenarios.
-
----
-
-### 1. ✅ Match Status Code
+Match specific HTTP status code:
 
 ```yaml
 match_on:
   status: 200
 ```
 
-This ensures the response returns with a specific HTTP status code.
+### Response Body Matching
 
----
+#### Single String
 
-### 2. 🔍 Match Body Contains Text
+Check if response body contains a specific string:
 
 ```yaml
 match_on:
-  body_contains: "Success"
+  body_contains: "success"
 ```
 
-You can also use an array:
+#### Multiple Strings
+
+Match if body contains any of these strings (first match wins):
 
 ```yaml
 match_on:
   body_contains:
-    - "token"
-    - "user_id"
+    - "admin"
+    - "superuser"
+    - "root"
 ```
 
-Checks if the response body (or stringified JSON) contains given strings.
+### Response Size Matching
 
----
+#### Exact Size
 
-### 3. 📦 Match Response Size
+Match if response is exactly N bytes:
 
-Match exact size:
 ```yaml
 match_on:
-  size: 1234
+  size: 1024
 ```
 
-Or use a range:
+#### Size Range
+
+Match if response falls within a size range:
+
 ```yaml
 match_on:
   size:
-    min: 500
+    min: 100
+    max: 5000
+```
+
+#### Minimum Size
+
+Match if response is at least N bytes:
+
+```yaml
+match_on:
+  size:
+    min: 1000
+```
+
+#### Maximum Size
+
+Match if response is at most N bytes:
+
+```yaml
+match_on:
+  size:
+    max: 10000
+```
+
+### Header Matching
+
+#### Exact Header Match
+
+Match if headers have exact values:
+
+```yaml
+match_on:
+  headers:
+    Content-Type: "application/json"
+    X-Custom: "value"
+```
+
+All specified headers must match (case-insensitive).
+
+#### Check Headers Exist
+
+Match if specific headers are present (value doesn't matter):
+
+```yaml
+match_on:
+  headers_exist: Content-Type
+```
+
+Multiple headers:
+
+```yaml
+match_on:
+  headers_exist:
+    - Content-Type
+    - X-API-Version
+    - Authorization
+```
+
+#### Check Header Value
+
+Match if a specific header has a specific value:
+
+```yaml
+match_on:
+  header_has_value:
+    key: Authorization
+    value: "Bearer token123"
+```
+
+Multiple checks (any match wins):
+
+```yaml
+match_on:
+  header_has_value:
+    - key: X-Admin
+      value: "true"
+    - key: X-Role
+      value: "superuser"
+```
+
+### Content-Type Matching
+
+Match if Content-Type contains a specific value:
+
+```yaml
+match_on:
+  content_type: "application/json"
+```
+
+This will match:
+- `application/json`
+- `application/json; charset=utf-8`
+- `application/json; boundary=...`
+
+### Response Time Matching
+
+#### Exact Time
+
+Match if response time is exactly N milliseconds:
+
+```yaml
+match_on:
+  time: 500
+```
+
+#### Time Range
+
+Match if response falls within time range:
+
+```yaml
+match_on:
+  time:
+    min: 100
+    max: 1000
+```
+
+#### Minimum Time
+
+Match if response takes at least N milliseconds:
+
+```yaml
+match_on:
+  time:
+    min: 5000
+```
+
+#### Maximum Time
+
+Match if response takes at most N milliseconds:
+
+```yaml
+match_on:
+  time:
+    max: 1000
+```
+
+### Response Contains Matching
+
+Search entire response (status, body, headers) for text:
+
+```yaml
+match_on:
+  response_contains: "error"
+```
+
+Multiple values (first match wins):
+
+```yaml
+match_on:
+  response_contains:
+    - "admin"
+    - "superuser"
+    - "root"
+```
+
+This searches:
+- Status code
+- Response body
+- All header key-value pairs
+
+### Complete Match On Example
+
+```yaml
+match_on:
+  status: 200
+  body_contains:
+    - "admin"
+    - "superuser"
+  headers:
+    Content-Type: "application/json"
+  response_time:
     max: 2000
 ```
 
 ---
 
-### 4. 🧾 Match Headers Exactly
+## Report Section
+
+The `report` section defines how findings are reported. All fields support placeholders.
 
 ```yaml
-match_on:
+report:
+  title: "Potential {{vuln_type}} Vulnerability"
+  description: "The application appears to be vulnerable to {{vuln_type}}"
+  cwe: "CWE-79"
+  cvssScore: "7.5"
+  mitigation: "Implement proper input validation"
+  stepsToReproduce: "Send request to {{req.url}}"
+  tags: "xss,injection,security"
+  impact: "Attacker could inject malicious scripts"
+```
+
+### Report Fields
+
+| Field | Purpose | Example |
+|-------|---------|---------|
+| `title` | Short vulnerability title | "XSS Vulnerability Detected" |
+| `description` | Detailed description | "User input is reflected without sanitization" |
+| `cwe` | CWE identifier | "CWE-79" |
+| `cvssScore` | CVSS score (0-10) | "7.5" |
+| `mitigation` | How to fix | "Sanitize all user inputs" |
+| `stepsToReproduce` | How to reproduce | "Access /search?q=<script>" |
+| `tags` | Comma-separated tags | "xss,owasp,injection" |
+| `impact` | Business impact | "Session hijacking, data theft" |
+
+---
+
+## Placeholders
+
+Placeholders allow dynamic content in report fields. Use double curly braces: `{{ placeholder }}`.
+
+### Request Placeholders
+
+| Placeholder | Description | Example |
+|-------------|-------------|---------|
+| `{{ req.url }}` | Transformed request URL | `https://api.example.com/users?id=1` |
+| `{{ req.method }}` | Request method | `GET`, `POST` |
+| `{{ req.headers }}` | Request headers (JSON) | `{"Content-Type":"application/json"}` |
+| `{{ req.body }}` | Request body | `{"user":"admin"}` |
+
+### Response Placeholders
+
+| Placeholder | Description | Example |
+|-------------|-------------|---------|
+| `{{ res.status }}` | Response status code | `200`, `404` |
+| `{{ res.headers }}` | Response headers (JSON) | `{"X-Admin":"true"}` |
+| `{{ res.body }}` | Response body | `"Admin panel accessed"` |
+| `{{ res.time }}` | Response time in ms | `150` |
+| `{{ res.size }}` | Response size in bytes | `2048` |
+
+### Original Request Placeholders
+
+| Placeholder | Description | Example |
+|-------------|-------------|---------|
+| `{{ original.url }}` | Original request URL (before transform) | `https://api.example.com/users` |
+| `{{ original.method }}` | Original method | `GET` |
+| `{{ original.headers }}` | Original headers (JSON) | `{"Authorization":"Bearer..."}` |
+| `{{ original.body }}` | Original body | `{}` |
+
+### Custom Placeholders
+
+```yaml
+report:
+  title: "Vulnerability in {{req.url}}"
+  description: "Original request: {{original.url}}"
+  stepsToReproduce: "Use URL: {{req.url}}"
+```
+
+---
+
+## Complete Examples
+
+### Example 1: Authentication Bypass Detection
+
+```yaml
+rule_name: Authentication Bypass via Host Header
+
+transform:
   headers:
-    content-type: application/json
-    cache-control: no-cache
+    add:
+      X-Forwarded-For: "127.0.0.1"
+      X-Original-URL: "/admin"
+  override_host: "internal.local"
+
+match_on:
+  status: 200
+  response_contains: "admin"
+
+report:
+  title: "Potential Authentication Bypass"
+  description: "Admin panel accessible after host header modification"
+  cwe: "CWE-74"
+  cvssScore: "8.5"
+  mitigation: "Validate Host header against whitelist"
+  stepsToReproduce: |
+    1. Send request to {{original.url}}
+    2. Modify Host header to: {{req.headers}}
+    3. Admin content returned
+  tags: "auth,bypass,host-header"
+  impact: "Unauthorized access to admin functionality"
 ```
 
-All header keys and their values must match exactly.
-
----
-
-### 5. 📌 Check Header Exists
+### Example 2: Cookie Manipulation
 
 ```yaml
+rule_name: Session Elevation via Cookie Tampering
+
+transform:
+  cookies:
+    add:
+      admin: "true"
+      role: "superuser"
+  replace_param_value:
+    user_id: "1"
+
 match_on:
-  headers_exist:
-    - set-cookie
-    - x-request-id
+  status: 200
+  body_contains:
+    - "admin"
+    - "superuser"
+
+report:
+  title: "Possible Session Elevation"
+  description: "System accepted elevated privileges via cookie manipulation"
+  cwe: "CWE-384"
+  cvssScore: "7.0"
+  mitigation: "Validate and sign session cookies"
+  stepsToReproduce: "Set cookie admin=true and access {{req.url}}"
+  tags: "session,cookie,privilege-escalation"
+  impact: "Account takeover, unauthorized access"
 ```
 
-You can also provide a single string:
-```yaml
-match_on:
-  headers_exist: x-api-key
-```
-
----
-
-### 6. 🎯 Match Header Has Value
-
-Check specific header key-value pairs:
+### Example 3: Parameter Injection Testing
 
 ```yaml
+rule_name: SQL Injection via Parameter Manipulation
+
+transform:
+  replace_params_one_by_one: "' OR '1'='1"
+  repeat_with_methods:
+    - GET
+    - POST
+
 match_on:
-  header_has_value:
-    - key: x-api-key
-      value: secret123
-    - key: server
-      value: nginx
-```
-
-Or just one:
-```yaml
-match_on:
-  header_has_value:
-    key: x-session-id
-    value: abc123
-```
-
----
-
-### 7. 🧪 Match Content-Type
-
-```yaml
-match_on:
-  content_type: application/json
-```
-
-Checks if the response has that content type in headers.
-
----
-
-### 8. ⏱ Match Response Time
-
-Exact match:
-```yaml
-match_on:
-  time: 300
-```
-
-Or use min/max:
-```yaml
-match_on:
+  status: 200
   time:
-    min: 200
+    min: 3000
+  response_contains:
+    - "error"
+    - "sql"
+    - "syntax"
+
+report:
+  title: "Potential SQL Injection"
+  description: |
+    The application appears vulnerable to SQL injection.
+    Original URL: {{original.url}}
+    Test URL: {{req.url}}
+  cwe: "CWE-89"
+  cvssScore: "9.0"
+  mitigation: "Use parameterized queries"
+  stepsToReproduce: |
+    1. Send GET/POST to {{req.url}}
+    2. SQL error returned
+    3. Database version: {{res.body}}
+  tags: "sql-injection,database,owasp"
+  impact: "Complete database compromise, data exfiltration"
+```
+
+### Example 4: XSS Detection with Payload
+
+```yaml
+rule_name: Reflected XSS in Search Parameter
+
+transform:
+  add_query_params:
+    search: "<script>alert('xss')</script>"
+  repeat_with_methods:
+    - GET
+    - POST
+
+match_on:
+  response_contains: "<script>alert('xss')</script>"
+  status: 200
+
+report:
+  title: "Reflected XSS Vulnerability Found"
+  description: |
+    User-supplied input is reflected without encoding.
+    Attack URL: {{req.url}}
+  cwe: "CWE-79"
+  cvssScore: "6.1"
+  mitigation: "HTML encode all user input in responses"
+  stepsToReproduce: |
+    Step 1: Visit {{req.url}}
+    Step 2: JavaScript executes in browser context
+    Step 3: Session cookies could be stolen
+  tags: "xss,owasp-a7"
+  impact: "Session hijacking, credential theft, malware injection"
+```
+
+### Example 5: Complex Multi-Condition Rule
+
+```yaml
+rule_name: Privilege Escalation via Method Override
+
+transform:
+  headers:
+    add:
+      X-HTTP-Method-Override: PUT
+  cookies:
+    add:
+      admin_token: "bypass"
+  replace_param_value:
+    user_id: "admin"
+    role: "superuser"
+
+match_on:
+  status: 200
+  headers:
+    X-Admin: "true"
+  body_contains:
+    - "admin"
+    - "privilege"
+  time:
     max: 500
+
+report:
+  title: "Privilege Escalation: {{req.method}} Override"
+  description: |
+    The application accepts privilege escalation through:
+    - Method override headers
+    - Direct role parameter manipulation
+    
+    Original request: {{original.url}}
+    Transformed request: {{req.url}}
+    
+    Response headers indicate admin access: {{res.headers}}
+  cwe: "CWE-269"
+  cvssScore: "9.8"
+  mitigation: |
+    1. Use server-side role validation
+    2. Ignore X-HTTP-Method-Override
+    3. Never trust client-supplied role parameters
+  stepsToReproduce: |
+    1. Send transformed request to {{req.url}}
+    2. Response contains admin data
+    3. User can modify other accounts
+  tags: "privilege-escalation,authorization,critical"
+  impact: "Complete application compromise, data breach"
 ```
 
 ---
+
+## Best Practices
+
+1. **Be Specific with Match Conditions**: More specific conditions reduce false positives
+2. **Use Multiple Match Conditions**: Combine multiple conditions for confidence
+3. **Document Placeholders**: Always reference relevant placeholders in stepsToReproduce
+4. **Include CWE/CVSS**: Help with prioritization and remediation
+5. **Test Transformations**: Verify transforms work as expected
+6. **Use Meaningful Tags**: Tags help with reporting and filtering
+7. **Clear Mitigation Steps**: Make it easy for developers to fix issues
 
 
 ### Report
 ## Template Variables Reference
-
-All available template variables are defined in the `createVulnerabilityContext` method in `src/utils/template.js`.
 
 ---
 
