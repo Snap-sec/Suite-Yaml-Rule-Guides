@@ -185,16 +185,75 @@ transform:
   - `?foo=1&bar=payload&baz=3`
   - `?foo=1&bar=2&baz=payload`
 
-#### Add Query Parameters
+```
+Yes, I'll provide sample YAML for all the new transformers we created:
 
-Add new query parameters:
+## Query Parameter Transformers:
 
+**1. `replace_query_param` (singular - key/value format):**
 ```yaml
-transform:
-  add_query_params:
-    debug: "true"
-    trace: "enabled"
-    admin: "1"
+replace_query_param:
+  key: userId
+  value: admin123
+```
+
+**2. `replace_query_params` (plural - object format):**
+```yaml
+replace_query_params:
+  userId: admin123
+  role: administrator
+  debug: true
+```
+
+**3. `replace_all_query_params` (single value for all):**
+```yaml
+replace_all_query_params: "' OR '1'='1"
+```
+
+**4. `replace_query_params_one_by_one` (creates variants):**
+```yaml
+replace_query_params_one_by_one: "<script>alert(1)</script>"
+```
+
+**5. `add_query_param` (singular - key/value format):**
+```yaml
+add_query_param:
+  key: debug
+  value: true
+```
+
+## Body Parameter Transformers:
+
+**1. `replace_body_param` (singular - key/value format):**
+```yaml
+replace_body_param:
+  key: isAdmin
+  value: true
+```
+
+**2. `replace_body_params` (plural - object format):**
+```yaml
+replace_body_params:
+  username: admin
+  role: superuser
+  active: true
+```
+
+**3. `replace_all_body_params` (single value for all):**
+```yaml
+replace_all_body_params: "{{7*7}}"
+```
+
+**4. `add_body_params` (plural - object format):**
+```yaml
+add_body_params:
+  __proto__: polluted
+  constructor: overridden
+  isAdmin: true
+```
+
+Would you like me to create complete rule examples using these transformers?
+
 ```
 
 ### Method Transformations
