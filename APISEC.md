@@ -1344,233 +1344,1339 @@ Each with different body payloads for respective operations.
 
 ---
 
-## Match On Section
+# Response Matcher - Complete Documentation
 
-The `match_on` section defines criteria for response validation. A response matches if **at least one** criterion is true.
+## Overview
 
-### Status Code Matching
+The Response Matcher allows you to define declarative rules in YAML to validate HTTP responses. Match on status codes, headers, and body content with flexible operators that support simple comparisons, regex patterns, and deep object matching. The matcher is fully extensible, allowing you to register custom operators for application-specific validation logic.
 
-Match specific HTTP status code:
+---
 
+## Core Concepts
+
+### Match Rule Structure
+
+```yaml
+match_on:
+  status: 200
+  header:
+    Content-Type: application/json
+  body:
+    contains: success
+```
+
+Match rules are organized into three sections:
+- **status** - HTTP status code matching
+- **header** - HTTP header matching
+- **body** - Request body matching
+
+### Response Object
+
+The matcher receives a response object with the following structure:
+
+```javascript
+{
+  status: 200,
+  headers: { 'content-type': 'application/json', ... },
+  body: '{"result":"success"}' or { result: "success" }
+}
+```
+
+### Matching Result
+
+The matcher returns `true` if the response matches all specified rules, and `false` if any rule fails. Empty or undefined rules are always considered a match.
+
+---
+
+## Status Code Matching
+
+### Single Status Code
+
+Match a specific HTTP status code.
+
+**Syntax:**
 ```yaml
 match_on:
   status: 200
 ```
 
-### Response Body Matching
+**Expected Behavior:**
 
-#### Single String
+The response matches only if the status code is exactly 200.
 
-Check if response body contains a specific string:
+**Example:**
+```yaml
+match_on:
+  status: 404
+```
+
+Matches responses with HTTP 404 status only.
+
+### Multiple Status Codes
+
+Match any status code from a list of acceptable codes.
+
+**Syntax:**
+```yaml
+match_on:
+  status: [200, 201, 204]
+```
+
+**Expected Behavior:**
+
+The response matches if the status code is any of the values in the array. This is useful for endpoints that return multiple valid status codes.
+
+**Example:**
+```yaml
+match_on:
+  status: [200, 302, 304]
+```
+
+Matches if the status code is 200 (OK), 302 (Found), or 304 (Not Modified).
+
+### Status Code with Operators
+
+Use operators for more complex status code matching.
+
+**Syntax:**
+```yaml
+match_on:
+  status:
+    gt: 199
+    lt: 300
+```
+
+**Expected Behavior:**
+
+When an object is provided with operators, all operators must pass for the match to succeed. This allows range checking and other comparisons.
+
+**Example:**
+```yaml
+match_on:
+  status:
+    gte: 200
+    lte: 299
+```
+
+Matches any successful 2xx status code.
+
+---
+
+## Header Matching
+
+Headers are matched case-insensitively by name. You can match exact header values, search headers, or use operators.
+
+### Exact Header Value Match
+
+Match a specific header with an exact value.
+
+**Syntax:**
+```yaml
+match_on:
+  header:
+    Content-Type: application/json
+    Cache-Control: no-cache
+```
+
+**Expected Behavior:**
+
+Each header specified is matched exactly against the response headers. Header names are case-insensitive. If any header doesn't match, the entire rule fails.
+
+**Example:**
+```yaml
+match_on:
+  header:
+    Authorization: 'Bearer token123'
+    X-Custom-Header: my-value
+```
+
+Matches responses where Authorization header is exactly "Bearer token123" AND X-Custom-Header is exactly "my-value".
+
+### Header Contains Search
+
+Search all headers for a value without knowing the header name.
+
+**Syntax:**
+```yaml
+match_on:
+  header:
+    contains: search_value
+```
+
+Or with regex:
 
 ```yaml
 match_on:
-  body_contains: "success"
+  header:
+    contains:
+      value: search_pattern
+      regex: true
 ```
 
-#### Multiple Strings
+**Expected Behavior:**
 
-Match if body contains any of these strings (first match wins):
+The matcher searches all header values for the specified string or regex pattern. At least one header must contain the value for the match to succeed. This is useful when you don't know which header will contain the value you're looking for.
 
+**Example:**
 ```yaml
 match_on:
-  body_contains:
-    - "admin"
-    - "superuser"
-    - "root"
+  header:
+    contains: 'Bearer'
 ```
 
-### Response Size Matching
+Matches any response where any header contains the string "Bearer".
 
-#### Exact Size
-
-Match if response is exactly N bytes:
-
+**Regex Example:**
 ```yaml
 match_on:
-  size: 1024
+  header:
+    contains:
+      value: '^Bearer\s+[a-zA-Z0-9_\-\.]+$'
+      regex: true
 ```
 
-#### Size Range
+Matches responses where any header matches the JWT bearer token pattern.
 
-Match if response falls within a size range:
+### Header with Operators
 
+Use operators for complex header matching.
+
+**Syntax:**
 ```yaml
 match_on:
-  size:
-    min: 100
-    max: 5000
+  header:
+    Content-Length:
+      gte: 1000
+      lte: 50000
+    Content-Type:
+      regex: 'application/(json|xml)'
 ```
 
-#### Minimum Size
+**Expected Behavior:**
 
-Match if response is at least N bytes:
+Operators are applied to specific headers. Multiple operators for the same header must all pass.
 
+**Example:**
 ```yaml
 match_on:
-  size:
-    min: 1000
+  header:
+    Set-Cookie:
+      contains: 'session_id='
+    X-Rate-Limit-Remaining:
+      gt: 0
 ```
 
-#### Maximum Size
+Matches responses where Set-Cookie header contains "session_id=" AND X-Rate-Limit-Remaining is greater than 0.
 
-Match if response is at most N bytes:
+### Combining Exact Match and Contains
 
+You can mix exact header matching with contains searches in a single rule.
+
+**Syntax:**
 ```yaml
 match_on:
-  size:
-    max: 10000
+  header:
+    Content-Type: application/json
+    contains: Authorization
 ```
 
-### Header Matching
+**Expected Behavior:**
 
-#### Exact Header Match
+Both conditions must be met: Content-Type must be exactly "application/json" AND at least one header must contain "Authorization".
 
-Match if headers have exact values:
-
+**Example:**
 ```yaml
 match_on:
-  headers:
-    Content-Type: "application/json"
-    X-Custom: "value"
+  header:
+    Server: nginx
+    contains:
+      value: 'gzip'
+      regex: false
 ```
 
-All specified headers must match (case-insensitive).
+Matches responses where Server header is "nginx" AND any header contains the string "gzip".
 
-#### Check Headers Exist
+---
 
-Match if specific headers are present (value doesn't matter):
+## Body Matching
 
+Body matching supports searching for content, matching JSON structures, and using operators for deep validation.
+
+### Simple String Contains
+
+Search the body for a substring.
+
+**Syntax:**
 ```yaml
 match_on:
-  headers_exist: Content-Type
+  body:
+    contains: success
 ```
 
-Multiple headers:
+**Expected Behavior:**
 
+The response body (converted to string if necessary) is searched for the exact substring. The match succeeds if the substring is found anywhere in the body.
+
+**Example:**
 ```yaml
 match_on:
-  headers_exist:
-    - Content-Type
-    - X-API-Version
-    - Authorization
+  body:
+    contains: error
 ```
 
-#### Check Header Value
+Matches responses where the body contains the string "error".
 
-Match if a specific header has a specific value:
+### Contains with Regex
 
+Search the body using a regular expression pattern.
+
+**Syntax:**
 ```yaml
 match_on:
-  header_has_value:
-    key: Authorization
-    value: "Bearer token123"
+  body:
+    contains:
+      value: 'pattern.*here'
+      regex: true
 ```
 
-Multiple checks (any match wins):
+**Expected Behavior:**
 
+The body is searched using the provided regex pattern. The regex is treated as a full regex string (not anchored by default).
+
+**Example:**
 ```yaml
 match_on:
-  header_has_value:
-    - key: X-Admin
-      value: "true"
-    - key: X-Role
-      value: "superuser"
+  body:
+    contains:
+      value: '"status":\s*"(success|ok)"'
+      regex: true
 ```
 
-### Content-Type Matching
+Matches responses where the body contains a JSON status field with value "success" or "ok".
 
-Match if Content-Type contains a specific value:
+### JSON Structure Matching
 
+Match specific fields within a JSON body.
+
+**Syntax:**
 ```yaml
 match_on:
-  content_type: "application/json"
+  body:
+    json:
+      result: success
+      count: 5
+      user:
+        name: John
+        age: 30
 ```
 
-This will match:
-- `application/json`
-- `application/json; charset=utf-8`
-- `application/json; boundary=...`
+**Expected Behavior:**
 
-### Response Time Matching
+The body is parsed as JSON and matched against the specified structure. Nested objects are supported. Values are matched exactly unless operators are used.
 
-#### Exact Time
-
-Match if response time is exactly N milliseconds:
-
+**Example:**
 ```yaml
 match_on:
-  time: 500
+  body:
+    json:
+      status: ok
+      data:
+        id: 123
+        active: true
 ```
 
-#### Time Range
+Matches JSON responses where status equals "ok" AND data.id equals 123 AND data.active is true.
 
-Match if response falls within time range:
+### JSON Structure with Operators
 
+Use operators within JSON matching for flexible validation.
+
+**Syntax:**
 ```yaml
 match_on:
-  time:
-    min: 100
-    max: 1000
+  body:
+    json:
+      status:
+        in: ['success', 'ok', 'completed']
+      timestamp:
+        regex: '^\d{4}-\d{2}-\d{2}T'
+      items:
+        length_gte: 1
+      code:
+        gte: 100
+        lte: 199
 ```
 
-#### Minimum Time
+**Expected Behavior:**
 
-Match if response takes at least N milliseconds:
+Operators are applied to JSON fields. Multiple operators for the same field must all pass. Nested objects are supported.
 
+**Example:**
 ```yaml
 match_on:
-  time:
-    min: 5000
+  body:
+    json:
+      error:
+        exists: false
+      data:
+        count:
+          gt: 0
+      message:
+        contains: welcome
 ```
 
-#### Maximum Time
+Matches JSON where error field doesn't exist, data.count is greater than 0, AND message contains "welcome".
 
-Match if response takes at most N milliseconds:
+### Combining Body Matching Methods
 
+Mix different body matching techniques in a single rule.
+
+**Syntax:**
 ```yaml
 match_on:
-  time:
-    max: 1000
+  body:
+    contains: '"status":"success"'
+    json:
+      status: success
+      count:
+        gte: 1
 ```
 
-### Response Contains Matching
+**Expected Behavior:**
 
-Search entire response (status, body, headers) for text:
+All body matching conditions must pass. The contains pattern is found AND the JSON structure matches.
 
+**Example:**
 ```yaml
 match_on:
-  response_contains: "error"
+  body:
+    contains:
+      value: '\{"result":'
+      regex: true
+    json:
+      result:
+        in: ['ok', 'success']
+      timestamp:
+        exists: true
 ```
 
-Multiple values (first match wins):
+Matches responses that contain a JSON object with a "result" field AND the result value is "ok" or "success" AND timestamp field exists.
 
+---
+
+## Operators Reference
+
+Operators provide flexible matching capabilities. They can be used in status, headers, and body matching.
+
+### Equality Operators
+
+#### `equals`
+
+Exact equality comparison.
+
+**Syntax:**
+```yaml
+field:
+  equals: value
+```
+
+**Expected Behavior:**
+
+The field value must exactly equal the specified value. Works with strings, numbers, and booleans.
+
+**Example:**
 ```yaml
 match_on:
-  response_contains:
-    - "admin"
-    - "superuser"
-    - "root"
+  header:
+    X-Status:
+      equals: active
 ```
 
-This searches:
-- Status code
-- Response body
-- All header key-value pairs
+#### `exact`
 
-### Complete Match On Example
+Alias for `equals`. Exact match comparison.
+
+**Syntax:**
+```yaml
+field:
+  exact: value
+```
+
+**Example:**
+```yaml
+match_on:
+  status:
+    exact: 200
+```
+
+#### `strict_equals`
+
+Strict equality comparison (uses === comparison).
+
+**Syntax:**
+```yaml
+field:
+  strict_equals: value
+```
+
+**Expected Behavior:**
+
+Identical to `equals` in most cases. Ensures strict type comparison.
+
+**Example:**
+```yaml
+match_on:
+  body:
+    json:
+      count:
+        strict_equals: 0
+```
+
+#### `not_equals`
+
+Not equal comparison.
+
+**Syntax:**
+```yaml
+field:
+  not_equals: value
+```
+
+**Expected Behavior:**
+
+The field value must not equal the specified value.
+
+**Example:**
+```yaml
+match_on:
+  status:
+    not_equals: 404
+```
+
+### String Operators
+
+#### `contains`
+
+String contains substring match.
+
+**Syntax:**
+```yaml
+field:
+  contains: substring
+```
+
+Or with regex:
+
+```yaml
+field:
+  contains:
+    value: pattern
+    regex: true
+```
+
+**Expected Behavior:**
+
+Field is converted to string and checked for substring presence. If `regex: true`, the value is treated as a regex pattern.
+
+**Example:**
+```yaml
+match_on:
+  header:
+    Content-Type:
+      contains: json
+```
+
+#### `not_contains`
+
+String does not contain substring.
+
+**Syntax:**
+```yaml
+field:
+  not_contains: substring
+```
+
+**Expected Behavior:**
+
+The field (as string) must not contain the specified substring.
+
+**Example:**
+```yaml
+match_on:
+  body:
+    json:
+      message:
+        not_contains: error
+```
+
+#### `contains_i`
+
+Case-insensitive contains.
+
+**Syntax:**
+```yaml
+field:
+  contains_i: substring
+```
+
+**Expected Behavior:**
+
+Performs case-insensitive substring matching.
+
+**Example:**
+```yaml
+match_on:
+  header:
+    Server:
+      contains_i: apache
+```
+
+Matches "Apache", "apache", "APACHE", etc.
+
+#### `regex`
+
+Regular expression match.
+
+**Syntax:**
+```yaml
+field:
+  regex: 'pattern'
+```
+
+**Expected Behavior:**
+
+Field is converted to string and matched against the regex pattern. Exceptions are caught and treated as no match.
+
+**Example:**
+```yaml
+match_on:
+  body:
+    json:
+      email:
+        regex: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+```
+
+#### `starts_with`
+
+String starts with prefix.
+
+**Syntax:**
+```yaml
+field:
+  starts_with: prefix
+```
+
+**Expected Behavior:**
+
+The field (as string) must start with the specified prefix.
+
+**Example:**
+```yaml
+match_on:
+  header:
+    Authorization:
+      starts_with: 'Bearer '
+```
+
+#### `ends_with`
+
+String ends with suffix.
+
+**Syntax:**
+```yaml
+field:
+  ends_with: suffix
+```
+
+**Expected Behavior:**
+
+The field (as string) must end with the specified suffix.
+
+**Example:**
+```yaml
+match_on:
+  body:
+    json:
+      url:
+        ends_with: .json
+```
+
+### Numeric Operators
+
+#### `gt`
+
+Greater than comparison.
+
+**Syntax:**
+```yaml
+field:
+  gt: number
+```
+
+**Expected Behavior:**
+
+Field is converted to number and compared. Must be strictly greater than the specified value.
+
+**Example:**
+```yaml
+match_on:
+  status:
+    gt: 199
+```
+
+#### `gte`
+
+Greater than or equal comparison.
+
+**Syntax:**
+```yaml
+field:
+  gte: number
+```
+
+**Expected Behavior:**
+
+Field is converted to number and compared. Must be greater than or equal to the specified value.
+
+**Example:**
+```yaml
+match_on:
+  header:
+    X-Rate-Limit-Remaining:
+      gte: 100
+```
+
+#### `lt`
+
+Less than comparison.
+
+**Syntax:**
+```yaml
+field:
+  lt: number
+```
+
+**Expected Behavior:**
+
+Field is converted to number and compared. Must be strictly less than the specified value.
+
+**Example:**
+```yaml
+match_on:
+  status:
+    lt: 300
+```
+
+#### `lte`
+
+Less than or equal comparison.
+
+**Syntax:**
+```yaml
+field:
+  lte: number
+```
+
+**Expected Behavior:**
+
+Field is converted to number and compared. Must be less than or equal to the specified value.
+
+**Example:**
+```yaml
+match_on:
+  body:
+    json:
+      response_time_ms:
+        lte: 5000
+```
+
+### Array Operators
+
+#### `in`
+
+Value is in array.
+
+**Syntax:**
+```yaml
+field:
+  in: [value1, value2, value3]
+```
+
+**Expected Behavior:**
+
+Field value must be one of the values in the specified array.
+
+**Example:**
+```yaml
+match_on:
+  status:
+    in: [200, 201, 204]
+```
+
+#### `not_in`
+
+Value is not in array.
+
+**Syntax:**
+```yaml
+field:
+  not_in: [value1, value2]
+```
+
+**Expected Behavior:**
+
+Field value must not be any of the values in the specified array.
+
+**Example:**
+```yaml
+match_on:
+  status:
+    not_in: [400, 401, 403, 404, 500, 502, 503]
+```
+
+#### `includes`
+
+Array includes value (for array fields).
+
+**Syntax:**
+```yaml
+field:
+  includes: value
+```
+
+**Expected Behavior:**
+
+Field must be an array and must contain the specified value.
+
+**Example:**
+```yaml
+match_on:
+  body:
+    json:
+      permissions:
+        includes: 'admin'
+```
+
+### Type and Existence Operators
+
+#### `type`
+
+Check field type.
+
+**Syntax:**
+```yaml
+field:
+  type: 'string'
+```
+
+**Expected Behavior:**
+
+Field type must match the specified type. Valid types: 'string', 'number', 'boolean', 'object', 'array'.
+
+**Example:**
+```yaml
+match_on:
+  body:
+    json:
+      data:
+        type: 'object'
+      count:
+        type: 'number'
+```
+
+#### `exists`
+
+Check if field exists or is null.
+
+**Syntax:**
+```yaml
+field:
+  exists: true
+```
+
+Or:
+
+```yaml
+field:
+  exists: false
+```
+
+**Expected Behavior:**
+
+When `true`, field must not be null or undefined. When `false`, field must be null or undefined.
+
+**Example:**
+```yaml
+match_on:
+  body:
+    json:
+      error:
+        exists: false
+      success:
+        exists: true
+```
+
+#### `empty`
+
+Check if field is empty.
+
+**Syntax:**
+```yaml
+field:
+  empty: true
+```
+
+Or:
+
+```yaml
+field:
+  empty: false
+```
+
+**Expected Behavior:**
+
+When `true`, field must be empty (null, undefined, or length 0). When `false`, field must have length > 0.
+
+**Example:**
+```yaml
+match_on:
+  body:
+    json:
+      message:
+        empty: false
+      items:
+        empty: false
+```
+
+### Length Operators
+
+#### `length`
+
+Exact length match.
+
+**Syntax:**
+```yaml
+field:
+  length: 10
+```
+
+**Expected Behavior:**
+
+Field must have exactly the specified length. Works with strings and arrays.
+
+**Example:**
+```yaml
+match_on:
+  body:
+    json:
+      id:
+        length: 36
+      items:
+        length: 5
+```
+
+#### `length_gte`
+
+Length greater than or equal.
+
+**Syntax:**
+```yaml
+field:
+  length_gte: 1
+```
+
+**Expected Behavior:**
+
+Field length must be greater than or equal to the specified value.
+
+**Example:**
+```yaml
+match_on:
+  body:
+    json:
+      results:
+        length_gte: 1
+      message:
+        length_gte: 3
+```
+
+#### `length_lte`
+
+Length less than or equal.
+
+**Syntax:**
+```yaml
+field:
+  length_lte: 1000
+```
+
+**Expected Behavior:**
+
+Field length must be less than or equal to the specified value.
+
+**Example:**
+```yaml
+match_on:
+  body:
+    json:
+      data:
+        length_lte: 100
+```
+
+### JSON Operator
+
+#### `json`
+
+Parse and match nested JSON structure (for body matching).
+
+**Syntax:**
+```yaml
+match_on:
+  body:
+    json:
+      nested:
+        structure: value
+```
+
+**Expected Behavior:**
+
+Body is parsed as JSON and matched against the nested structure. All fields and operators within the JSON rule must match.
+
+**Example:**
+```yaml
+match_on:
+  body:
+    json:
+      user:
+        name: John
+        age:
+          gte: 18
+      roles:
+        includes: 'admin'
+```
+
+---
+
+## Complex Matching Examples
+
+### Example 1: API Success Response Validation
+
+Validate a successful API response with status, headers, and JSON body structure.
 
 ```yaml
 match_on:
   status: 200
-  body_contains:
-    - "admin"
-    - "superuser"
-  headers:
-    Content-Type: "application/json"
-  response_time:
-    max: 2000
+  header:
+    Content-Type: application/json
+    Cache-Control: 'no-cache'
+  body:
+    json:
+      status: success
+      data:
+        user_id:
+          type: 'number'
+          gt: 0
+        email:
+          regex: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
 ```
+
+**Validates:**
+- HTTP 200 response
+- Content-Type is application/json
+- Cache-Control header is no-cache
+- Response body contains status: "success"
+- user_id is a number greater than 0
+- email matches email regex pattern
+
+### Example 2: Error Handling with Multiple Possible Status Codes
+
+Match error responses that could have different HTTP codes.
+
+```yaml
+match_on:
+  status:
+    in: [400, 401, 403, 404]
+  header:
+    contains:
+      value: 'application/.*json'
+      regex: true
+  body:
+    json:
+      error:
+        exists: true
+      error_code:
+        in: ['VALIDATION_ERROR', 'UNAUTHORIZED', 'FORBIDDEN', 'NOT_FOUND']
+      message:
+        not_empty: true
+```
+
+**Validates:**
+- Status is one of the error codes
+- Response contains an application JSON header
+- Error object exists in response
+- Error code matches expected values
+- Error message is not empty
+
+### Example 3: Rate Limit Response Validation
+
+Validate rate limit headers and ensure retry information is present.
+
+```yaml
+match_on:
+  status: 429
+  header:
+    X-RateLimit-Limit:
+      type: 'string'
+    X-RateLimit-Remaining:
+      gte: 0
+    X-RateLimit-Reset:
+      regex: '^\d+$'
+  body:
+    contains:
+      value: 'rate limit'
+      regex: false
+```
+
+**Validates:**
+- Status 429 (Too Many Requests)
+- Rate limit headers are present
+- Remaining count is non-negative
+- Reset time is a numeric timestamp
+- Body mentions "rate limit"
+
+### Example 4: Paginated List Response
+
+Validate paginated list responses with nested arrays.
+
+```yaml
+match_on:
+  status: 200
+  body:
+    json:
+      page:
+        gte: 1
+      per_page:
+        in: [10, 25, 50, 100]
+      total:
+        gte: 0
+      items:
+        length_gte: 0
+        length_lte: 100
+      items:
+        type: 'array'
+      data:
+        - id:
+            type: 'number'
+        - name:
+            length_gte: 1
+```
+
+**Validates:**
+- Status 200 response
+- Page number is at least 1
+- Per-page value is one of the allowed options
+- Total count is non-negative
+- Items array contains between 0-100 items
+- Each item has numeric id and non-empty name
+
+### Example 5: Redirect Response Validation
+
+Validate redirect responses.
+
+```yaml
+match_on:
+  status:
+    in: [301, 302, 307, 308]
+  header:
+    Location:
+      regex: '^https?://.*'
+    Location:
+      not_contains: localhost
+  body:
+    empty: true
+```
+
+**Validates:**
+- Status is a redirect code
+- Location header contains valid URL
+- Location doesn't redirect to localhost
+- Body is empty
+
+### Example 6: Authentication Token Validation
+
+Validate responses containing authentication tokens.
+
+```yaml
+match_on:
+  status: 200
+  header:
+    Authorization:
+      starts_with: 'Bearer '
+    Set-Cookie:
+      contains: 'session'
+  body:
+    json:
+      token:
+        regex: '^[a-zA-Z0-9_\-\.]+$'
+      token_type: Bearer
+      expires_in:
+        gt: 0
+      refresh_token:
+        length_gte: 20
+```
+
+**Validates:**
+- Status 200 with successful authentication
+- Authorization header contains Bearer token
+- Set-Cookie header contains session info
+- Token matches JWT-like format
+- Token type is Bearer
+- Expiration is in the future
+- Refresh token is at least 20 characters
+
+### Example 7: Health Check Response
+
+Simple health check validation.
+
+```yaml
+match_on:
+  status: 200
+  header:
+    Content-Type:
+      contains: json
+  body:
+    json:
+      status:
+        in: [ok, healthy, up]
+      timestamp:
+        regex: '^\d{4}-\d{2}-\d{2}T'
+      version:
+        regex: '^\d+\.\d+\.\d+$'
+```
+
+**Validates:**
+- Status 200
+- Content-Type contains "json"
+- Status is one of: ok, healthy, up
+- Timestamp is ISO format
+- Version follows semantic versioning
+
+### Example 8: Search Results with Facets
+
+Validate complex search response with nested facets.
+
+```yaml
+match_on:
+  status: 200
+  body:
+    json:
+      query:
+        not_empty: true
+      total_results:
+        gte: 0
+      results:
+        type: 'array'
+        length_lte: 100
+      facets:
+        type: 'object'
+      facets:
+        categories:
+          type: 'array'
+        facets:
+          categories:
+            - count:
+                type: 'number'
+                gte: 0
+            - name:
+                length_gte: 1
+```
+
+**Validates:**
+- Status 200
+- Query string is not empty
+- Total results is non-negative
+- Results array exists and has max 100 items
+- Facets object exists
+- Category facets are an array
+- Each category has count (number >= 0) and name (non-empty)
+
+### Example 9: Form Submission with Validation Errors
+
+Validate form submission responses that may include field-level errors.
+
+```yaml
+match_on:
+  status:
+    in: [400, 422]
+  body:
+    json:
+      success: false
+      errors:
+        type: 'object'
+      errors:
+        exists: true
+      errors:
+          empty: false
+      message:
+        contains: 'validation'
+        contains_i: 'failed'
+```
+
+**Validates:**
+- Status is 400 or 422 (validation error)
+- Success is false
+- Errors object exists and is not empty
+- Message contains "validation" (case-insensitive) and "failed"
+
+### Example 10: File Download Response
+
+Validate file download responses.
+
+```yaml
+match_on:
+  status: 200
+  header:
+    Content-Type:
+      in: ['application/pdf', 'application/zip', 'image/png']
+    Content-Disposition:
+      starts_with: 'attachment'
+    Content-Length:
+      gte: 1
+  body:
+    contains: ''
+```
+
+**Validates:**
+- Status 200
+- Content-Type is one of the allowed file types
+- Content-Disposition header indicates attachment
+- Content-Length is positive (file not empty)
+- Body exists (any content)
+
+---
+
+## Best Practices
+
+1. **Be Specific** - Use specific status codes or ranges rather than matching everything
+2. **Combine Matching Types** - Mix status, header, and body matching for comprehensive validation
+3. **Use Regex Carefully** - Regex patterns are powerful but can be slow; use simple contains when possible
+4. **Validate Structure** - Use JSON matching to validate response structure, not just content
+5. **Test Edge Cases** - Consider what happens with empty responses, missing fields, and unexpected types
+6. **Document Complex Rules** - Add comments explaining what each rule validates
+7. **Use Contains for Search** - For headers or body, use contains when you don't need exact matches
+8. **Combine Operators** - Use multiple operators on the same field for range checking and complex logic
+
+---
+
+## Error Handling
+
+The matcher handles various error conditions gracefully:
+
+- **Invalid Regex** - Regex errors are caught and treated as no match
+- **JSON Parse Errors** - Invalid JSON is treated as no match for JSON rules
+- **Type Mismatches** - Operations that don't apply to field type are handled safely
+- **Missing Fields** - Missing fields in JSON structures are treated as no match
+- **Null Values** - Null values are handled appropriately by operators
 
 ---
 
