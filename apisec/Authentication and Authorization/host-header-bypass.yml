@@ -1,0 +1,23 @@
+rule_name: Host Header Auth Bypass
+
+transform:
+  headers:
+    add:
+      Host: "internal.local"
+      X-Forwarded-Host: "internal.local"
+      X-Original-URL: "/admin"
+      X-Forwarded-For: "127.0.0.1"
+
+match_on:
+  status: 200
+  content_type: "application/json"
+
+report:
+  title: "Host Header Auth Bypass"
+  description: "API bypassed authentication via host header manipulation"
+  cwe: "CWE-74"
+  cvssScore: "8.5"
+  mitigation: "Validate host headers against whitelist"
+  stepsToReproduce: "Send request with manipulated host headers: {{req.headers}}"
+  tags: "host-header,auth-bypass"
+  impact: "Unauthorized access via host header manipulation"

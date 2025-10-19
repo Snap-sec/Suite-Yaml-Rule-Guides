@@ -1,0 +1,18 @@
+rule_name: Reflected XSS
+
+transform:
+  replace_params_one_by_one: "<script>alert(0)</script>"
+
+match_on:
+  status: 200
+  response_contains: "<script>alert(0)</script>"
+
+report:
+  title: "Reflected XSS"
+  description: "Reflected XSS vulnerability detected"
+  cwe: "CWE-79"
+  cvssScore: "6.1"
+  mitigation: "HTML encode all user input in responses"
+  stepsToReproduce: "Inject XSS payload: {{req.url}}"
+  tags: "xss,reflected,injection"
+  impact: "Session hijacking and credential theft"

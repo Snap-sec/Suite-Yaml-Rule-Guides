@@ -1,0 +1,23 @@
+rule_name: GraphQL Injection
+
+transform:
+  replace_body_params:
+    query: "{__schema{types{name}}}"
+    query: "{user(id:\"1\"){id,name,password}}"
+    query: "{__type(name:\"User\"){fields{name,type}}}"
+
+match_on:
+  status: 200
+  response_contains:
+    - "__schema"
+    - "__type"
+
+report:
+  title: "GraphQL Injection"
+  description: "GraphQL malicious queries and resolver abuse detected"
+  cwe: "CWE-943"
+  cvssScore: "7.5"
+  mitigation: "Implement query depth limits and field restrictions"
+  stepsToReproduce: "Inject GraphQL payload: {{req.body}}"
+  tags: "graphql-injection,query-abuse,resolver-abuse"
+  impact: "GraphQL schema disclosure and data extraction"

@@ -1,0 +1,25 @@
+rule_name: LDAP AD Injection
+
+transform:
+  replace_params_one_by_one: "*)(uid=*))(|(uid=*"
+  replace_body_params:
+    user: "*)(uid=*))(|(uid=*"
+    filter: "*)(objectClass=*))(|(objectClass=*"
+
+match_on:
+  status: 200
+  response_contains:
+    - "user"
+    - "admin"
+    - "authenticated"
+    - "ldap"
+
+report:
+  title: "LDAP AD Injection"
+  description: "LDAP/Active Directory injection detected"
+  cwe: "CWE-90"
+  cvssScore: "8.0"
+  mitigation: "Use parameterized LDAP queries and input validation"
+  stepsToReproduce: "Inject LDAP payload: {{req.url}}"
+  tags: "ldap-injection,active-directory,ldap"
+  impact: "LDAP query manipulation and data extraction"

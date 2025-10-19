@@ -1,0 +1,19 @@
+rule_name: Simple Param Redirect
+
+transform:
+  replace_params_one_by_one: "https://www.evil.com"
+
+match_on:
+  status: [301, 302, 307, 308]
+  headers:
+    Location: "evil.com"
+
+report:
+  title: "Open Redirect Vulnerability"
+  description: "Open redirect vulnerability detected via parameter manipulation"
+  cwe: "CWE-601"
+  cvssScore: "4.3"
+  mitigation: "Validate redirect URLs against whitelist"
+  stepsToReproduce: "Replace parameter with evil.com: {{req.url}}"
+  tags: "open-redirect,redirect,url-validation"
+  impact: "Phishing attacks and credential theft"

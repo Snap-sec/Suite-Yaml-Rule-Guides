@@ -1,0 +1,53 @@
+rule_name: Unauthorized Access - Auth Headers/Cookies Removed
+
+transform:
+  headers:
+    remove:
+      - Authorization
+      - X-API-Key
+      - X-Auth-Token
+      - Bearer
+  cookies:
+    remove:
+      - session
+      - session_id
+      - auth
+      - auth_token
+      - jwt
+      - token
+  repeat_with_methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+
+match_on:
+  status: 200
+  content_type: "application/json"
+
+report:
+  title: "Unauthorized Access Detected ({{req.method}} {{endpoint}})"
+  description: |
+    The endpoint responded with 200 OK and JSON content type to an unauthenticated request.
+    All authentication headers and cookies were removed before sending the request.
+
+    • Original URL: {{original.url}}
+    • Transformed URL: {{req.url}}
+    • Response Status: {{res.status}}
+    • Content-Type: {{res.headers.Content-Type}}
+  cwe: "CWE-306"
+  cvssScore: "8.6"
+  severity: "critical"
+  mitigation: |
+    1. Implement proper authentication middleware
+    2. Validate JWT tokens and session cookies
+    3. Return 401 Unauthorized for missing credentials
+    4. Return 403 Forbidden for invalid credentials
+    5. Log authentication failures for monitoring
+  stepsToReproduce: |
+    1. Send original request to {{original.url}}
+    2. Remove all authentication headers and cookies
+    3. Send {{req.method}} request to {{req.url}}
+    4. Observe {{res.status}} response with JSON content
+  tags: "auth,unauthorized,missing-auth,json"
+  impact: "Unauthenticated users can access protected API endpoints and sensitive data"
