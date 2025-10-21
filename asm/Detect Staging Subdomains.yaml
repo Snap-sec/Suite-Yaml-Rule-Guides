@@ -1,0 +1,17 @@
+name: Detect Staging Subdomains
+description: Set environment to 'staging' if the subdomain contains 'stg', '-stg', or '.stg'
+severity: info
+product: risk-register
+assetType: subdomain
+match:
+  - field: value
+    operator: regex
+    value: "(^|[-.])stg($|[-.])"
+    options:
+      match_case: false
+set:
+  - field: environment
+    value: staging
+  - field: tags
+    value: "staging,auto-classified"
+    transformer: List

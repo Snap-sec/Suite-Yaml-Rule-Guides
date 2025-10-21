@@ -1,0 +1,17 @@
+name: Detect Development Subdomains
+description: Set environment to 'development' if the subdomain contains 'dev', '-dev', or '.dev'
+severity: info
+product: risk-register
+assetType: subdomain
+match:
+  - field: value
+    operator: regex
+    value: "(^|[-.])dev($|[-.])"
+    options:
+      match_case: false
+set:
+  - field: environment
+    value: development
+  - field: tags
+    value: "development,auto-classified"
+    transformer: List

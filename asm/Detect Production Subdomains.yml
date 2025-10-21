@@ -1,0 +1,17 @@
+name: Detect Production Subdomains
+description: Set environment to 'production' if the subdomain contains 'prod', '-prod', or '.prod'
+severity: info
+product: risk-register
+assetType: subdomain
+match:
+  - field: value
+    operator: regex
+    value: "(^|[-.])prod($|[-.])"
+    options:
+      match_case: false
+set:
+  - field: environment
+    value: prod
+  - field: tags
+    value: "production,auto-classified"
+    transformer: List

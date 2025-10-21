@@ -1,0 +1,14 @@
+name: Assign Owner to Subdomains
+description: Automatically assign ownership to Imran for all subdomain assets
+severity: info
+product: risk-register
+assetType: subdomain
+match:
+  - field: type
+    operator: "=="
+    value: subdomain
+set:
+  - field: owner.name
+    value: Imran
+  - field: owner.email
+    value: imran@snapsec.co

@@ -1,0 +1,14 @@
+name: Classify External IPs
+description: Detect and mark IP assets that are public (not in private/internal ranges)
+severity: info
+product: aim
+assetType: ip
+match:
+  - field: value
+    operator: regex
+    value: "^(?!10\\.|192\\.168\\.|172\\.(1[6-9]|2\\d|3[0-1])\\.)"
+    options:
+      match_case: false
+set:
+  - field: risk.exposure
+    value: true
