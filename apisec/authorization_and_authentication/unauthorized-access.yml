@@ -1,53 +1,52 @@
-rule_name: Unauthorized Access - Auth Headers/Cookies Removed
+rule_name: Auth Not Required - 200 JSON without credentials
 
 transform:
   headers:
     remove:
       - Authorization
+      - Cookie
       - X-API-Key
       - X-Auth-Token
-      - Bearer
-  cookies:
+      - X-Access-Token
+      - Api-Key
+      - Authentication
+  query:
     remove:
-      - session
-      - session_id
-      - auth
-      - auth_token
-      - jwt
+      - access_token
       - token
-  repeat_with_methods:
-    - GET
-    - POST
-    - PUT
-    - DELETE
+      - api_key
+      - key
+      - auth
+  body:
+    remove:
+      - access_token
+      - token
+      - apiKey
+      - auth
 
 match_on:
   status: 200
-  content_type: "application/json"
+  header:
+    Content-Type:
+      contains: json
 
 report:
-  title: "Unauthorized Access Detected ({{req.method}} {{endpoint}})"
-  description: |
-    The endpoint responded with 200 OK and JSON content type to an unauthenticated request.
-    All authentication headers and cookies were removed before sending the request.
-
-    • Original URL: {{original.url}}
-    • Transformed URL: {{req.url}}
-    • Response Status: {{res.status}}
-    • Content-Type: {{res.headers.Content-Type}}
-  cwe: "CWE-306"
-  cvssScore: "8.6"
-  severity: "critical"
-  mitigation: |
-    1. Implement proper authentication middleware
-    2. Validate JWT tokens and session cookies
-    3. Return 401 Unauthorized for missing credentials
-    4. Return 403 Forbidden for invalid credentials
-    5. Log authentication failures for monitoring
+  title: "Unprotected JSON endpoint (no auth required)"
+  description: >-
+    The endpoint returned 200 OK with a JSON response even after removing all
+    authentication headers, cookies, and common token parameters.
+    Original: {{original.method}} {{original.url}}
+    Tested: {{req.method}} {{req.url}}
+  cwe: "CWE-287"
+  cvssScore: "6.5"
+  mitigation: >-
+    Enforce authentication/authorization on this endpoint; require valid tokens
+    server-side and reject requests lacking credentials.
   stepsToReproduce: |
-    1. Send original request to {{original.url}}
-    2. Remove all authentication headers and cookies
-    3. Send {{req.method}} request to {{req.url}}
-    4. Observe {{res.status}} response with JSON content
-  tags: "auth,unauthorized,missing-auth,json"
-  impact: "Unauthenticated users can access protected API endpoints and sensitive data"
+    1) Send the original request.
+    2) Re-send without Authorization/Cookie and without token params (as above).
+    3) Observe 200 OK and JSON Content-Type. Response: {{res.status}} {{res.statusText}}
+  tags: "auth,access-control,misconfiguration"
+  impact: >-
+    Unauthenticated access to JSON data/functionality may expose sensitive
+    information or allow unauthorized actions.
