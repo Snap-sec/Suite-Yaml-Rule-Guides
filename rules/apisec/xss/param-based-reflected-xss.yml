@@ -1,18 +1,50 @@
 rule_name: Reflected XSS
 
 transform:
-  replace_params_one_by_one: "<script>alert(0)</script>"
+  query:
+    transformations:
+      - replace_all_values_one_by_one: "<script>alert(0)</script>"
+  body:
+    transformations:
+      - replace_all_one_by_one: "<script>alert(0)</script>"
+  header:
+    transformations:
+      - replace_all_values_one_by_one: "<script>alert(0)</script>"
 
 match_on:
   status: 200
-  response_contains: "<script>alert(0)</script>"
+  header:
+    Content-Type:
+      regex: 'text\/html|application\/html|application\/x?html'
+  body:
+    # each entry here is treated as a regex; escape angle brackets to match literal payload
+    contains:
+      - "<script>alert\\(0\\)<\\/script>"
+      - "<script>\\s*alert\\s*\\(\\s*0\\s*\\)\\s*<\\/script>"  # tolerant whitespace variant
+      - "onerror\\s*=\\s*[\"']?alert\\s*\\("                    # image onerror style
 
 report:
-  title: "Reflected XSS"
-  description: "Reflected XSS vulnerability detected"
+  title: "Reflected XSS detected"
+  description: >-
+    A reflected XSS payload (`<script>alert(0)</script>`) injected into a
+    request parameter was reflected back in the response body (and the response
+    has an HTML content-type). This indicates a reflected cross-site scripting
+    vulnerability where user input is returned without proper HTML encoding.
+    Original: {{original.method}} {{original.url}}
+    Tested:   {{req.method}} {{req.url}}
+    Matched:  {{match.criteria}}
+    Status:   {{res.status}} | Content-Type: {{res.headers.Content-Type}}
+  severity: high
   cwe: "CWE-79"
   cvssScore: "6.1"
-  mitigation: "HTML encode all user input in responses"
-  stepsToReproduce: "Inject XSS payload: {{req.url}}"
+  mitigation: >-
+    Properly HTML-encode or sanitize all user-controlled input before rendering
+    in HTML contexts. Use context-aware encoding libraries and CSP as defense-in-depth.
+  stepsToReproduce: |
+    1) Send baseline request: {{original.method}} {{original.url}}
+    2) Re-send while replacing a single parameter value with: <script>alert(0)</script>
+    3) Observe the payload reflected in the HTML response and executed in a browser context.
   tags: "xss,reflected,injection"
-  impact: "Session hijacking and credential theft"
+  impact: >-
+    Successful reflected XSS can lead to session hijacking, credential theft,
+    forced actions, and the ability to run arbitrary JavaScript in victims' browsers.
