@@ -12,7 +12,6 @@ transform:
       - replace_all_values_one_by_one: "<script>alert(0)</script>"
 
 match_on:
-  status: 200
   header:
     Content-Type:
       regex: 'text\/html|application\/html|application\/x?html'
