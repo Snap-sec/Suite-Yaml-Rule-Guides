@@ -1,7 +1,7 @@
 rule_name: Auth Not Required - 200 JSON without credentials
 
 transform:
-  headers:
+  header:
     remove:
       - Authorization
       - Cookie
@@ -10,19 +10,6 @@ transform:
       - X-Access-Token
       - Api-Key
       - Authentication
-  query:
-    remove:
-      - access_token
-      - token
-      - api_key
-      - key
-      - auth
-  body:
-    remove:
-      - access_token
-      - token
-      - apiKey
-      - auth
 
 match_on:
   status: 200

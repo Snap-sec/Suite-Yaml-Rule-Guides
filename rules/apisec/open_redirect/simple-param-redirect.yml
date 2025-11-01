@@ -1,19 +1,48 @@
-rule_name: Simple Param Redirect
+rule_name: Open Redirect - high confidence (absolute external targets)
 
 transform:
-  replace_params_one_by_one: "https://www.evil.com"
+  query:
+    transformations:
+      - replace_all_values_one_by_one: "https://example.com/"
+      - replace_all_values_one_by_one: "http://example.com/"
+      - replace_all_values_one_by_one: "//example.com/"
+      - replace_all_values_one_by_one: "https://example.com/evil"
+      - replace_all_values_one_by_one: "//example.com/evil"
+      - replace_all_values_one_by_one: "https:%2F%2Fexample.com"     # URL-encoded
+      - replace_all_values_one_by_one: "https://%65xample.com/"      # percent-encoded host char
+      - replace_all_values_one_by_one: "///example.com"              # triple-slash trick
 
 match_on:
-  status: [301, 302, 307, 308]
-  headers:
-    Location: "evil.com"
+  status: [301, 302, 303, 307, 308, 200]
+  header:
+    Location: "example.com"
 
 report:
-  title: "Open Redirect Vulnerability"
-  description: "Open redirect vulnerability detected via parameter manipulation"
+  title: "Open Redirect — external absolute URL accepted"
+  description: >-
+    A user-controlled parameter or value was coerced into an external absolute URL
+    (e.g., https://example.com/) and the application produced a redirect or an in-page
+    navigation (meta/JS) to that URL. Patterns only match absolute external URLs to
+    reduce false positives.
+    Original: {{original.method}} {{original.url}}
+    Tested:   {{req.method}} {{req.url}}
+    Matched:  {{match.criteria}}
+    Status:   {{res.status}} | Content-Type: {{res.headers.Content-Type}}
+  severity: high
   cwe: "CWE-601"
-  cvssScore: "4.3"
-  mitigation: "Validate redirect URLs against whitelist"
-  stepsToReproduce: "Replace parameter with evil.com: {{req.url}}"
-  tags: "open-redirect,redirect,url-validation"
-  impact: "Phishing attacks and credential theft"
+  cvssScore: "6.5"
+  mitigation: >-
+    Only allow redirects to application-controlled destinations. Use a strict allowlist
+    of hostnames/paths; canonicalize and validate user-supplied targets; reject
+    protocol-relative and absolute external URLs; and prefer mapping short codes to
+    server-side destinations instead of trusting client input.
+  stepsToReproduce: |
+    1) Send baseline request: {{original.method}} {{original.url}}
+    2) Re-send with a redirect parameter replaced by an absolute URL such as
+       https://example.com/ or //attacker.com/ (see transform payloads).
+    3) Observe a 3xx response or a 200 with meta/JS that navigates to the external host.
+    4) Verify that non-allowlisted external hosts are accepted.
+  tags: "open-redirect,redirect,phishing"
+  impact: >-
+    Open redirects can facilitate phishing, token leakage via referer headers, and user
+    journey hijacking to attacker-controlled sites.

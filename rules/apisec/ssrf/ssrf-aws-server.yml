@@ -1,0 +1,66 @@
+rule_name: SSRF - high-confidence internal access detection
+
+transform:
+  query:
+    transformations:
+      - replace_all_values_one_by_one: "http://169.254.169.254/latest/meta-data/iam/security-credentials/"
+      - replace_all_values_one_by_one: "http://169.254.169.254/latest/meta-data/"
+      - replace_all_values_one_by_one: "http://127.0.0.1/"
+      - replace_all_values_one_by_one: "http://127.0.0.1:5984/_all_dbs"
+      - replace_all_values_one_by_one: "http://localhost/"
+      - replace_all_values_one_by_one: "http://169.254.169.254/latest/meta-data/iam/security-credentials/admin"
+      - replace_all_values_one_by_one: "http://[::1]/"
+  body:
+    transformations:
+      - replace_all_values_one_by_one: "http://169.254.169.254/latest/meta-data/iam/security-credentials/"
+      - replace_all_values_one_by_one: "http://127.0.0.1:5984/_all_dbs"
+      - replace_all_values_one_by_one: "http://localhost:5984/_all_dbs"
+      - replace_all_values_one_by_one: "http://127.0.0.1/"
+      - replace_all_values_one_by_one: "http://169.254.169.254/2009-04-04/meta-data/"
+  header:
+    transformations:
+      - replace_all_values_one_by_one: "http://169.254.169.254/latest/meta-data/iam/security-credentials/"
+      - replace_all_values_one_by_one: "http://127.0.0.1/"
+      - replace_all_values_one_by_one: "http://localhost/"
+
+match_on:
+  status: [200, 201, 202, 301, 302, 400, 401, 403, 404, 500]
+  body:
+    contains:
+      - "iam/security-credentials(/|$)"
+      - "accessKeyId\\s*[:=]\\s*[A-Z0-9/+=]{8,}"
+      - "secretAccessKey\\s*[:=]\\s*[A-Za-z0-9/+=]{16,}"
+      - "_all_dbs\\s*[:=]?\\s*\\["
+      - "(^|\\s)root:x:0:0:"
+      - "(^|\\s)CouchDB\\s+\\w+"
+
+report:
+  title: "Potential SSRF - internal resource accessed (high-confidence)"
+  description: >-
+    The application returned content strongly indicative of an internal resource
+    after injecting internal URLs into request parameters/headers. Indicators
+    matched are high-confidence regex patterns (e.g. AWS credential fields,
+    CouchDB _all_dbs, IAM credential path or /etc/passwd root entry), minimizing
+    false positives from generic public pages.
+    Original: {{original.method}} {{original.url}}
+    Tested:   {{req.method}} {{req.url}}
+    Matched:  {{match.criteria}}
+    Status:   {{res.status}} | Content-Type: {{res.headers.Content-Type}}
+  severity: critical
+  cwe: "CWE-918"
+  cvssScore: "9.0"
+  mitigation: >-
+    Implement strict outbound URL allowlists, block link-local/private IP ranges,
+    validate and canonicalize user-supplied URLs, and avoid fetching arbitrary
+    URLs. Prefer IMDSv2 and network segmentation; disable verbose metadata output.
+  stepsToReproduce: |
+    1) Send baseline request: {{original.method}} {{original.url}}
+    2) Re-send while replacing a single parameter/header/value with:
+       - http://169.254.169.254/latest/meta-data/iam/security-credentials/
+       - http://127.0.0.1:5984/_all_dbs
+    3) Observe high-confidence artifacts in response (accessKeyId/secretAccessKey,
+       _all_dbs array, "iam/security-credentials", or root:x:0:0: lines).
+  tags: "ssrf,internal-exposure,imds,cloud"
+  impact: >-
+    SSRF can expose cloud credentials, internal services and management endpoints,
+    enabling data exfiltration, pivoting, and potentially remote code execution.

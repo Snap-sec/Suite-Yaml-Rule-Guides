@@ -1,0 +1,88 @@
+rule_name: Command Injection - single command (uname -a)
+
+transform:
+  query:
+    transformations:
+      - replace_all_values_one_by_one: "; uname -a"
+      - replace_all_values_one_by_one: "&& uname -a"
+      - replace_all_values_one_by_one: "| uname -a"
+      - replace_all_values_one_by_one: "`uname -a`"
+      - replace_all_values_one_by_one: "$(uname -a)"
+      - replace_all_values_one_by_one: "|| uname -a"
+      - replace_all_values_one_by_one: "; /bin/uname -a"
+      - replace_all_values_one_by_one: "&& /bin/uname -a"
+
+  body:
+    transformations:
+      - replace_all_values_one_by_one: "; uname -a"
+      - replace_all_values_one_by_one: "&& uname -a"
+      - replace_all_values_one_by_one: "| uname -a"
+      - replace_all_values_one_by_one: "`uname -a`"
+      - replace_all_values_one_by_one: "$(uname -a)"
+      - replace_all_values_one_by_one: "|| uname -a"
+      - replace_all_values_one_by_one: "; /bin/uname -a"
+
+  header:
+    transformations:
+      - replace_all_values_one_by_one: "; uname -a"
+      - replace_all_values_one_by_one: "&& uname -a"
+      - replace_all_values_one_by_one: "`uname -a`"
+      - replace_all_values_one_by_one: "$(uname -a)"
+
+match_on:
+  body:
+    contains:
+      - "Linux"
+      - "Darwin"
+      - "FreeBSD"
+      - "SunOS"
+      - "uname -a"
+      - "kernel"
+      - "GNU/Linux"
+      - "MINGW"
+      - "CYGWIN"
+      - "Windows"
+      - "Microsoft"
+  header:
+    contains:
+      - "Linux"
+      - "Darwin"
+      - "FreeBSD"
+      - "SunOS"
+      - "uname -a"
+      - "kernel"
+      - "GNU/Linux"
+      - "MINGW"
+      - "CYGWIN"
+      - "Windows"
+      - "Microsoft"
+
+report:
+  title: "Possible Command Injection — `uname -a` output detected"
+  description: >-
+    Injecting `uname -a` (via various shell wrappers) into request parameters
+    produced responses containing operating-system identifiers or kernel
+    information (e.g., "Linux", "Darwin", "GNU/Linux", "kernel", or "Microsoft").
+    This indicates the application may be executing OS commands with unsanitized
+    input.
+    Original: {{original.method}} {{original.url}}
+    Tested:   {{req.method}} {{req.url}}
+    Matched:  {{match.criteria}}
+    Status:   {{res.status}} | Content-Type: {{res.headers.Content-Type}}
+  severity: critical
+  cwe: "CWE-78"
+  cvssScore: "9.8"
+  mitigation: >-
+    Avoid invoking shells with user-controlled input. Use native OS APIs or safe
+    libraries, validate and whitelist inputs, escape values properly if needed,
+    run processes with least privilege, and disable verbose error output in
+    production.
+  stepsToReproduce: |
+    1) Send the baseline request: {{original.method}} {{original.url}}
+    2) Re-send while replacing a single parameter value with one of the transformations above (e.g. "; uname -a" or "`uname -a`").
+    3) Observe response body for OS/kernel identifiers (e.g., "Linux", "Darwin", "GNU/Linux", "Microsoft").
+    4) Confirm across multiple parameters to determine scope.
+  tags: "command-injection,os-command,critical"
+  impact: >-
+    Remote command execution can lead to full system compromise, data theft,
+    lateral movement, and persistence. Treat confirmed findings as critical.

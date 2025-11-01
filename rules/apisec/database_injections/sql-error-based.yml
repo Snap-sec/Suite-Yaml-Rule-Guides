@@ -1,51 +1,68 @@
-rule_name: SQLi - error-based injection (all params)
+rule_name: Error-based SQL Injection
 
 transform:
-  # Inject an error/union-based SQL payload into all parameters to provoke DB errors or reveal DB info.
-  # This payload attempts to trigger SQL parsing/union behavior so database error messages or version info may appear.
-  replace_all_param_values: "1' UNION SELECT NULL,version(),NULL-- "
+  query:
+    transformations:
+      - replace_all_values_one_by_one: "' OR '1'='1"
+      - replace_all_values_one_by_one: "\" OR \"1\"=\"1"
+      - replace_all_values_one_by_one: "1'--"
+      - replace_all_values_one_by_one: "1')--"
+      - replace_all_values_one_by_one: "1\"--"
+      - replace_all_values_one_by_one: "'; WAITFOR DELAY '0:0:3'--"
+      - replace_all_values_one_by_one: "1); DROP TABLE users;--"
+
+  body:
+    transformations:
+      - replace_all_one_by_one: "' OR '1'='1"
+      - replace_all_one_by_one: "\" OR \"1\"=\"1"
+      - replace_all_one_by_one: "1'--"
+      - replace_all_one_by_one: "1')--"
+      - replace_all_one_by_one: "1\"--"
+      - replace_all_one_by_one: "'; WAITFOR DELAY '0:0:3'--"
+
+  header:
+    transformations:
+      - replace_all_values_one_by_one: "' OR '1'='1"
+      - replace_all_values_one_by_one: "\" OR \"1\"=\"1"
 
 match_on:
-  # Error-based SQLi often returns DB-specific errors or stack traces.
-  status: [400, 422, 500, 200, 302]
-  response_contains:
-    - "syntax error"
-    - "SQL"
-    - "SQLException"
-    - "ERROR:"
-    - "MySQL"
-    - "PostgreSQL"
-    - "ORA-"
-    - "SQLSTATE"
-    - "unclosed quotation mark"
-    - "unterminated quoted string"
-    - "unknown column"
-    - "syntax near"
+  body:
+    contains:
+      - "you have an error in your sql syntax"
+      - "sql syntax error"
+      - "unclosed quotation mark after the character string"
+      - "quoted string not properly terminated"
+      - "unknown column"
+      - "unterminated string literal"
+      - "conversion failed when converting the varchar"
+      - "mysql_fetch_array()"
+      - "warning: mysql_"
+      - "org.hibernate.exception"
+      - "java.sql.SQLException"
+      - "SQLSTATE\\["
+      - "ORA-"
 
 report:
-  title: "SQL Injection — Error-based ({{endpoint}})"
-  description: |
-    An injected SQL error/UNION payload was sent in all parameters and the response contained database error messages,
-    SQL exceptions, or database version information. This indicates user input may be reaching SQL query contexts
-    without proper sanitization or parameterization.
-    • Original URL: {{original.url}}
-    • Transformed request: {{req.url}}
-    • Payload used: 1' UNION SELECT NULL,version(),NULL-- 
-    • Response status: {{res.status}}
-    • Evidence snippet: {{res.body}}
+  title: "Error-based SQL Injection indicators found"
+  description: >-
+    Injecting SQL metacharacters into individual parameters caused the server to
+    return database error signatures. This strongly indicates error-based SQLi.
+    Original: {{original.method}} {{original.url}}
+    Tested: {{req.method}} {{req.url}}
+    Status: {{res.status}} | Content-Type: {{res.headers.Content-Type}}
+  severity: critical
   cwe: "CWE-89"
-  severity: "critical"
-  cvssScore: 9.0
-  mitigation: |
-    - Use parameterized queries / prepared statements (do not concatenate SQL).
-    - Employ ORM query binding or safe query builders.
-    - Validate and sanitize all user input; enforce strict input types/lengths.
-    - Remove verbose DB error messages from production responses; log errors server-side instead.
-    - Use least-privilege DB accounts and limit exposure of schema information.
+  cvssScore: "9.0"
+  mitigation: >-
+    Use parameterized queries (prepared statements), apply strict server-side
+    validation and encoding, disable verbose DB errors in production, and use
+    least-privilege DB accounts.
   stepsToReproduce: |
-    1. Take the original API request: {{original.method}} {{original.url}}
-    2. Replace all parameter values with: 1' UNION SELECT NULL,version(),NULL-- 
-    3. Send the transformed request to {{req.url}}.
-    4. Inspect the response for DB error messages, SQL exceptions, or version strings.
-  tags: "sql-injection,error-based,db,owasp"
-  impact: "Disclosure of database internals, data exfiltration, authentication bypass or full system compromise depending on severity."
+    1) Send the baseline request: {{original.method}} {{original.url}}
+    2) Re-send while replacing a single parameter value with a payload such as ' OR '1'='1.
+    3) Observe response containing database error text (e.g., SQLSTATE[…], syntax error).
+    4) Repeat for other parameters to confirm the scope.
+  tags: "sqli,error-based,owasp-a03"
+  impact: >-
+    Attackers can enumerate schema/data and potentially take over the database by
+    exploiting query construction flaws revealed via verbose errors.
