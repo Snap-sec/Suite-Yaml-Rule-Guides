@@ -12,12 +12,12 @@ transform:
 
   body:
     transformations:
-      - replace_all_one_by_one: "' OR '1'='1"
-      - replace_all_one_by_one: "\" OR \"1\"=\"1"
-      - replace_all_one_by_one: "1'--"
-      - replace_all_one_by_one: "1')--"
-      - replace_all_one_by_one: "1\"--"
-      - replace_all_one_by_one: "'; WAITFOR DELAY '0:0:3'--"
+      - replace_all_values_one_by_one: "' OR '1'='1"
+      - replace_all_values_one_by_one: "\" OR \"1\"=\"1"
+      - replace_all_values_one_by_one: "1'--"
+      - replace_all_values_one_by_one: "1')--"
+      - replace_all_values_one_by_one: "1\"--"
+      - replace_all_values_one_by_one: "'; WAITFOR DELAY '0:0:3'--"
 
   header:
     transformations:
