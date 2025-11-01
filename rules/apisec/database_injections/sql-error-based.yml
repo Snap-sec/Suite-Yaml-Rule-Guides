@@ -9,7 +9,6 @@ transform:
       - replace_all_values_one_by_one: "1')--"
       - replace_all_values_one_by_one: "1\"--"
       - replace_all_values_one_by_one: "'; WAITFOR DELAY '0:0:3'--"
-      - replace_all_values_one_by_one: "1); DROP TABLE users;--"
 
   body:
     transformations:
