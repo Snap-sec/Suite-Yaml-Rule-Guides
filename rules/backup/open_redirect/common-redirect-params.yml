@@ -1,0 +1,33 @@
+rule_name: Common Redirect Parameters
+
+transform:
+  add_query_params:
+    redirect: "https://www.evil.com"
+    url: "https://www.evil.com"
+    next: "https://www.evil.com"
+    return: "https://www.evil.com"
+    return_to: "https://www.evil.com"
+    continue: "https://www.evil.com"
+    dest: "https://www.evil.com"
+    destination: "https://www.evil.com"
+    path: "https://www.evil.com"
+    callback: "https://www.evil.com"
+    goto: "https://www.evil.com"
+    ru: "https://www.evil.com"
+    r: "https://www.evil.com"
+    ref: "https://www.evil.com"
+    redir: "https://www.evil.com"
+
+match_on:
+  status: [301, 302, 303, 307, 308]
+  response_contains: "evil.com"
+
+report:
+  title: "Open Redirect - Common Parameters"
+  description: "Open redirect vulnerability detected via common redirect parameter names"
+  cwe: "CWE-601"
+  cvssScore: "4.3"
+  mitigation: "Validate redirect URLs against whitelist and sanitize parameter names"
+  stepsToReproduce: "Add redirect parameters with evil.com: {{req.url}}"
+  tags: "open-redirect,redirect,parameter-injection"
+  impact: "Phishing attacks and credential theft"

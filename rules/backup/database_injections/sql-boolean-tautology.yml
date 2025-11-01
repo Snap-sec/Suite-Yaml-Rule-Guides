@@ -1,0 +1,21 @@
+rule_name: SQL Injection - Boolean Tautology
+
+transform:
+  replace_params_one_by_one: "' OR '1'='1' AND 'injection'='injection' -- "
+  replace_body_params:
+    id: "' OR '1'='1' AND 'injection'='injection' -- "
+    user: "' OR '1'='1' AND 'injection'='injection' -- "
+
+match_on:
+  status: 200
+  response_contains: "injection"
+
+report:
+  title: "SQL Injection - Boolean Tautology"
+  description: "SQL boolean tautology injection detected"
+  cwe: "CWE-89"
+  cvssScore: "9.0"
+  mitigation: "Use parameterized queries and input validation"
+  stepsToReproduce: "Inject boolean tautology: {{req.url}}"
+  tags: "sql-injection,boolean,tautology"
+  impact: "Authentication bypass and data extraction"

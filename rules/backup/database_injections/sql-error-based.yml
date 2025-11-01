@@ -1,0 +1,51 @@
+rule_name: SQLi - error-based injection (all params)
+
+transform:
+  # Inject an error/union-based SQL payload into all parameters to provoke DB errors or reveal DB info.
+  # This payload attempts to trigger SQL parsing/union behavior so database error messages or version info may appear.
+  replace_all_param_values: "1' UNION SELECT NULL,version(),NULL-- "
+
+match_on:
+  # Error-based SQLi often returns DB-specific errors or stack traces.
+  status: [400, 422, 500, 200, 302]
+  response_contains:
+    - "syntax error"
+    - "SQL"
+    - "SQLException"
+    - "ERROR:"
+    - "MySQL"
+    - "PostgreSQL"
+    - "ORA-"
+    - "SQLSTATE"
+    - "unclosed quotation mark"
+    - "unterminated quoted string"
+    - "unknown column"
+    - "syntax near"
+
+report:
+  title: "SQL Injection — Error-based ({{endpoint}})"
+  description: |
+    An injected SQL error/UNION payload was sent in all parameters and the response contained database error messages,
+    SQL exceptions, or database version information. This indicates user input may be reaching SQL query contexts
+    without proper sanitization or parameterization.
+    • Original URL: {{original.url}}
+    • Transformed request: {{req.url}}
+    • Payload used: 1' UNION SELECT NULL,version(),NULL-- 
+    • Response status: {{res.status}}
+    • Evidence snippet: {{res.body}}
+  cwe: "CWE-89"
+  severity: "critical"
+  cvssScore: 9.0
+  mitigation: |
+    - Use parameterized queries / prepared statements (do not concatenate SQL).
+    - Employ ORM query binding or safe query builders.
+    - Validate and sanitize all user input; enforce strict input types/lengths.
+    - Remove verbose DB error messages from production responses; log errors server-side instead.
+    - Use least-privilege DB accounts and limit exposure of schema information.
+  stepsToReproduce: |
+    1. Take the original API request: {{original.method}} {{original.url}}
+    2. Replace all parameter values with: 1' UNION SELECT NULL,version(),NULL-- 
+    3. Send the transformed request to {{req.url}}.
+    4. Inspect the response for DB error messages, SQL exceptions, or version strings.
+  tags: "sql-injection,error-based,db,owasp"
+  impact: "Disclosure of database internals, data exfiltration, authentication bypass or full system compromise depending on severity."

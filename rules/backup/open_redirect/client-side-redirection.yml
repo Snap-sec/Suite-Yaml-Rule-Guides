@@ -1,0 +1,25 @@
+rule_name: Client Side Redirection
+
+transform:
+  replace_params_one_by_one: "evil.com"
+
+match_on:
+  status: 200
+  response_contains:
+    - "window.location"
+    - "location.href"
+    - "location.replace"
+    - "location.assign"
+    - "document.location"
+    - "meta.*refresh"
+    - "evil.com"
+
+report:
+  title: "Client Side Redirection"
+  description: "Client-side redirection vulnerability detected via JavaScript or meta tags"
+  cwe: "CWE-601"
+  cvssScore: "4.3"
+  mitigation: "Validate redirect URLs on server-side and sanitize client-side redirection"
+  stepsToReproduce: "Replace parameter with evil.com: {{req.url}}"
+  tags: "open-redirect,client-side,javascript,meta-refresh"
+  impact: "Phishing attacks and credential theft"

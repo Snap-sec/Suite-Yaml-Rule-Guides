@@ -1,0 +1,52 @@
+rule_name: Auth Not Required - 200 JSON without credentials
+
+transform:
+  headers:
+    remove:
+      - Authorization
+      - Cookie
+      - X-API-Key
+      - X-Auth-Token
+      - X-Access-Token
+      - Api-Key
+      - Authentication
+  query:
+    remove:
+      - access_token
+      - token
+      - api_key
+      - key
+      - auth
+  body:
+    remove:
+      - access_token
+      - token
+      - apiKey
+      - auth
+
+match_on:
+  status: 200
+  header:
+    Content-Type:
+      contains: json
+
+report:
+  title: "Unprotected JSON endpoint (no auth required)"
+  description: >-
+    The endpoint returned 200 OK with a JSON response even after removing all
+    authentication headers, cookies, and common token parameters.
+    Original: {{original.method}} {{original.url}}
+    Tested: {{req.method}} {{req.url}}
+  cwe: "CWE-287"
+  cvssScore: "6.5"
+  mitigation: >-
+    Enforce authentication/authorization on this endpoint; require valid tokens
+    server-side and reject requests lacking credentials.
+  stepsToReproduce: |
+    1) Send the original request.
+    2) Re-send without Authorization/Cookie and without token params (as above).
+    3) Observe 200 OK and JSON Content-Type. Response: {{res.status}} {{res.statusText}}
+  tags: "auth,access-control,misconfiguration"
+  impact: >-
+    Unauthenticated access to JSON data/functionality may expose sensitive
+    information or allow unauthorized actions.
