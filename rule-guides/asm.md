@@ -21,15 +21,14 @@ Example:
 
 ```yaml
 match:
-  and:
-    - conditions:
-        - field: "type"
-          operator: "=="
-          value: "certificate"
+  conditions:
+    - field: "type"
+      operator: "=="
+      value: "certificate"
 
-        - field: "properties.certificate_is_expired"
-          operator: "=="
-          value: true
+    - field: "properties.certificate_is_expired"
+      operator: "=="
+      value: true
 
 set:
   - field: "exposure_status"
@@ -37,6 +36,8 @@ set:
   - field: "exposure_reason"
     value: "Expired certificate"
 ```
+
+> ⚠️ **Important:** Each rule’s match conditions **must** be placed inside a `conditions:` block. If you define them directly under `match:` (like `match: - field: xz`), the rule will still be parsed but will generate a list query like `[ { query1 }, { query2 } ]` instead of a proper MongoDB `$and` structure.
 
 ---
 
@@ -75,7 +76,7 @@ Each condition has:
 
 ### 2.3. Logical Operators
 
-Combine multiple conditions:
+Combine multiple condition groups using logical operators:
 
 ```yaml
 match:
@@ -158,14 +159,13 @@ Mark assets with expired certificates as exposed.
 
 ```yaml
 match:
-  and:
-    - conditions:
-        - field: "type"
-          operator: "=="
-          value: "certificate"
-        - field: "properties.certificate_is_expired"
-          operator: "=="
-          value: true
+  conditions:
+    - field: "type"
+      operator: "=="
+      value: "certificate"
+    - field: "properties.certificate_is_expired"
+      operator: "=="
+      value: true
 set:
   - field: "exposure_status"
     value: "exposed"
@@ -244,15 +244,14 @@ Identify newly discovered subdomains to review.
 
 ```yaml
 match:
-  and:
-    - conditions:
-        - field: "type"
-          operator: "=="
-          value: "subdomain"
-        - field: "createdAt"
-          operator: ">="
-          transformer: "Date"
-          value: "-7 days"
+  conditions:
+    - field: "type"
+      operator: "=="
+      value: "subdomain"
+    - field: "createdAt"
+      operator: ">="
+      transformer: "Date"
+      value: "-7 days"
 set:
   - field: "exposure_status"
     value: "not_exposed"
@@ -286,6 +285,7 @@ set:
 ## 5. Notes
 
 * All rules automatically filter by `orgId` or `isUniversal`.
+* Always wrap field-based conditions under `conditions:`.
 * If a field doesn’t exist in an asset, the condition simply doesn’t match.
 * Nested logical operators (`and`/`or`) can be deeply combined.
 * Relative dates (`Date` transformer) are calculated at runtime.
