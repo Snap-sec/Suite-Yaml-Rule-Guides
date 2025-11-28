@@ -1,7 +1,7 @@
 name: Assign Owner to Subdomains
 description: Automatically assign ownership to Imran for all subdomain assets
 severity: info
-product: risk-register
+product: asm
 assetType: subdomain
 match:
   - field: type
