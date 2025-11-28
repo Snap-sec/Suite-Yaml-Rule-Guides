@@ -1,7 +1,7 @@
 name: Detect Staging Subdomains
 description: Set environment to 'staging' if the subdomain contains 'stg', '-stg', or '.stg'
 severity: info
-product: risk-register
+product: asm
 assetType: subdomain
 match:
   - field: value
