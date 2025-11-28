@@ -1,7 +1,7 @@
 name: Classify External IPs
 description: Detect and mark IP assets that are public (not in private/internal ranges)
 severity: info
-product: aim
+product: asm
 assetType: ip
 match:
   - field: value
