@@ -1,7 +1,7 @@
 name: Classify Internal IPs
 description: Detect and mark IP assets that fall within private/internal ranges (RFC1918)
 severity: info
-product: aim
+product: asm
 assetType: ip
 match:
   - field: value
