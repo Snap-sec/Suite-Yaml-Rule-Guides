@@ -1,0 +1,26 @@
+name: '[SUBDOMAIN] - Publicly Exposed Staging/Development Subdomain'
+description: >-
+  Detects active subdomains that appear to be for staging, development, or
+  testing, which may not be intended for public access.
+product: asm
+severity: medium
+isUniversal: true
+match:
+  conditions:
+    - field: type
+      operator: '=='
+      value: subdomain
+    - field: properties.subdomain_status
+      operator: '=='
+      value: live
+    - field: value
+      operator: regex
+      value: (stg|dev|test)
+set:
+  - field: exposure_status
+    value: exposed
+  - field: exposure_reason
+    value: >-
+      The subdomain appears to be a non-production environment (staging, dev,
+      test) and is publicly accessible.
+

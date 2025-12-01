@@ -1,0 +1,21 @@
+name: '[CERTIFICATE] - Expired SSL/TLS Certificate'
+description: >-
+  Detects SSL/TLS certificates that have expired, which can cause trust errors
+  and indicates a lack of maintenance.
+product: asm
+severity: high
+isUniversal: true
+match:
+  conditions:
+    - field: type
+      operator: '=='
+      value: certificate
+    - field: properties.certificate_is_expired
+      operator: '=='
+      value: true
+set:
+  - field: exposure_status
+    value: exposed
+  - field: exposure_reason
+    value: The SSL/TLS certificate has expired.
+

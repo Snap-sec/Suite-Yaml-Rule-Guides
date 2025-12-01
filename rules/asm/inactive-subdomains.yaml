@@ -1,0 +1,19 @@
+name: '[SUBDOMAIN] - Inactive Subdomain'
+description: Marks subdomains that are no longer active (dead) as safe.
+product: asm
+severity: low
+isUniversal: true
+match:
+  conditions:
+    - field: type
+      operator: '=='
+      value: subdomain
+    - field: properties.subdomain_status
+      operator: '=='
+      value: dead
+set:
+  - field: exposure_status
+    value: not_exposed
+  - field: exposure_reason
+    value: The subdomain is inactive.
+

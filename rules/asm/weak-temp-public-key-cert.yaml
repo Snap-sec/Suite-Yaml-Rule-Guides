@@ -1,0 +1,26 @@
+name: '[CERTIFICATE] - Weak Temporary Public Key In Certificate'
+description: >-
+  Detects certificates using weak ephemeral Diffie-Hellman public keys (key size
+  &lt; 2048 bits), which can make TLS connections vulnerable to decryption.
+product: asm
+severity: medium
+isUniversal: true
+match:
+  conditions:
+    - field: type
+      operator: '=='
+      value: certificate
+    - field: properties.certificate_temp_public_key_size
+      operator: exists
+      value: true
+    - field: properties.certificate_temp_public_key_size
+      operator: <
+      value: 2048
+set:
+  - field: exposure_status
+    value: exposed
+  - field: exposure_reason
+    value: >-
+      The certificate uses a weak temporary public key (less than 2048 bits),
+      making it vulnerable to Logjam-style attacks.
+

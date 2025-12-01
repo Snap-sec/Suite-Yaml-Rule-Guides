@@ -1,0 +1,24 @@
+name: '[IP] - Publicly Exposed IP Address'
+description: >-
+  Detects active and publicly accessible IP addresses that are part of the
+  monitored infrastructure.
+product: asm
+severity: low
+isUniversal: true
+match:
+  conditions:
+    - field: type
+      operator: '=='
+      value: ip
+    - field: properties.ip_is_active
+      operator: '=='
+      value: true
+    - field: properties.ip_is_public
+      operator: '=='
+      value: true
+set:
+  - field: exposure_status
+    value: exposed
+  - field: exposure_reason
+    value: The IP address is active and publicly accessible.
+
