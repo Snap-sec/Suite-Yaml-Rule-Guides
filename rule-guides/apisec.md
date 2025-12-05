@@ -204,7 +204,123 @@ Ensures the final outgoing URL always reflects updated query params.
 
 # Matching
 
-*(To be documented next.)*
+The `match_on` block determines whether a transformed request triggers a rule finding.
+A match **only succeeds if all defined match conditions pass**.
+
+Supported match types:
+
+* **Status code** (`status`)
+* **Response body** (`body`)
+* **Response headers** (`header`)
+
+Each matcher returns:
+
+* `location` – where the match occurred
+* `matched_on` – value or pattern responsible
+* `highlight` – a regex-style highlight pattern for UI display
+
+---
+
+## Status Matching
+
+Status codes may be matched in three ways:
+
+### **Exact match**
+
+```yaml
+status: 200
+```
+
+Matches only if `response.status === 200`.
+
+### **List match**
+
+```yaml
+status: [200, 201, 204]
+```
+
+Matches if status is in the list.
+
+### **Object form**
+
+```yaml
+status:
+  in: [200, 403]
+```
+
+```yaml
+status:
+  notIn: [500, 502]
+```
+
+---
+
+## Body Matching
+
+The `body` matcher supports:
+
+* **contains** (string or list)
+* **regex** (raw JS regex)
+
+### **Contains (regex-capable)**
+
+```yaml
+body:
+  contains: "admin"
+```
+
+```yaml
+body:
+  contains:
+    - "admin"
+    - "privilege"
+```
+
+Matches if **any** of the patterns match the response body.
+
+### **Full regex match**
+
+```yaml
+body:
+  regex: "^\{.*admin.*\}$"
+```
+
+---
+
+## Header Matching
+
+Header names are normalized to lowercase.
+
+Supported forms:
+
+### **Exact match**
+
+```yaml
+header:
+  X-Admin: "true"
+```
+
+### **Contains** (regex-capable)
+
+```yaml
+header:
+  server:
+    contains: "nginx"
+```
+
+### **Regex match**
+
+```yaml
+header:
+  set-cookie:
+    regex: "session=.*secure"
+```
+
+---
+
+## Match Evaluation Logic
+
+All match conditions must pass.
 
 ---
 
@@ -227,13 +343,13 @@ Example usage inside a report:
 ```yaml
 description: |
   Request Sent:
-  {{req.url}}
+  {{req}}
 
   Response Received:
-  {{res.body}}
+  {{res}}
 
   Original Request Context:
-  {{original.method}}
+  {{original}}
 ```
 
 ---
