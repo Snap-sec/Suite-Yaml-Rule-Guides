@@ -1,0 +1,35 @@
+rule_name: Weak Content-Type Options
+description: Detects if X-Content-Type-Options is present but set to a value other than 'nosniff', or if we detect a 200 OK response where we highly expect it (this rule specifically focuses on MALFORMED/WEAK values if present, as pure missing check is hard).
+# Note: Since we can't easily check "missing", we check for "present but not nosniff".
+# This effectively catches bypasses or typos like 'no-sniff'.
+transform:
+  method: ["GET"]
+match_on:
+  status: 200
+  headers:
+    X-Content-Type-Options:
+      # Regex that matches anything that is NOT "nosniff"
+      regex: "^(?!nosniff$).*$"
+report:
+  title: "Weak X-Content-Type-Options"
+  description: |
+    The 'X-Content-Type-Options' header is present but not set to 'nosniff'.
+    This enables MIME-sniffing which can lead to XSS vulnerabilities.
+
+    Found: {{res.headers.X-Content-Type-Options}}
+
+    Original Request:
+    {{original}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-116"
+  cvssScore: "3.0"
+  mitigation: |
+    1. Set 'X-Content-Type-Options: nosniff'
+  stepsToReproduce: |
+    1. Send request to {{req.url}}
+    2. Observe insecure header value.
+  tags: "misconfiguration,low"
+  impact: "MIME-sniffing XSS"

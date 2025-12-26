@@ -1,0 +1,44 @@
+rule_name: Insecure Cookie: Missing Secure Flag
+description: Detects 'Set-Cookie' headers that do not include the 'Secure' attribute.
+transform:
+  # Standard request usually triggers cookies if they exist.
+  method: ["GET"]
+match_on:
+  status: 200
+  headers:
+    Set-Cookie:
+      # Regex matches if the string does NOT contain "Secure" (case insensitive)
+      # Explanation:
+      # ^         Start of string
+      # (?!       Negative lookahead: Assert that what follows is NOT...
+      #   .*      Any characters
+      #   (?i)    Case insensitive flag
+      #   secure  The word "secure"
+      # )         End lookahead
+      # .*        Match the rest of the string (only if lookahead succeeded)
+      # $         End of string
+      regex: "^(?!.*(?i)secure).*$"
+report:
+  title: "Insecure Cookie: Missing Secure Flag"
+  description: |
+    A cookie was set without the 'Secure' flag.
+    This means the cookie can be transmitted over unencrypted HTTP connections, making it vulnerable to interception.
+
+    Set-Cookie: {{res.headers.Set-Cookie}}
+
+    Original Request:
+    {{original}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-614"
+  cvssScore: "5.0"
+  mitigation: |
+    1. Set the 'Secure' flag on all sensitive cookies.
+    2. Ensure the site is served over HTTPS.
+  stepsToReproduce: |
+    1. Send request to {{req.url}}
+    2. Observe 'Set-Cookie' header lacks '; Secure'
+  tags: "misconfiguration,cookie,medium"
+  impact: "Session hijacking via side-jacking"

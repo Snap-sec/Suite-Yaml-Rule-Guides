@@ -1,0 +1,33 @@
+rule_name: Insecure Cookie: Missing HttpOnly Flag
+description: Detects 'Set-Cookie' headers that do not include the 'HttpOnly' attribute.
+transform:
+  method: ["GET"]
+match_on:
+  status: 200
+  headers:
+    Set-Cookie:
+      # Regex matches if the string does NOT contain "HttpOnly" (case insensitive)
+      regex: "^(?!.*(?i)httponly).*$"
+report:
+  title: "Insecure Cookie: Missing HttpOnly Flag"
+  description: |
+    A cookie was set without the 'HttpOnly' flag.
+    This means the cookie can be accessed by client-side JavaScript, making it vulnerable to theft via Cross-Site Scripting (XSS).
+
+    Set-Cookie: {{res.headers.Set-Cookie}}
+
+    Original Request:
+    {{original}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-1004"
+  cvssScore: "5.0"
+  mitigation: |
+    1. Set the 'HttpOnly' flag on all sensitive cookies.
+  stepsToReproduce: |
+    1. Send request to {{req.url}}
+    2. Observe 'Set-Cookie' header lacks '; HttpOnly'
+  tags: "misconfiguration,cookie,medium"
+  impact: "Session theft via XSS"

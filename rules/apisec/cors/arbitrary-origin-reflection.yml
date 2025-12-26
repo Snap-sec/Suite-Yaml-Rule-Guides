@@ -1,0 +1,38 @@
+rule_name: CORS Arbitrary Origin Reflection
+description: Detects if the application reflects an arbitrary origin in the Access-Control-Allow-Origin header while allowing credentials.
+transform:
+  headers:
+    add:
+      Origin: "https://evil-attacker.com"
+match_on:
+  status: 200
+  headers:
+    Access-Control-Allow-Origin: "https://evil-attacker.com"
+    Access-Control-Allow-Credentials: "true"
+report:
+  title: "CORS: Arbitrary Origin Reflection with Credentials"
+  description: |
+    The application blindly reflects the requested Origin header value in the Access-Control-Allow-Origin response header and sets Access-Control-Allow-Credentials to true.
+
+    This configuration allows any website to make authenticated requests (reading data, performing actions) on behalf of your users.
+
+    Original Request:
+    {{original}}
+
+    Transformed Request:
+    {{req}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-942"
+  cvssScore: "8.8"
+  mitigation: |
+    1. Define a whitelist of trusted origins.
+    2. Do not reflect the 'Origin' header blindly.
+    3. If multiple origins must be supported, validate against the whitelist before reflecting.
+  stepsToReproduce: |
+    1. Send request with 'Origin: https://evil-attacker.com' to {{req.url}}
+    2. Observe response headers 'Access-Control-Allow-Origin: https://evil-attacker.com' and 'Access-Control-Allow-Credentials: true'
+  tags: "cors,misconfiguration,critical"
+  impact: "Cross-domain data theft, unauthorized actions"
