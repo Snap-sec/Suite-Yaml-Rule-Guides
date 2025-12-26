@@ -45,9 +45,10 @@ match_on:
   status: 200
   headers:
     X-Admin: "true"
-  body_contains:
-    - "admin"
-    - "privilege"
+  body:
+    contains:
+      - "admin"
+      - "privilege"
   time:
     max: 500
 
