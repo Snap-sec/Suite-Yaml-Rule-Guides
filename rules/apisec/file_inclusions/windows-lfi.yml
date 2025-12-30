@@ -3,17 +3,44 @@ description: Detects Windows LFI by attempting to access c:/windows/win.ini usin
 
 transform:
   query:
-    replace_all_values_one_by_one:
-      - "c:/windows/win.ini"
-      - "../../../../windows/win.ini"
-      - "..\\..\\..\\..\\windows\\win.ini"
-      - "/windows/win.ini"
-      - "file:///c:/windows/win.ini"
-      - "....//....//....//windows/win.ini"
-      - "..%5c..%5c..%5cwindows%5cwin.ini"
-      - "%2e%2e%2f%2e%2e%2f%2e%2e%2fwindows%2fwin.ini"
-      - "c:\\windows\\win.ini"
-      - "c:\\windows\\win.ini%00"
+    transformations:
+      - replace_all_values_one_by_one:
+          - "c:/windows/win.ini"
+          - "../../../../windows/win.ini"
+          - "..\\..\\..\\..\\windows\\win.ini"
+          - "/windows/win.ini"
+          - "file:///c:/windows/win.ini"
+          - "....//....//....//windows/win.ini"
+          - "..%5c..%5c..%5cwindows%5cwin.ini"
+          - "%2e%2e%2f%2e%2e%2f%2e%2e%2fwindows%2fwin.ini"
+          - "c:\\windows\\win.ini"
+          - "c:\\windows\\win.ini%00"
+  body:
+    transformations:
+      - replace_all_values_one_by_one:
+          - "c:/windows/win.ini"
+          - "../../../../windows/win.ini"
+          - "..\\..\\..\\..\\windows\\win.ini"
+          - "/windows/win.ini"
+          - "file:///c:/windows/win.ini"
+          - "....//....//....//windows/win.ini"
+          - "..%5c..%5c..%5cwindows%5cwin.ini"
+          - "%2e%2e%2f%2e%2e%2f%2e%2e%2fwindows%2fwin.ini"
+          - "c:\\windows\\win.ini"
+          - "c:\\windows\\win.ini%00"
+  header:
+    transformations:
+      - replace_all_values_one_by_one:
+          - "c:/windows/win.ini"
+          - "../../../../windows/win.ini"
+          - "..\\..\\..\\..\\windows\\win.ini"
+          - "/windows/win.ini"
+          - "file:///c:/windows/win.ini"
+          - "....//....//....//windows/win.ini"
+          - "..%5c..%5c..%5cwindows%5cwin.ini"
+          - "%2e%2e%2f%2e%2e%2f%2e%2e%2fwindows%2fwin.ini"
+          - "c:\\windows\\win.ini"
+          - "c:\\windows\\win.ini%00"
 
 match_on:
   body:

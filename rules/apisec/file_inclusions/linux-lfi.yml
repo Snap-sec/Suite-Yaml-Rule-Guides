@@ -3,17 +3,44 @@ description: Detects Linux LFI by attempting to access /etc/passwd using common 
 
 transform:
   query:
-    replace_all_values_one_by_one:
-      - "/etc/passwd"
-      - "../../../../etc/passwd"
-      - "../../../../../../../../etc/passwd"
-      - "....//....//....//etc/passwd"
-      - "..%2f..%2f..%2f..%2fetc%2fpasswd"
-      - "%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd"
-      - "file:///etc/passwd"
-      - "/bn/../../etc/passwd"
-      - "c:/windows/win.ini" # Sanity check or noise for fun? No, strict to Linux.
-      - "/etc/passwd%00"
+    transformations:
+      - replace_all_values_one_by_one:
+          - "/etc/passwd"
+          - "../../../../etc/passwd"
+          - "../../../../../../../../etc/passwd"
+          - "....//....//....//etc/passwd"
+          - "..%2f..%2f..%2f..%2fetc%2fpasswd"
+          - "%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd"
+          - "file:///etc/passwd"
+          - "/bn/../../etc/passwd"
+          - "c:/windows/win.ini"
+          - "/etc/passwd%00"
+  body:
+    transformations:
+      - replace_all_values_one_by_one:
+          - "/etc/passwd"
+          - "../../../../etc/passwd"
+          - "../../../../../../../../etc/passwd"
+          - "....//....//....//etc/passwd"
+          - "..%2f..%2f..%2f..%2fetc%2fpasswd"
+          - "%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd"
+          - "file:///etc/passwd"
+          - "/bn/../../etc/passwd"
+          - "c:/windows/win.ini"
+          - "/etc/passwd%00"
+  header:
+    transformations:
+      - replace_all_values_one_by_one:
+          - "/etc/passwd"
+          - "../../../../etc/passwd"
+          - "../../../../../../../../etc/passwd"
+          - "....//....//....//etc/passwd"
+          - "..%2f..%2f..%2f..%2fetc%2fpasswd"
+          - "%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd"
+          - "file:///etc/passwd"
+          - "/bn/../../etc/passwd"
+          - "c:/windows/win.ini"
+          - "/etc/passwd%00"
 
 match_on:
   body:

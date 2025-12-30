@@ -3,13 +3,32 @@ description: Detects RFI vulnerabilities by attempting to include a remote URL (
 
 transform:
   query:
-    replace_all_values_one_by_one:
-      - "http://example.com"
-      - "http://example.com/index.html"
-      - "https://example.com"
-      # Null byte terminators
-      - "http://example.com%00"
-      - "http://example.com/index.html%00" 
+    transformations:
+      - replace_all_values_one_by_one:
+          - "http://example.com"
+          - "http://example.com/index.html"
+          - "https://example.com"
+          # Null byte terminators
+          - "http://example.com%00"
+          - "http://example.com/index.html%00"
+  body:
+    transformations:
+      - replace_all_values_one_by_one:
+          - "http://example.com"
+          - "http://example.com/index.html"
+          - "https://example.com"
+          # Null byte terminators
+          - "http://example.com%00"
+          - "http://example.com/index.html%00"
+  header:
+    transformations:
+      - replace_all_values_one_by_one:
+          - "http://example.com"
+          - "http://example.com/index.html"
+          - "https://example.com"
+          # Null byte terminators
+          - "http://example.com%00"
+          - "http://example.com/index.html%00" 
 
 match_on:
   body:

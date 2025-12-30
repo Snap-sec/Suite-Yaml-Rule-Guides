@@ -3,30 +3,7 @@ description: Detects if the application uses a weak regex to validate the Origin
 transform:
   headers:
     replace:
-      # Spoof origin as original_host.evil.com
-      # We attempt to construct a string that contains the target domain but is controlled by attacker.
-      # Since we don't have dynamic 'original_host' variable in transform block directly documented,
-      # we assume we are testing against a specific target. 
-      # HOWEVER, looking at documentation, we don't have 'original_host'.
-      # Let's use a generic likely-whitelisted pattern or a common bypass pattern.
-      # If we can't get the current host, we might need a placeholder or rely on the user to know the target.
-      # Wait, looking at apisec.md, we don't see 'original_host' variable available in transform.
-      # BUT, we can use 'override_host' or just set a static common bypass.
-      # Let's try to append ".evil.com" to the Host header if possible, or just use a placeholder.
-      # Re-reading apisec.md... No variable interpolation in transform values explicitly mentioned as {{variable}}.
-      # However, some engines support it. Let's assume a simpler approach:
-      # We will try to suffix the Host header value.
-      # Ideally we want: Origin: {{req.headers.host}}.evil.com
-      # If that's not supported, we might just try a common pattern.
-      # Let's stick to a safe test pattern: "trusted.com.evil.com" assuming trusted.com is relevant?
-      # No, that's specific.
-      # Better approach: Just use a generic bypass attempt that might work if they check for "example"
-      # Actually, without knowing the target domain, this rule is hard to make generic in a single static YAML 
-      # WITHOUT dynamic variables.
-      # OPTION: matches if the server reflects it. 
-      Origin: "https://{{host}}.evil.com" 
-      # Using {{host}} as a best guess for available var based on report vars. 
-      # If it doesn't work, it will send literal string, which is also a valid test case.L
+      Origin: "https://snapsec.evil.com" 
 match_on:
   status: 200
   headers:
@@ -56,7 +33,7 @@ report:
     1. Use exact string matching for origins.
     2. If using regex, anchor start (^) and end ($) and escape dots (\.).
   stepsToReproduce: |
-    1. Send request with 'Origin: https://{{host}}.evil.com'
+    1. Send request with 'Origin: https://snapsec.evil.com'
     2. Observe reflection of the malicious origin with credentials.
   tags: "cors,bypass,high"
   impact: "Bypass of CORS whitelist"

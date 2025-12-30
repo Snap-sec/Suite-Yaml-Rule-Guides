@@ -3,10 +3,23 @@ description: Detects Angular Client-Side Template Injection (CSTI) by injecting 
 
 transform:
   query:
-    replace_all_values_one_by_one:
-      - "{{'angular'+'csti'}}"
-      - "{{constructor.constructor('alert(1)')()}}"
-      - "w{{'a'+'it'}}for{{'i'+'t'}}"
+    transformations:
+      - replace_all_values_one_by_one:
+          - "{{'angular'+'csti'}}"
+          - "{{constructor.constructor('alert(1)')()}}"
+          - "w{{'a'+'it'}}for{{'i'+'t'}}"
+  body:
+    transformations:
+      - replace_all_values_one_by_one:
+          - "{{'angular'+'csti'}}"
+          - "{{constructor.constructor('alert(1)')()}}"
+          - "w{{'a'+'it'}}for{{'i'+'t'}}"
+  header:
+    transformations:
+      - replace_all_values_one_by_one:
+          - "{{'angular'+'csti'}}"
+          - "{{constructor.constructor('alert(1)')()}}"
+          - "w{{'a'+'it'}}for{{'i'+'t'}}"
 
 match_on:
   body:

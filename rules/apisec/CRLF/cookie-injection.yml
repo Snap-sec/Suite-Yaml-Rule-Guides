@@ -3,8 +3,14 @@ description: Detects if query parameters are reflected into the Set-Cookie heade
 
 transform:
   query:
-    # Based on the original rule which fuzzed with "{{first}}" where first="cookie_injection"
-    replace_all_values_one_by_one: "cookie_injection"
+    transformations:
+      - replace_all_values_one_by_one: "cookie_injection"
+  body:
+    transformations:
+      - replace_all_values_one_by_one: "cookie_injection"
+  header:
+    transformations:
+      - replace_all_values_one_by_one: "cookie_injection"
 
 match_on:
   header:

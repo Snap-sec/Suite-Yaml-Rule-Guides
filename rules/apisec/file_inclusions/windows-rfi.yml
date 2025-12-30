@@ -3,13 +3,32 @@ description: Detects RFI on Windows systems, often utilizing UNC paths or standa
 
 transform:
   query:
-    replace_all_values_one_by_one:
-      - "\\\\127.0.0.1\\c$\\windows\\win.ini" # SMB/UNC Path
-      - "http://example.com"
-      - "http://example.com/index.html"
-      - "http://example.com?" # Bypass some extension checks
-      # Null bytes
-      - "http://example.com%00"
+    transformations:
+      - replace_all_values_one_by_one:
+          - "\\\\127.0.0.1\\c$\\windows\\win.ini" # SMB/UNC Path
+          - "http://example.com"
+          - "http://example.com/index.html"
+          - "http://example.com?" # Bypass some extension checks
+          # Null bytes
+          - "http://example.com%00"
+  body:
+    transformations:
+      - replace_all_values_one_by_one:
+          - "\\\\127.0.0.1\\c$\\windows\\win.ini" # SMB/UNC Path
+          - "http://example.com"
+          - "http://example.com/index.html"
+          - "http://example.com?" # Bypass some extension checks
+          # Null bytes
+          - "http://example.com%00"
+  header:
+    transformations:
+      - replace_all_values_one_by_one:
+          - "\\\\127.0.0.1\\c$\\windows\\win.ini" # SMB/UNC Path
+          - "http://example.com"
+          - "http://example.com/index.html"
+          - "http://example.com?" # Bypass some extension checks
+          # Null bytes
+          - "http://example.com%00"
 
 match_on:
   body:

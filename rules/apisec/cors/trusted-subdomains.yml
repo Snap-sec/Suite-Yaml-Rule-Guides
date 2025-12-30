@@ -4,7 +4,7 @@ transform:
   headers:
     replace:
       # Attempt to prefix the host with a malicious subdomain
-      Origin: "https://evil.{{host}}"
+      Origin: "https://evil.snapsec.co"
 match_on:
   status: 200
   headers:
@@ -32,7 +32,7 @@ report:
     1. Explicitly whitelist only required subdomains.
     2. Avoid wildcard subdomain trust (*.example.com) if possible.
   stepsToReproduce: |
-    1. Send request with 'Origin: https://evil.{{host}}'
+    1. Send request with 'Origin: https://evil.snapsec.co'
     2. Observe reflection of the origin with credentials.
   tags: "cors,misconfiguration,medium"
   impact: "Expanded attack surface via subdomains"
