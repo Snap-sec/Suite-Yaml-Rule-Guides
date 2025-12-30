@@ -1,0 +1,50 @@
+rule_name: Windows Local File Inclusion
+description: Detects Windows LFI by attempting to access c:/windows/win.ini using common traversal payloads.
+
+transform:
+  query:
+    replace_all_values_one_by_one:
+      - "c:/windows/win.ini"
+      - "../../../../windows/win.ini"
+      - "..\\..\\..\\..\\windows\\win.ini"
+      - "/windows/win.ini"
+      - "file:///c:/windows/win.ini"
+      - "....//....//....//windows/win.ini"
+      - "..%5c..%5c..%5cwindows%5cwin.ini"
+      - "%2e%2e%2f%2e%2e%2f%2e%2e%2fwindows%2fwin.ini"
+      - "c:\\windows\\win.ini"
+      - "c:\\windows\\win.ini%00"
+
+match_on:
+  body:
+    regex: 
+      - "\\[fonts\\]"
+      - "\\[extensions\\]"
+      - "for 16-bit app support"
+
+report:
+  title: "Windows Local File Inclusion"
+  description: |
+    The application is vulnerable to Local File Inclusion (LFI) on Windows.
+    It was possible to read the C:\Windows\win.ini file.
+
+    Original Request:
+    {{original}}
+
+    Transformed Request:
+    {{req}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-22"
+  cvssScore: "7.5"
+  mitigation: |
+    1. Validate and sanitize user input.
+    2. Use an allowlist of permitted filenames.
+    3. Disable file system access for the web user where possible.
+  stepsToReproduce: |
+    1. Inject LFI payload in query parameter.
+    2. Response contains "[fonts]" or "[extensions]".
+  tags: "lfi,windows,traversal,vuln"
+  impact: "Information Disclosure, RCE (via log poisoning or SMB)"

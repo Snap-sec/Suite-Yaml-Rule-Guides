@@ -1,0 +1,74 @@
+rule_name: CRLF Injection
+description: Detects CRLF injection vulnerabilities which can lead to HTTP Response Splitting.
+
+transform:
+  query:
+    replace_all_values_one_by_one:
+      - "%00Set-Cookie:crlfinjection=crlfinjection"
+      - "%0aSet-Cookie:crlfinjection=crlfinjection"
+      - "%0a%20Set-Cookie:crlfinjection=crlfinjection"
+      - "%0dSet-Cookie:crlfinjection=crlfinjection"
+      - "%0d%09Set-Cookie:crlfinjection=crlfinjection"
+      - "%0d%0aSet-Cookie:crlfinjection=crlfinjection"
+      - "%0d%0a%09Set-Cookie:crlfinjection=crlfinjection"
+      - "%0d%0a%20Set-Cookie:crlfinjection=crlfinjection"
+      - "%0d%20Set-Cookie:crlfinjection=crlfinjection"
+      - "%20Set-Cookie:crlfinjection=crlfinjection"
+      
+      # Medium payloads
+      - "%20%0aSet-Cookie:crlfinjection=crlfinjection"
+      - "%20%0dSet-Cookie:crlfinjection=crlfinjection"
+      - "%20%0d%0aSet-Cookie:crlfinjection=crlfinjection"
+      - "%23%0aSet-Cookie:crlfinjection=crlfinjection"
+      - "%23%0a%20Set-Cookie:crlfinjection=crlfinjection"
+      - "%23%0dSet-Cookie:crlfinjection=crlfinjection"
+      - "%23%0d%0aSet-Cookie:crlfinjection=crlfinjection"
+      - "%25%30Set-Cookie:crlfinjection=crlfinjection"
+      - "%25%30%61Set-Cookie:crlfinjection=crlfinjection"
+      - "%2e%2e%2f%0d%0aSet-Cookie:crlfinjection=crlfinjection"
+      - "%2f%2e%2e%0d%0aSet-Cookie:crlfinjection=crlfinjection"
+      - "%2f..%0d%0aSet-Cookie:crlfinjection=crlfinjection"
+      - "%3fSet-Cookie:crlfinjection=crlfinjection"
+      
+      # High payloads
+      - "%3f%0aSet-Cookie:crlfinjection=crlfinjection"
+      - "%3f%0dSet-Cookie:crlfinjection=crlfinjection"
+      - "%3f%0d%0aSet-Cookie:crlfinjection=crlfinjection"
+      - "\rSet-Cookie:crlfinjection=crlfinjection"
+      - "\r%20Set-Cookie:crlfinjection=crlfinjection"
+      - "\r\nSet-Cookie:crlfinjection=crlfinjection"
+      - "\r\n%20Set-Cookie:crlfinjection=crlfinjection"
+      - "\r\n\tSet-Cookie:crlfinjection=crlfinjection"
+      - "\r\tSet-Cookie:crlfinjection=crlfinjection"
+
+match_on:
+  header:
+    set-cookie:
+      regex: "crlfinjection=crlfinjection"
+
+report:
+  title: "CRLF Injection"
+  description: |
+    The application is vulnerable to CRLF Injection.
+    User input is reflected in HTTP headers without proper sanitization of CRLF characters.
+    This can lead to HTTP Response Splitting, XSS, or Cache Poisoning.
+
+    Original Request:
+    {{original}}
+
+    Transformed Request:
+    {{req}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-113"
+  cvssScore: "5.3"
+  mitigation: |
+    1. Remove CRLF characters from input before using in headers.
+    2. Use safe APIs that prevent header injection.
+  stepsToReproduce: |
+    1. Inject CRLF characters and a fake header.
+    2. Observe the fake header set in the response.
+  tags: "crlf,dast,vuln,injection"
+  impact: "HTTP Response Splitting, Cross-Site Scripting (XSS)"

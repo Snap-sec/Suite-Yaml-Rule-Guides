@@ -1,0 +1,44 @@
+rule_name: Remote File Inclusion (Linux/Generic)
+description: Detects RFI vulnerabilities by attempting to include a remote URL (example.com).
+
+transform:
+  query:
+    replace_all_values_one_by_one:
+      - "http://example.com"
+      - "http://example.com/index.html"
+      - "https://example.com"
+      # Null byte terminators
+      - "http://example.com%00"
+      - "http://example.com/index.html%00" 
+
+match_on:
+  body:
+    contains: "<h1>Example Domain</h1>"
+  status: 200
+
+report:
+  title: "Remote File Inclusion (Linux/Generic)"
+  description: |
+    The application is vulnerable to Remote File Inclusion (RFI).
+    It successfully included content from a remote server (example.com).
+
+    Original Request:
+    {{original}}
+
+    Transformed Request:
+    {{req}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-98"
+  cvssScore: "9.8"
+  mitigation: |
+    1. Disable `allow_url_include` in php.ini.
+    2. Input validation and sanitization.
+    3. Use an allowlist for file inclusions.
+  stepsToReproduce: |
+    1. Inject "http://example.com" into the parameter.
+    2. Observe "Example Domain" content in response.
+  tags: "rfi,linux,remote,vuln"
+  impact: "Remote Code Execution (RCE)"

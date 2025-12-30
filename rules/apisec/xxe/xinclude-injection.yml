@@ -1,0 +1,41 @@
+rule_name: XInclude Injection
+description: Detects XInclude injection vulnerabilities by attempting to include external files via XML.
+
+transform:
+  query:
+    replace_all_values_one_by_one:
+      - '<asd xmlns:xi="http://www.w3.org/2001/XInclude"><xi:include parse="text" href="file:///etc/passwd"/></asd>'
+      - '<asd xmlns:xi="http://www.w3.org/2001/XInclude"><xi:include parse="text" href="file:///c:/windows/win.ini"/></asd>'
+
+match_on:
+  body:
+    regex: 
+      - "root:.*:0:0:"
+      - "for 16-bit app support"
+
+report:
+  title: "XInclude Injection"
+  description: |
+    The application is vulnerable to XInclude Injection.
+    It was possible to read system files by injecting XInclude directives.
+
+    Original Request:
+    {{original}}
+
+    Transformed Request:
+    {{req}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-611"
+  cvssScore: "8.2"
+  mitigation: |
+    1. Disable XInclude processing in your XML parser configuration.
+    2. Use safer XML parsing libraries.
+    3. Validate and sanitize user input.
+  stepsToReproduce: |
+    1. Inject XInclude payload into a parameter.
+    2. Observe content of /etc/passwd or win.ini in the response.
+  tags: "dast,xxe,xinclude,vuln,injection"
+  impact: "Information Disclosure, LFI, SSRF"

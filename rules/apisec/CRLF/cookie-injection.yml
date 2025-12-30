@@ -1,0 +1,40 @@
+rule_name: Parameter Based Cookie Injection
+description: Detects if query parameters are reflected into the Set-Cookie header, leading to cookie injection.
+
+transform:
+  query:
+    # Based on the original rule which fuzzed with "{{first}}" where first="cookie_injection"
+    replace_all_values_one_by_one: "cookie_injection"
+
+match_on:
+  header:
+    set-cookie:
+      regex: "(?i)cookie_injection"
+
+report:
+  title: "Parameter Based Cookie Injection"
+  description: |
+    The application reflects query parameters into the Set-Cookie header.
+    This allows an attacker to inject arbitrary cookies or modify existing ones.
+
+    Verified with payload: cookie_injection
+
+    Original Request:
+    {{original}}
+
+    Transformed Request:
+    {{req}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-642"
+  cvssScore: "0.0" # Original severity was info
+  mitigation: |
+    1. Do not use user input directly in Set-Cookie headers.
+    2. Validate and sanitize input.
+  stepsToReproduce: |
+    1. Send request with parameter value "cookie_injection"
+    2. Check response Set-Cookie header for "cookie_injection"
+  tags: "reflected,dast,cookie,injection,vuln"
+  impact: "Session fixation, cookie poisoning"

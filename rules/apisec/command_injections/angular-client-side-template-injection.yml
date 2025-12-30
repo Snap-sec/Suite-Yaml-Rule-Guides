@@ -1,0 +1,44 @@
+rule_name: Angular Client-Side Template Injection
+description: Detects Angular Client-Side Template Injection (CSTI) by injecting Angular expressions into query parameters.
+
+transform:
+  query:
+    replace_all_values_one_by_one:
+      - "{{'angular'+'csti'}}"
+      - "{{constructor.constructor('alert(1)')()}}"
+      - "w{{'a'+'it'}}for{{'i'+'t'}}"
+
+match_on:
+  body:
+    contains:
+      - "49"
+      - "angularcsti"
+      - "waitforit"
+  # Using contains instead of regex for simple string matching where possible
+
+report:
+  title: "Angular Client-Side Template Injection"
+  description: |
+    The application is vulnerable to Angular Client-Side Template Injection (CSTI).
+    User input is evaluated as an Angular expression, which can lead to XSS.
+
+    Original Request:
+    {{original}}
+
+    Transformed Request:
+    {{req}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-79"
+  cvssScore: "6.1"
+  mitigation: |
+    1. Avoid generating Angular templates from user input.
+    2. Use `ng-non-bindable` for untrusted content.
+    3. Use Content Security Policy (CSP).
+  stepsToReproduce: |
+    1. Inject {{7*7}} or {{'angular'+'csti'}} into a parameter.
+    2. Observe "49" or "angularcsti" in the response.
+  tags: "csti,angular,injection,xss,vuln"
+  impact: "Cross-Site Scripting (XSS)"
