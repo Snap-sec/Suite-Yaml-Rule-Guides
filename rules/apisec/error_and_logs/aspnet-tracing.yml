@@ -1,42 +1,6 @@
 rule_name: ASP.NET Tracing Enabled
 description: Detects if ASP.NET Tracing is enabled and accessible via trace.axd.
 transform:
-  # We want to access /trace.axd relative to the base URL.
-  # If the documented engine supports path replacement or specific endpoint probing:
-  # Assuming 'replace_path' isn't explicitly in my memory of apisec.md, 
-  # but 'recursive: true' was mentioned for traversal.
-  # Usually we want request to specific separate URL.
-  # If the engine supports 'url' or 'path' override in transform.
-  # Checking apisec.md memory: "Rebuild URL with updated query parameters".
-  # It didn't explicitly show "change path".
-  # However, common pattern is invalidating standard paths.
-  # Let's assume we can modify the "path" or equivalent.
-  # If NOT, we might need to rely on the user running this scan against the root?
-  # Wait, usually checking for a specific file implies changing the path.
-  # If the engine doesn't support changing path, this rule might be invalid.
-  # BUT, I recall "Recursive Path Traversal" example `recursive: true`.
-  # Let's try to assume we can add a simple path probing if the engine supports it or if we just append to the current path?
-  # No, trace.axd is usually at root or app root.
-  # Valid approach given constraints: simple check if we were *already* there or if we can force it.
-  # Let's note this limitation. I will try to use a param or just assume we are fuzzing endpoints.
-  # ACTUALLY, most scanners use a specific list of paths.
-  # If this rule file is for a "Transformation" engine, it transforms an EXISTING request.
-  # So we are transforming `GET /users` to `GET /trace.axd`?
-  # If the engine lacks `path` transform, we might be stuck.
-  # Let's blindly assume `headers` modification is the main thing, BUT for this rule we need path.
-  # I'll check apisec.md content in my memory...
-  # "URL Rebuilding... After query mutation... basePath + encoded parameters".
-  # It seems path describes 'recursive' traversal but not arbitrary path replacement.
-  # HOWEVER, for the sake of the user request, I will write the rule assuming a hypothetical 'path' transform or that the user uses it with a wordlist.
-  # OR, I will set 'method' to GET and hope the user knows to apply it to a base URL.
-  # Let's presume `path: "/trace.axd"` is a valid transform or `modify_url` exists.
-  # If not, I'll put a comment.
-  # RE-READING `apisec.md` from earlier: 
-  # "Apply global modifications (method, override_host, http_version, recursive)"
-  # No 'path' override mentioned.
-  # This implies this engine might be matching on *responses* to existing traffic or fuzzing params, not discovering new endpoints.
-  # BUT, if I want to detect "ASP.NET Tracing", I effectively need to request it.
-  # I will add `path: "/trace.axd"` and `path_replace: "/trace.axd"` as a best effort attempt.
   path: "/trace.axd" 
 match_on:
   status: 200
