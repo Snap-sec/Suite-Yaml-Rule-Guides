@@ -30,20 +30,17 @@ Example rule:
 ```yaml
 rule_name: Privilege Escalation via Method Override
 
+# if this rule matches, for that (host), it will not match again
+single_match: true
+
 transform:
-  headers:
+  header:
     add:
       X-HTTP-Method-Override: PUT
-  cookies:
-    add:
-      admin_token: "bypass"
-  replace_param_value:
-    user_id: "admin"
-    role: "superuser"
 
 match_on:
   status: 200
-  headers:
+  header:
     X-Admin: "true"
   body:
     contains:
@@ -70,6 +67,7 @@ report:
 
   cwe: "CWE-269"
   cvssScore: "9.8"
+  severity: "critical"
   mitigation: |
     1. Use server-side role validation
     2. Ignore X-HTTP-Method-Override
