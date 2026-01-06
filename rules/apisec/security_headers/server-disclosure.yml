@@ -23,6 +23,7 @@ report:
     {{res}}
 
   cwe: "CWE-200"
+  severity: low
   cvssScore: "5.3"
   mitigation: |
     1. Configure the server to suppress the 'Server' header or set it to a generic value (e.g. 'Apache').

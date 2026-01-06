@@ -29,6 +29,7 @@ report:
     {{res}}
 
   cwe: "CWE-942"
+  severity: high
   cvssScore: "7.5"
   mitigation: |
     1. Use exact string matching for origins.

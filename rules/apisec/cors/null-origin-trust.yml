@@ -26,6 +26,7 @@ report:
     {{res}}
 
   cwe: "CWE-942"
+  severity: medium
   cvssScore: "5.0"
   mitigation: |
     1. Do not whitelist the 'null' origin.

@@ -23,6 +23,7 @@ report:
     {{res}}
 
   cwe: "CWE-614"
+  severity: medium
   cvssScore: "5.0"
   mitigation: |
     1. Set the 'Secure' flag on all sensitive cookies.

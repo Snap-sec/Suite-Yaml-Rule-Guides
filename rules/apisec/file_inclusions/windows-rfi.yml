@@ -50,6 +50,7 @@ report:
     {{res}}
 
   cwe: "CWE-98"
+  severity: critical
   cvssScore: "9.8"
   mitigation: |
     1. Disable `allow_url_include` in php.ini.

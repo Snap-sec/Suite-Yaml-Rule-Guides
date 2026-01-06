@@ -25,6 +25,7 @@ report:
     Original: {{original.method}} {{original.url}}
     Tested: {{req.method}} {{req.url}}
   cwe: "CWE-287"
+  severity: critical
   cvssScore: "6.5"
   mitigation: >-
     Enforce authentication/authorization on this endpoint; require valid tokens

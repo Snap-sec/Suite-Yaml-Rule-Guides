@@ -44,6 +44,7 @@ report:
     {{res}}
 
   cwe: "CWE-79"
+  severity: medium
   cvssScore: "6.1"
   mitigation: |
     1. Avoid generating Angular templates from user input.

@@ -27,6 +27,7 @@ report:
     {{res}}
 
   cwe: "CWE-942"
+  severity: medium
   cvssScore: "6.0"
   mitigation: |
     1. Explicitly whitelist only required subdomains.

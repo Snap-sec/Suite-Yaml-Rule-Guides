@@ -27,6 +27,7 @@ report:
     {{res}}
 
   cwe: "CWE-942"
+  severity: high
   cvssScore: "8.8"
   mitigation: |
     1. Define a whitelist of trusted origins.

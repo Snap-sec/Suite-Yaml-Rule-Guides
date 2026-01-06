@@ -62,6 +62,7 @@ report:
     {{res}}
 
   cwe: "CWE-94"
+  severity: critical
   cvssScore: "9.8"
   mitigation: |
     1. Avoid using `eval()`, `exec()`, or similar functions with user-supplied input.

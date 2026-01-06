@@ -35,6 +35,7 @@ report:
     {{res}}
 
   cwe: "CWE-642"
+  severity: medium
   cvssScore: "0.0"
   mitigation: |
     1. Do not use user input directly in Set-Cookie headers.

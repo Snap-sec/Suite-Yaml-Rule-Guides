@@ -62,6 +62,7 @@ report:
     {{res}}
 
   cwe: "CWE-22"
+  severity: high
   cvssScore: "7.5"
   mitigation: |
     1. Validate and sanitize user input.

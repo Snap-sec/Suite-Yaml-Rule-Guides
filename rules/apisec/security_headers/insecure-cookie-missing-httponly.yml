@@ -23,6 +23,7 @@ report:
     {{res}}
 
   cwe: "CWE-1004"
+  severity: medium
   cvssScore: "5.0"
   mitigation: |
     1. Set the 'HttpOnly' flag on all sensitive cookies.

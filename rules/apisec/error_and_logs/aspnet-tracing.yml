@@ -25,6 +25,7 @@ report:
     {{res}}
 
   cwe: "CWE-215"
+  severity: medium
   cvssScore: "5.3"
   mitigation: |
     1. Disable tracing in web.config: <trace enabled="false" ... />

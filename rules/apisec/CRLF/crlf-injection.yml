@@ -61,6 +61,7 @@ report:
     {{res}}
 
   cwe: "CWE-113"
+  severity: medium
   cvssScore: "5.3"
   mitigation: |
     1. Remove CRLF characters from input before using in headers.

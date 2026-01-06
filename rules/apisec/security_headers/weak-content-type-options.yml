@@ -23,6 +23,7 @@ report:
     {{res}}
 
   cwe: "CWE-116"
+  severity: low
   cvssScore: "3.0"
   mitigation: |
     1. Set 'X-Content-Type-Options: nosniff'
