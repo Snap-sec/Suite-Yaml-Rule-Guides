@@ -94,18 +94,6 @@ The transformation pipeline:
 
 ## Supported Request Mutations
 
-### **HTTP Version**
-
-```yaml
-http_version: "1.0"
-```
-
-### **Host Override**
-
-```yaml
-override_host: "spoofed.com"
-```
-
 ### **Method Override**
 
 Produces one request per method.
