@@ -46,8 +46,6 @@ match_on:
     contains:
       - "admin"
       - "privilege"
-  time:
-    max: 500
 
 report:
   title: "Privilege Escalation: {{req.method}} Override"
