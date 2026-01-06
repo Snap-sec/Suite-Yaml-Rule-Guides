@@ -16,11 +16,10 @@ match_on:
     Content-Type:
       regex: 'text\/html|application\/html|application\/x?html'
   body:
-    # each entry here is treated as a regex; escape angle brackets to match literal payload
     contains:
       - "<script>alert\\(0\\)<\\/script>"
-      - "<script>\\s*alert\\s*\\(\\s*0\\s*\\)\\s*<\\/script>"  # tolerant whitespace variant
-      - "onerror\\s*=\\s*[\"']?alert\\s*\\("                    # image onerror style
+      - "<script>\\s*alert\\s*\\(\\s*0\\s*\\)\\s*<\\/script>"
+      - "onerror\\s*=\\s*[\"']?alert\\s*\\("
 
 report:
   title: "Reflected XSS detected"

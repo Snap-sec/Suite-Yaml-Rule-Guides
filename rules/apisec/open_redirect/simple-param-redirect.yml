@@ -8,9 +8,9 @@ transform:
       - replace_all_values_one_by_one: "//example.com/"
       - replace_all_values_one_by_one: "https://example.com/evil"
       - replace_all_values_one_by_one: "//example.com/evil"
-      - replace_all_values_one_by_one: "https:%2F%2Fexample.com"     # URL-encoded
-      - replace_all_values_one_by_one: "https://%65xample.com/"      # percent-encoded host char
-      - replace_all_values_one_by_one: "///example.com"              # triple-slash trick
+      - replace_all_values_one_by_one: "https:%2F%2Fexample.com"
+      - replace_all_values_one_by_one: "https://%65xample.com/"
+      - replace_all_values_one_by_one: "///example.com"
 
 match_on:
   status: [301, 302, 303, 307, 308, 200]

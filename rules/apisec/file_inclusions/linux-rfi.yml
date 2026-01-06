@@ -8,7 +8,6 @@ transform:
           - "http://example.com"
           - "http://example.com/index.html"
           - "https://example.com"
-          # Null byte terminators
           - "http://example.com%00"
           - "http://example.com/index.html%00"
   body:
@@ -17,7 +16,6 @@ transform:
           - "http://example.com"
           - "http://example.com/index.html"
           - "https://example.com"
-          # Null byte terminators
           - "http://example.com%00"
           - "http://example.com/index.html%00"
   header:
@@ -26,7 +24,6 @@ transform:
           - "http://example.com"
           - "http://example.com/index.html"
           - "https://example.com"
-          # Null byte terminators
           - "http://example.com%00"
           - "http://example.com/index.html%00" 
 

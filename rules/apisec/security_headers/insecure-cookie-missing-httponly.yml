@@ -6,7 +6,6 @@ match_on:
   status: 200
   headers:
     Set-Cookie:
-      # Regex matches if the string does NOT contain "HttpOnly" (case insensitive)
       regex: "^(?!.*(?i)httponly).*$"
 report:
   title: "Insecure Cookie: Missing HttpOnly Flag"

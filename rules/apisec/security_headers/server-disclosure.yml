@@ -5,23 +5,8 @@ transform:
 match_on:
   status: 200
   headers:
-    # Matches interesting server headers that contain version numbers or technology names
-    # Note: Regex logic "OR" is implied if checking independently, but since all conditions must matches usually,
-    # we might need separate rules if valid YAML doesn't support "OR" in keys.
-    # HOWEVER, most engines allow regex on specific keys.
-    # Let's target specific headers. If we put two headers here, it usually means BOTH must match.
-    # If the user wants EITHER, we should separate properly or use a broad regex if the engine iterates headers.
-    # Assuming 'Server' OR 'X-Powered-By'. Since we can't do OR easily in 'headers' map (usually AND),
-    # I will create a rule that looks for *ANY* indication.
-    # Actually, simplest safe bet is to look for one or the other. 
-    # Let's focus on 'Server' header having digits/version info first.
     Server: 
       regex: ".*\\d+\\.\\d+.*" 
-    # Ideally we'd also check X-Powered-By. If I list both, it enforces both.
-    # I will stick to Server header for this rule to be precise, or assume 'X-Powered-By' is rare enough to break out.
-    # Let's try to capture 'X-Powered-By' in a separate rule or just focus on Server here.
-    # Wait, 'apisec.md' doesn't explicitly say headers are ANDed. But usually it is.
-    # I'll stick to Server header with versions.
 report:
   title: "Information Disclosure: Server Version"
   description: |

@@ -3,7 +3,6 @@ description: Detects if the application trusts any subdomain of the target Host.
 transform:
   headers:
     replace:
-      # Attempt to prefix the host with a malicious subdomain
       Origin: "https://evil.snapsec.co"
 match_on:
   status: 200

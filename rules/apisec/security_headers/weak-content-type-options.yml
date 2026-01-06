@@ -1,14 +1,11 @@
 rule_name: Weak Content-Type Options
 description: Detects if X-Content-Type-Options is present but set to a value other than 'nosniff', or if we detect a 200 OK response where we highly expect it (this rule specifically focuses on MALFORMED/WEAK values if present, as pure missing check is hard).
-# Note: Since we can't easily check "missing", we check for "present but not nosniff".
-# This effectively catches bypasses or typos like 'no-sniff'.
 transform:
   method: ["GET"]
 match_on:
   status: 200
   headers:
     X-Content-Type-Options:
-      # Regex that matches anything that is NOT "nosniff"
       regex: "^(?!nosniff$).*$"
 report:
   title: "Weak X-Content-Type-Options"

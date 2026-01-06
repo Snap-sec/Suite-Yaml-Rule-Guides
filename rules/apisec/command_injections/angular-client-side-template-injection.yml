@@ -27,7 +27,6 @@ match_on:
       - "49"
       - "angularcsti"
       - "waitforit"
-  # Using contains instead of regex for simple string matching where possible
 
 report:
   title: "Angular Client-Side Template Injection"
