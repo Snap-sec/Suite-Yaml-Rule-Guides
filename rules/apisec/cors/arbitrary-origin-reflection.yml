@@ -1,12 +1,13 @@
 rule_name: CORS Arbitrary Origin Reflection
+single_match: true
 description: Detects if the application reflects an arbitrary origin in the Access-Control-Allow-Origin header while allowing credentials.
 transform:
-  headers:
+  header:
     add:
       Origin: "https://evil-attacker.com"
 match_on:
   status: 200
-  headers:
+  header:
     Access-Control-Allow-Origin: "https://evil-attacker.com"
     Access-Control-Allow-Credentials: "true"
 report:

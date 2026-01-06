@@ -1,10 +1,11 @@
 rule_name: Server Information Disclosure
+single_match: true
 description: Detects if the server reveals detailed version information in 'Server' or 'X-Powered-By' headers.
 transform:
   method: ["GET", "POST", "HEAD"]
 match_on:
   status: 200
-  headers:
+  header:
     Server: 
       regex: ".*\\d+\\.\\d+.*" 
 report:

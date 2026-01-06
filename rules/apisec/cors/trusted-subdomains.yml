@@ -1,12 +1,13 @@
 rule_name: CORS Trusted Arbitrary Subdomain
+single_match: true
 description: Detects if the application trusts any subdomain of the target Host.
 transform:
-  headers:
+  header:
     replace:
       Origin: "https://evil.snapsec.co"
 match_on:
   status: 200
-  headers:
+  header:
     Access-Control-Allow-Origin: 
       regex: "https://evil\\..*"
     Access-Control-Allow-Credentials: "true"

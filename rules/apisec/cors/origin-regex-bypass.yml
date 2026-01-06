@@ -1,12 +1,13 @@
 rule_name: CORS Origin Regex Bypass
+single_match: true
 description: Detects if the application uses a weak regex to validate the Origin header (e.g. matching 'domain.com' anywhere in the string).
 transform:
-  headers:
+  header:
     replace:
       Origin: "https://snapsec.evil.com" 
 match_on:
   status: 200
-  headers:
+  header:
     Access-Control-Allow-Origin: 
       regex: ".*\\.evil\\.com"
     Access-Control-Allow-Credentials: "true"
