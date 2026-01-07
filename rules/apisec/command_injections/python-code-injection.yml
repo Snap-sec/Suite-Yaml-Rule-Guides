@@ -1,5 +1,5 @@
 rule_name: Python Code Injection
-description: Detects Python code injection vulnerabilities by attempting to execute arbitrary Python code.
+description: "Detects Python code injection vulnerabilities enabling arbitrary code execution."
 
 transform:
   query:

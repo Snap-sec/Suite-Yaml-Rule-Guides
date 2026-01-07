@@ -1,4 +1,5 @@
 rule_name: Open Redirect - high confidence (absolute external targets)
+description: "Detects Open Redirect vulnerabilities by injecting external absolute URLs."
 
 transform:
   query:

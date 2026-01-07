@@ -1,4 +1,5 @@
 rule_name: Error-based SQL Injection
+description: "Detects error-based SQL injection vulnerabilities via database error messages."
 
 transform:
   query:

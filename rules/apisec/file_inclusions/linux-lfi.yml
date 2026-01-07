@@ -1,5 +1,5 @@
 rule_name: Linux Local File Inclusion
-description: Detects Linux LFI by attempting to access /etc/passwd using common traversal payloads.
+description: "Detects Linux Local File Inclusion by attempting to read /etc/passwd."
 
 transform:
   query:

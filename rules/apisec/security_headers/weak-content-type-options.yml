@@ -1,6 +1,6 @@
 rule_name: Weak Content-Type Options
 single_match: true
-description: Detects if X-Content-Type-Options is present but set to a value other than 'nosniff', or if we detect a 200 OK response where we highly expect it (this rule specifically focuses on MALFORMED/WEAK values if present, as pure missing check is hard).
+description: "Detects weak or malformed 'X-Content-Type-Options' header values."
 transform:
   method: ["GET"]
 match_on:

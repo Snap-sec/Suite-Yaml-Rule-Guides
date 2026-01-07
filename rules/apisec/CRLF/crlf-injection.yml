@@ -1,5 +1,5 @@
 rule_name: CRLF Injection
-description: Detects CRLF injection vulnerabilities which can lead to HTTP Response Splitting.
+description: "Detects CRLF injection vulnerabilities potentially leading to HTTP Response Splitting."
 
 transform:
   query:

@@ -1,5 +1,5 @@
 rule_name: Angular Client-Side Template Injection
-description: Detects Angular Client-Side Template Injection (CSTI) by injecting Angular expressions into query parameters.
+description: "Detects Angular Client-Side Template Injection vulnerabilities."
 
 transform:
   query:

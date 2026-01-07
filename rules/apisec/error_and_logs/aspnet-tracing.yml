@@ -1,6 +1,6 @@
 rule_name: ASP.NET Tracing Enabled
 single_match: true
-description: Detects if ASP.NET Tracing is enabled and accessible via trace.axd.
+description: "Detects enabled and accessible ASP.NET Tracing via trace.axd."
 transform:
   path: "/trace.axd" 
 match_on:

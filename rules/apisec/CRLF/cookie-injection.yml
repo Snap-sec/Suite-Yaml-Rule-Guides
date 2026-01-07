@@ -1,5 +1,5 @@
 rule_name: Parameter Based Cookie Injection
-description: Detects if query parameters are reflected into the Set-Cookie header, leading to cookie injection.
+description: "Detects reflection of query parameters into the Set-Cookie header."
 
 transform:
   query:
