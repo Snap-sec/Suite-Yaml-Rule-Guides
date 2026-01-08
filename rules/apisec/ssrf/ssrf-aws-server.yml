@@ -28,7 +28,6 @@ match_on:
   status: [200, 201, 202, 301, 302, 400, 401, 403, 404, 500]
   body:
     contains:
-      - "iam/security-credentials(/|$)"
       - "accessKeyId\\s*[:=]\\s*[A-Z0-9/+=]{8,}"
       - "secretAccessKey\\s*[:=]\\s*[A-Za-z0-9/+=]{16,}"
       - "_all_dbs\\s*[:=]?\\s*\\["
