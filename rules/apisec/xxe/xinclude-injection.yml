@@ -1,5 +1,5 @@
 rule_name: XInclude Injection
-description: Detects XInclude injection vulnerabilities by attempting to include external files via XML.
+description: "Detects XInclude Injection vulnerabilities by attempting to include external files."
 
 transform:
   query:

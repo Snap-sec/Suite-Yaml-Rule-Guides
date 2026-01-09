@@ -1,5 +1,5 @@
 rule_name: Windows Local File Inclusion
-description: Detects Windows LFI by attempting to access c:/windows/win.ini using common traversal payloads.
+description: "Detects Windows Local File Inclusion by attempting to read c:/windows/win.ini."
 
 transform:
   query:

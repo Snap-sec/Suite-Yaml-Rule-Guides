@@ -1,6 +1,6 @@
 rule_name: CORS Null Origin Trust
 single_match: true
-description: Detects if the application accepts 'null' as a valid origin.
+description: "Detects acceptance of 'null' as a valid origin in CORS configuration."
 transform:
   header:
     add:

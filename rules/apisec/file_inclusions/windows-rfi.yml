@@ -1,5 +1,5 @@
 rule_name: Remote File Inclusion (Windows)
-description: Detects RFI on Windows systems, often utilizing UNC paths or standard URL inclusion.
+description: "Detects Remote File Inclusion on Windows systems via UNC paths or URLs."
 
 transform:
   query:

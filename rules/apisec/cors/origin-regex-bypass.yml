@@ -1,6 +1,6 @@
 rule_name: CORS Origin Regex Bypass
 single_match: true
-description: Detects if the application uses a weak regex to validate the Origin header (e.g. matching 'domain.com' anywhere in the string).
+description: "Detects weak regex validation in Origin header allowing unauthorized domains."
 transform:
   header:
     replace:

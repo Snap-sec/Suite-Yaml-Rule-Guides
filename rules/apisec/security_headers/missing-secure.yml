@@ -1,6 +1,6 @@
 rule_name: Insecure Cookie: Missing Secure Flag
 single_match: true
-description: Detects 'Set-Cookie' headers that do not include the 'Secure' attribute.
+description: "Detects 'Set-Cookie' headers missing the 'Secure' attribute."
 transform:
   method: ["GET"]
 match_on:

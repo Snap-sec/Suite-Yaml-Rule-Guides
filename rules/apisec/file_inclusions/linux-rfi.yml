@@ -1,5 +1,5 @@
 rule_name: Remote File Inclusion (Linux/Generic)
-description: Detects RFI vulnerabilities by attempting to include a remote URL (example.com).
+description: "Detects Remote File Inclusion vulnerabilities by attempting to include remote URLs."
 
 transform:
   query:

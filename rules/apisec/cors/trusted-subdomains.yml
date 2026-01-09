@@ -1,6 +1,6 @@
 rule_name: CORS Trusted Arbitrary Subdomain
 single_match: true
-description: Detects if the application trusts any subdomain of the target Host.
+description: "Detects excessive trust of arbitrary subdomains in CORS configuration."
 transform:
   header:
     replace:
