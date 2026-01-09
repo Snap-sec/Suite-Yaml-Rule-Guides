@@ -301,6 +301,16 @@ header:
     regex: "session=.*secure"
 ```
 
+### **Non-existence match**
+
+```yaml
+header:
+  X-Admin:
+    notExists: true
+```
+
+Matches if the specified header is missing from the response.
+
 ---
 
 ## Match Evaluation Logic
