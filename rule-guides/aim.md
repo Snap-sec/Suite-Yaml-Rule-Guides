@@ -1,383 +1,311 @@
-# Rule Engine Documentation
+# Policy Engine Documentation
 
-This document provides complete documentation for the YAML-based **Rule Engine**.
-The rule engine is used to define, transform, and evaluate match conditions into MongoDB queries.
+## Overview
 
----
+The Policy Engine allows you to define **declarative rules** using YAML to evaluate data, enrich it, and perform actions when certain conditions are met.
 
-## Table of Contents
+Policies are evaluated against incoming data (assets, events, scan results, findings, etc.) and fall into **three types**:
 
-1. [Rule Structure](#rule-structure)
-2. [Top-Level Fields](#top-level-fields)
-3. [Match Conditions](#match-conditions)
+1. **Classifier** – Enriches or modifies data by setting fields when conditions match
+2. **Trigger** – Executes actions (e.g., create Jira ticket, run scan) when conditions match
+3. **Alert** – Notifies users (email, Slack, in-app) when conditions match
 
-   * [Basic Operators](#basic-operators)
-   * [Regex Matching](#regex-matching)
-   * [Array Matching (](#array-matching-elemmatch)[`elemMatch`](#array-matching-elemmatch)[)](#array-matching-elemmatch)
-   * [Negation](#negation)
-4. [Logical Operators](#logical-operators)
-5. [Transformers](#transformers)
-
-   * [Date Transformer](#date-transformer)
-   * [Number Transformer](#number-transformer)
-   * [List Transformer](#list-transformer)
-6. [Set Queries](#set-queries)
-7. [Examples](#examples)
-
-   * [Basic Rule](#basic-rule)
-   * [Rule with Negation](#rule-with-negation)
-   * [Rule with Regex](#rule-with-regex)
-   * [Rule with Date Transformer](#rule-with-date-transformer)
-   * [Rule with Number Transformer](#rule-with-number-transformer)
-   * [Rule with List Transformer](#rule-with-list-transformer)
-   * [Rule with Set Queries](#rule-with-set-queries)
+All policies share a **common matching language**, making them easy to reason about and extend.
 
 ---
 
-## Rule Structure
+## Common Concepts
 
-Each rule is defined in YAML format. A rule describes conditions that must be matched in a dataset (such as risks, assets, or vulnerabilities).
+### Match Block
 
-#### Example Rule
-
-```yaml
-name: rule name
-description: rule description
-severity: critical
-product: risk-register
-assetType: subdomain
-match:
-  - field: properties.vulnerabilityStats.critical
-    operator: '>='
-    value: 1
-```
-
----
-
-## Top-Level Fields
-
-| Field         | Type         | Description                                                                 |
-| ------------- | ------------ | --------------------------------------------------------------------------- |
-| `name`        | String       | Name of the rule.                                                           |
-| `description` | String       | Human-readable description of what this rule does.                          |
-| `severity`    | String       | The severity of the rule (e.g., `critical`, `high`, `medium`, `low`).       |
-| `product`     | String       | The product/module this rule applies to (e.g., `risk-register`).            |
-| `assetType`   | String       | The type of asset this rule applies to (e.g., `subdomain`, `ip`, `server`). |
-| `match`       | Object/Array | Defines the conditions to evaluate (see below).                             |
-| `set`         | Object/Array | Defines update operations to apply if the match condition is satisfied.     |
-
----
-
-## Match Conditions
-
-The `match` section defines the actual query rules.
-It can either be:
-
-* **An array of conditions** (field/operator/value triplets)
-* **An object with logical operators** (`and`, `or`, `conditions`)
-
----
-
-### Basic Operators
-
-The following operators are supported:
-
-| Operator       | MongoDB Equivalent | Example (`value`)            |
-| -------------- | ------------------ | ---------------------------- |
-| `==`           | `$eq`              | `"status"` → `"active"`      |
-| `!=`           | `$ne`              | `"status"` → `"inactive"`    |
-| `>`            | `$gt`              | `"age"` → `18`               |
-| `>=`           | `$gte`             | `"age"` → `21`               |
-| `<`            | `$lt`              | `"age"` → `65`               |
-| `<=`           | `$lte`             | `"age"` → `60`               |
-| `in`           | `$in`              | `"country"` → `["US","IN"]`  |
-| `not_in`       | `$nin`             | `"country"` → `["CN"]`       |
-| `regex`        | `$regex`           | `"email"` → `".*@gmail.com"` |
-| `contains`     | `$in`              | `"tags"` → `["security"]`    |
-| `not_contains` | `$nin`             | `"tags"` → `["spam"]`        |
-
----
-
-### Regex Matching
-
-```yaml
-- field: email
-  operator: regex
-  value: ".*@gmail.com"
-  options:
-    match_case: false
-```
-
-* `match_case: false` → makes the regex case-insensitive (`$options: i`).
-* `match_case: true` → case-sensitive (default MongoDB behavior).
-
----
-
-### Array Matching (`elemMatch`)
-
-```yaml
-- field: vulnerabilities.severity
-  operator: "=="
-  value: "critical"
-  options:
-    matchType: elemMatch
-```
-
-This generates a query using `$elemMatch`.
-
----
-
-### Negation
-
-```yaml
-- field: status
-  operator: "=="
-  value: "inactive"
-  options:
-    negate: true
-```
-
-Equivalent MongoDB query:
-
-```js
-{ status: { $not: { $eq: "inactive" } } }
-```
-
----
-
-## Logical Operators
+The `match` block defines **conditions** that must be satisfied for the policy to execute.
 
 ```yaml
 match:
-  and:
-    - conditions:
-        - field: age
-          operator: '>='
-          value: 18
-    - conditions:
-        - field: country
-          operator: 'in'
-          value: ["US", "CA"]
+  - field: <field_name>
+    operator: <operator>
+    value: <value>
 ```
 
-Equivalent MongoDB query:
+### Supported Operators
 
-```js
-{
-  $and: [
-    { age: { $gte: 18 } },
-    { country: { $in: ["US", "CA"] } }
-  ]
-}
-```
+| Operator   | Description           |
+| ---------- | --------------------- |
+| `==`       | Equals                |
+| `!=`       | Not equals            |
+| `>`        | Greater than          |
+| `<`        | Less than             |
+| `>=`       | Greater than or equal |
+| `<=`       | Less than or equal    |
+| `in`       | Value exists in array |
+| `contains` | String contains value |
+| `exists`   | Field exists          |
+
+> Multiple match conditions are **ANDed** by default.
 
 ---
 
-## Transformers
+## 1. Classifier Policy
 
-Transformers allow automatic type conversion for the `value` field.
-You can specify `transformer` alongside a condition.
+### Purpose
 
-### Date Transformer
+Classifiers are used to **enrich, normalize, or tag data** after it is ingested.
 
-```yaml
-- field: createdAt
-  operator: ">="
-  value: -3days
-  transformer: Date
-```
+Typical use cases:
 
-* `3days` → 3 days in the future.
-* `-3days` → 3 days ago.
-* Supports: `minutes`, `hours`, `days`, `months`, `years`.
+* Assign severity
+* Tag assets
+* Normalize fields
+* Categorize findings
 
----
-
-### Number Transformer
+### Structure
 
 ```yaml
-- field: properties.size
-  operator: ">="
-  value: "1000"
-  transformer: Number
-```
+name: <string>
+description: <string>
 
-Transforms `"1000"` → `1000`.
+match:
+  - field: <field>
+    operator: <operator>
+    value: <value>
 
----
-
-### List Transformer
-
-```yaml
-- field: tags
-  operator: in
-  value: "security,compliance,network"
-  transformer: List
-```
-
-Transforms into:
-
-```js
-["security", "compliance", "network"]
-```
-
----
-
-## Set Queries
-
-The `set` section allows rules to **update fields** in documents that match the query.
-
-### Syntax
-
-```yaml
 set:
-  - field: field1
-    value: newValue
-  - field: field2
-    value: anotherValue
+  - field: <field>
+    value: <value>
 ```
-
-* Each entry defines a field to be updated with a new value.
-* If no `severity` field is specified, a default value of `info` will be set automatically.
 
 ### Example
 
 ```yaml
+name: classify-high-risk-subdomain
+description: Mark admin subdomains as high risk
+
+match:
+  - field: subdomain
+    operator: contains
+    value: admin
+
 set:
-  - field: status
-    value: flagged
-  - field: reviewed
-    value: true
-```
-
-This produces the following MongoDB update:
-
-```js
-{
-  $set: {
-    status: "flagged",
-    reviewed: true,
-    severity: "info" // default if not provided
-  }
-}
-```
-
-A rule can have both `match` and `set`, but `set` is optional.
-
----
-
-## Examples
-
-### Basic Rule
-
-```yaml
-name: Critical Vulnerabilities
-description: Detect assets with >= 1 critical vulnerability
-severity: critical
-product: risk-register
-assetType: subdomain
-match:
-  - field: properties.vulnerabilityStats.critical
-    operator: '>='
-    value: 1
-```
-
----
-
-### Rule with Negation
-
-```yaml
-match:
-  - field: status
-    operator: "=="
-    value: "inactive"
-    options:
-      negate: true
-```
-
----
-
-### Rule with Regex
-
-```yaml
-match:
-  - field: email
-    operator: regex
-    value: ".*@example.com"
-    options:
-      match_case: false
-```
-
----
-
-### Rule with Date Transformer
-
-```yaml
-match:
-  - field: createdAt
-    operator: ">="
-    value: -30days
-    transformer: Date
-```
-
-Finds documents created in the last 30 days.
-
----
-
-### Rule with Number Transformer
-
-```yaml
-match:
-  - field: properties.riskScore
-    operator: ">"
-    value: "75"
-    transformer: Number
-```
-
----
-
-### Rule with List Transformer
-
-```yaml
-match:
-  - field: category
-    operator: in
-    value: "network,application,cloud"
-    transformer: List
-```
-
----
-
-### Rule with Set Queries
-
-```yaml
-name: Flag High-Risk Assets
-description: Mark assets with riskScore >= 80 as flagged
-severity: high
-product: risk-register
-assetType: server
-match:
-  - field: properties.riskScore
-    operator: ">="
-    value: 80
-set:
-  - field: status
-    value: flagged
-  - field: severity
+  - field: risk_level
     value: high
+
+  - field: tags
+    value: ["admin", "critical"]
 ```
 
-This finds high-risk assets and updates their status and severity.
+### Behavior
+
+* If all `match` conditions are satisfied:
+
+  * Fields defined in `set` are **added or overwritten**
+* No side effects (no notifications, no actions)
 
 ---
 
-## Summary
+## 2. Trigger Policy
 
-* Rules are written in YAML.
-* `match` defines field/operator/value conditions.
-* `set` allows updating fields in matched documents.
-* Options allow `elemMatch`, regex sensitivity, and negation.
-* Transformers convert values into Dates, Numbers, or Lists.
-* Logical operators (`and`, `or`) combine conditions.
+### Purpose
 
-This engine translates YAML rules into **MongoDB queries and updates**.
+Triggers execute **automated actions** when conditions are met.
+
+Typical use cases:
+
+* Create Jira tickets
+* Run vulnerability scans
+* Start workflows
+* Call internal services
+
+### Structure
+
+```yaml
+name: <string>
+description: <string>
+
+match:
+  - field: <field>
+    operator: <operator>
+    value: <value>
+
+action:
+  type: <action_type>
+  config:
+    <key>: <value>
+```
+
+### Supported Action Types
+
+| Action Type      | Description                     |
+| ---------------- | ------------------------------- |
+| `jira.create`    | Create a Jira issue             |
+| `scan.run`       | Run vulnerability or asset scan |
+| `webhook.call`   | Call an external webhook        |
+| `workflow.start` | Trigger internal workflow       |
+
+### Example: Create Jira Ticket on Critical Vulnerability
+
+```yaml
+name: trigger-jira-on-critical-vuln
+description: Create Jira ticket when critical vulnerability is found
+
+match:
+  - field: severity
+    operator: ==
+    value: critical
+
+  - field: status
+    operator: ==
+    value: open
+
+action:
+  type: jira.create
+  config:
+    project: SEC
+    issue_type: Bug
+    priority: Highest
+    summary: "Critical vulnerability detected"
+```
+
+### Example: Run Vulnerability Scan on New Asset
+
+```yaml
+name: trigger-scan-on-new-asset
+description: Automatically scan newly discovered assets
+
+match:
+  - field: asset_status
+    operator: ==
+    value: new
+
+action:
+  type: scan.run
+  config:
+    scan_type: vulnerability
+    depth: full
+```
+
+### Behavior
+
+* Trigger executes **exactly once per match event**
+* Triggers **cause side effects**
+* Can be rate-limited or deduplicated by engine logic
+
+---
+
+## 3. Alert Policy
+
+### Purpose
+
+Alerts notify users when specific conditions occur.
+
+Typical use cases:
+
+* High-severity findings
+* SLA breaches
+* Asset changes
+* Scan failures
+
+### Structure
+
+```yaml
+name: <string>
+description: <string>
+
+match:
+  - field: <field>
+    operator: <operator>
+    value: <value>
+
+alert:
+  channels:
+    - type: <channel_type>
+      config:
+        <key>: <value>
+```
+
+### Supported Alert Channels
+
+| Channel        | Description         |
+| -------------- | ------------------- |
+| `email`        | Send email          |
+| `slack`        | Slack message       |
+| `notification` | In-app notification |
+| `webhook`      | External webhook    |
+
+### Example: Email Alert on High Risk Asset
+
+```yaml
+name: alert-high-risk-asset
+description: Notify security team when high-risk asset is detected
+
+match:
+  - field: risk_level
+    operator: ==
+    value: high
+
+alert:
+  channels:
+    - type: email
+      config:
+        to:
+          - security@company.com
+        subject: "High Risk Asset Detected"
+        template: high_risk_asset
+```
+
+### Example: Slack Alert on Scan Failure
+
+```yaml
+name: alert-scan-failure
+description: Notify on failed scans
+
+match:
+  - field: scan_status
+    operator: ==
+    value: failed
+
+alert:
+  channels:
+    - type: slack
+      config:
+        channel: "#security-alerts"
+        message: "Scan failed for asset {{asset_id}}"
+```
+
+### Behavior
+
+* Alerts **do not mutate data**
+* Alerts **do not execute workflows**
+* Multiple channels can be configured per alert
+
+---
+
+## Execution Order (Recommended)
+
+1. **Classifier policies** – enrich data
+2. **Trigger policies** – execute actions
+3. **Alert policies** – notify users
+
+This ensures alerts and triggers operate on **fully classified data**.
+
+---
+
+## Design Principles
+
+* Declarative and readable
+* Deterministic evaluation
+* Extensible operators and actions
+* Separation of concerns:
+
+  * Classify
+  * Act
+  * Notify
+
+---
+
+## Future Extensions
+
+* `any` / `all` match groups
+* Rule versioning
+* Policy priority
+* Dry-run mode
+* Policy simulation and testing
