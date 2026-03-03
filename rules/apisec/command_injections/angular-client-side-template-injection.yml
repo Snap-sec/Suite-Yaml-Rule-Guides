@@ -5,26 +5,29 @@ transform:
   query:
     transformations:
       - replace_all_values_one_by_one:
-          - "{{'angular'+'csti'}}"
+          - "{{13337*7}}"
           - "{{constructor.constructor('alert(1)')()}}"
           - "w{{'a'+'it'}}for{{'i'+'t'}}"
+          - "{{'angular'+'csti'}}"
   body:
     transformations:
       - replace_all_values_one_by_one:
-          - "{{'angular'+'csti'}}"
+          - "{{13337*7}}"
           - "{{constructor.constructor('alert(1)')()}}"
           - "w{{'a'+'it'}}for{{'i'+'t'}}"
+          - "{{'angular'+'csti'}}"
   header:
     transformations:
       - replace_all_values_one_by_one:
-          - "{{'angular'+'csti'}}"
+          - "{{13337*7}}"
           - "{{constructor.constructor('alert(1)')()}}"
           - "w{{'a'+'it'}}for{{'i'+'t'}}"
+          - "{{'angular'+'csti'}}"
 
 match_on:
   body:
     contains:
-      - "49"
+      - "93359"
       - "angularcsti"
       - "waitforit"
 
@@ -51,7 +54,7 @@ report:
     2. Use `ng-non-bindable` for untrusted content.
     3. Use Content Security Policy (CSP).
   stepsToReproduce: |
-    1. Inject {{7*7}} or {{'angular'+'csti'}} into a parameter.
-    2. Observe "49" or "angularcsti" in the response.
+    1. Inject {{13337*7}} or {{'angular'+'csti'}} into a parameter.
+    2. Observe "93359" or "angularcsti" in the response.
   tags: "csti,angular,injection,xss,vuln"
   impact: "Cross-Site Scripting (XSS)"
