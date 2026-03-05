@@ -1,0 +1,45 @@
+rule_name: Mass Assignment / Parameter Pollution
+description: "Detects mass assignment vulnerabilities by injecting privileged fields into request bodies and query parameters."
+
+transform:
+  body:
+    add:
+      snap_xyz_123: "a9s8x9a8sxasx89as"
+
+match_on:
+  status: 200
+  body:
+    contains:
+      - "a9s8x9a8sxasx89as"
+
+report:
+  title: "Mass Assignment - Privilege Escalation via Parameter Injection"
+  description: |
+    The application reflected the injected canary header value (snap_xyz_123: a9s8x9a8sxasx89as)
+    back in the response body, alongside a mass assignment attempt (role: "admin").
+    This indicates the server binds request input directly to internal model objects
+    without filtering, allowing attackers to inject privileged fields.
+
+    Original Request:
+    {{original}}
+
+    Transformed Request:
+    {{req}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-915"
+  severity: critical
+  cvssScore: "9.8"
+  mitigation: |
+    1. Use an explicit allowlist (DTO/schema) when binding request data to model objects.
+    2. Never expose or bind internal privilege fields (role, isAdmin, is_superuser) from client input.
+    3. Validate and strip unexpected fields server-side before processing.
+    4. Use frameworks' built-in mass-assignment protection (e.g., Rails strong parameters, Laravel $fillable).
+  stepsToReproduce: |
+    1. Send the original request to {{req.url}}.
+    2. Re-send with header snap_xyz_123: a9s8x9a8sxasx89as, body field role="admin", and query param role=admin.
+    3. Observe the response body contains "a9s8x9a8sxasx89as", confirming the server reflects injected input.
+  tags: "mass-assignment,privilege-escalation,authorization,owasp-api6,critical"
+  impact: "Attackers can escalate to admin/superuser roles, access restricted functionality, or modify other users' data."

