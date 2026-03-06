@@ -1,0 +1,55 @@
+rule_name: Bank Account Number Exposure in Response
+description: "Detects plaintext bank account numbers and routing numbers in API responses."
+
+single_match: true
+
+match_on:
+  status:
+    notIn: [404, 301, 302]
+  body:
+    contains:
+      # JSON field name patterns for account numbers
+      - "\"account_number\"\\s*:\\s*\"[0-9]{6,17}\""
+      - "\"bank_account\"\\s*:\\s*\"[0-9]{6,17}\""
+      - "\"bank_account_number\"\\s*:\\s*\"[0-9]{6,17}\""
+      - "\"acct_number\"\\s*:\\s*\"[0-9]{6,17}\""
+      - "\"accountNumber\"\\s*:\\s*\"[0-9]{6,17}\""
+      # US ABA Routing Number (9 digits, first digit 0-3)
+      - "\"routing_number\"\\s*:\\s*\"[0-3][0-9]{8}\""
+      - "\"routingNumber\"\\s*:\\s*\"[0-3][0-9]{8}\""
+      - "\"aba\"\\s*:\\s*\"[0-3][0-9]{8}\""
+      # UK Sort Code: XX-XX-XX
+      - "\"sort_code\"\\s*:\\s*\"[0-9]{2}-[0-9]{2}-[0-9]{2}\""
+      - "\\b[0-9]{2}-[0-9]{2}-[0-9]{2}\\b"
+      # Indian IFSC (11 chars: 4 alpha + 0 + 6 alphanum)
+      - "\"ifsc\"\\s*:\\s*\"[A-Z]{4}0[A-Z0-9]{6}\""
+      - "\"ifsc_code\"\\s*:\\s*\"[A-Z]{4}0[A-Z0-9]{6}\""
+      # Generic bank details block
+      - "\"bank_details\"\\s*:\\s*\\{"
+
+report:
+  title: "Bank Account Number Exposed in Response"
+  description: |
+    The API response contains plaintext bank account or routing number details.
+    This information enables unauthorized bank transfers and constitutes a serious
+    data protection violation under GDPR, PSD2, and local banking regulations.
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-312"
+  severity: critical
+  cvssScore: "9.8"
+  mitigation: |
+    1. Mask account numbers in API responses (show only last 4 digits).
+    2. Apply field-level access control — only authorized roles should see account details.
+    3. Encrypt account data at rest and in transit.
+    4. Audit response serializers for unintentional exposure of financial fields.
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response for account_number, routing_number, sort_code, or ifsc fields.
+  tags: "bank-account,routing-number,financial,pii,critical,gdpr"
+  impact: "Unauthorized bank transfers, identity theft, regulatory penalties."

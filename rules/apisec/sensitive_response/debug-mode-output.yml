@@ -1,0 +1,78 @@
+rule_name: Debug Mode Output Exposure in Response
+description: "Detects debug mode indicators, development configuration, and verbose diagnostic output in API responses."
+
+single_match: true
+
+match_on:
+  status:
+    notIn: [404, 301, 302]
+  body:
+    contains:
+      # Framework debug mode indicators
+      - "\"debug\"\\s*:\\s*true"
+      - "\"DEBUG\"\\s*:\\s*true"
+      - "\"debug_mode\"\\s*:\\s*true"
+      # Django debug page
+      - "Django Version:"
+      - "Exception Value:"
+      - "Exception Location:"
+      - "Python Executable:"
+      - "Python Version:"
+      - "Python Path:"
+      # Laravel / PHP debug
+      - "\"app.debug\":true"
+      - "APP_DEBUG=true"
+      - "Whoops! There was an error."
+      - "\"whoops\""
+      # Spring Boot actuator leak
+      - "\"activeProfiles\""
+      - "\"beanDefinitionNames\""
+      - "/actuator/env"
+      - "spring.datasource.password"
+      # Express / Node debug
+      - "X-Powered-By: Express"
+      - "\"NODE_ENV\":\"development\""
+      - "\"env\":\"development\""
+      # Rails debug
+      - "Rails.env.development"
+      - "config.consider_all_requests_local"
+      # Generic
+      - "\"environment\"\\s*:\\s*\"dev"
+      - "\"environment\"\\s*:\\s*\"local"
+      - "\"ENVIRONMENT\"\\s*:\\s*\"dev"
+      - "XDEBUG_SESSION"
+      - "\"xdebug\""
+      # Verbose SQL queries in response
+      - "SELECT .* FROM .* WHERE"
+      - "INSERT INTO .* VALUES"
+      - "UPDATE .* SET .* WHERE"
+      # Internal config exposure
+      - "\"config\"\\s*:\\s*\\{.*\"password\""
+      - "\"settings\"\\s*:\\s*\\{.*\"secret\""
+
+report:
+  title: "Debug Mode / Development Output Exposed in Response"
+  description: |
+    The API response contains debug mode indicators, verbose diagnostic output, or
+    development configuration. This reveals internal application structure, query
+    logic, environment details, and potentially credentials to any observer.
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-94"
+  severity: high
+  cvssScore: "7.5"
+  mitigation: |
+    1. Set DEBUG=False / NODE_ENV=production on all production servers.
+    2. Never enable Spring Boot actuator endpoints without authentication.
+    3. Use environment-specific config files — no debug settings in production.
+    4. Implement a global error handler that returns sanitized responses.
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response for debug flags, development environment strings, or raw SQL queries.
+  tags: "debug,misconfiguration,information-disclosure,high,owasp-api7"
+  impact: "Exposes internal logic, SQL queries, environment config, and potentially credentials."

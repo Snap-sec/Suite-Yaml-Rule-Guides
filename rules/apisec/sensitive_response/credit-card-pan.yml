@@ -1,0 +1,58 @@
+rule_name: Credit Card PAN Exposure in Response
+description: "Detects plaintext credit card Primary Account Numbers (PANs) in API responses across major card schemes."
+
+single_match: true
+
+match_on:
+  status:
+    notIn: [404, 301, 302]
+  body:
+    contains:
+      # Visa: 4xxx xxxx xxxx xxxx (13 or 16 digits)
+      - "\\b4[0-9]{3}[\\s\\-]?[0-9]{4}[\\s\\-]?[0-9]{4}[\\s\\-]?[0-9]{4}\\b"
+      - "\\b4[0-9]{3}[\\s\\-]?[0-9]{4}[\\s\\-]?[0-9]{4}[\\s\\-]?[0-9]{1}\\b"
+      # Mastercard: 51-55 or 2221-2720
+      - "\\b5[1-5][0-9]{2}[\\s\\-]?[0-9]{4}[\\s\\-]?[0-9]{4}[\\s\\-]?[0-9]{4}\\b"
+      - "\\b2[2-7][0-9]{2}[\\s\\-]?[0-9]{4}[\\s\\-]?[0-9]{4}[\\s\\-]?[0-9]{4}\\b"
+      # American Express: 3[47]xx xxxxxx xxxxx (15 digits)
+      - "\\b3[47][0-9]{2}[\\s\\-]?[0-9]{6}[\\s\\-]?[0-9]{5}\\b"
+      # Discover: 6011, 622, 64, 65
+      - "\\b6(?:011|5[0-9]{2})[\\s\\-]?[0-9]{4}[\\s\\-]?[0-9]{4}[\\s\\-]?[0-9]{4}\\b"
+      - "\\b622[0-9]{13}\\b"
+      # Diners Club: 300-305, 36, 38 (14 digits)
+      - "\\b3(?:0[0-5]|[68][0-9])[0-9]{2}[\\s\\-]?[0-9]{6}[\\s\\-]?[0-9]{4}\\b"
+      # JCB: 3528-3589 (16 digits)
+      - "\\b35(?:2[89]|[3-8][0-9])[0-9]{12}\\b"
+      # UnionPay: 62xx (16-19 digits)
+      - "\\b62[0-9]{14,17}\\b"
+      # In JSON context keys
+      - "\"card_number\"\\s*:\\s*\"[0-9 \\-]{13,19}\""
+      - "\"pan\"\\s*:\\s*\"[0-9 \\-]{13,19}\""
+      - "\"credit_card\"\\s*:\\s*\"[0-9 \\-]{13,19}\""
+      - "\"card_no\"\\s*:\\s*\"[0-9 \\-]{13,19}\""
+
+report:
+  title: "Credit Card PAN Exposed in Response"
+  description: |
+    The API response contains a plaintext credit card Primary Account Number (PAN).
+    Exposing PANs violates PCI-DSS requirements and enables fraudulent card use.
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-312"
+  severity: critical
+  cvssScore: "9.9"
+  mitigation: |
+    1. Never return full PANs in API responses — truncate to last 4 digits only.
+    2. Use tokenization (e.g., Stripe, Braintree) to never store raw PANs.
+    3. Ensure PCI-DSS compliant data handling at all layers.
+    4. Apply response field masking at the serialization layer.
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response body for 13-19 digit card number patterns.
+  tags: "pci-dss,credit-card,pan,financial,critical,compliance"
+  impact: "Financial fraud, unauthorized transactions, PCI-DSS non-compliance penalties."

@@ -1,0 +1,48 @@
+rule_name: SWIFT / BIC Code Exposure in Response
+description: "Detects SWIFT/BIC codes returned in API responses, especially when paired with account data."
+
+single_match: true
+
+match_on:
+  status:
+    notIn: [404, 301, 302]
+  body:
+    contains:
+      # SWIFT/BIC: 8 or 11 alphanumeric chars (4 bank + 2 country + 2 location + optional 3 branch)
+      - "\"swift\"\\s*:\\s*\"[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?\""
+      - "\"bic\"\\s*:\\s*\"[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?\""
+      - "\"swift_code\"\\s*:\\s*\"[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?\""
+      - "\"bic_code\"\\s*:\\s*\"[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?\""
+      - "\"swiftCode\"\\s*:\\s*\"[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?\""
+      # Well-known bank SWIFT codes as literals
+      - "CHASUS33"
+      - "BOFAUS3N"
+      - "BNPAFRPP"
+      - "DEUTDEDB"
+      - "HSBCHKHH"
+
+report:
+  title: "SWIFT / BIC Code Exposed in Response"
+  description: |
+    The API response contains a plaintext SWIFT/BIC code, typically tied to banking
+    destination details. When combined with IBAN or account numbers, this data
+    enables unauthorized international wire transfers.
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-312"
+  severity: high
+  cvssScore: "7.5"
+  mitigation: |
+    1. Limit SWIFT/BIC exposure to users who legitimately need it (payment flows only).
+    2. Return it only in secure, authenticated endpoints with proper authorization.
+    3. Avoid storing SWIFT codes alongside full IBAN details in the same API response.
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response for swift, bic, or swift_code fields.
+  tags: "swift,bic,bank,financial,wire-transfer,pii"
+  impact: "Facilitates unauthorized international wire transfers when combined with IBAN."

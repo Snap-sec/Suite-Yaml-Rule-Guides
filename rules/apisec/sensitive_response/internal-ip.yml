@@ -1,0 +1,59 @@
+rule_name: Internal IP Address Exposure in Response
+description: "Detects private/internal IP addresses leaked in API responses that reveal internal network topology."
+
+single_match: true
+
+match_on:
+  status:
+    notIn: [404, 301, 302]
+  body:
+    contains:
+      # RFC 1918 private ranges
+      # 10.0.0.0/8
+      - "\\b10\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b"
+      # 172.16.0.0/12
+      - "\\b172\\.(1[6-9]|2[0-9]|3[01])\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b"
+      # 192.168.0.0/16
+      - "\\b192\\.168\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b"
+      # Loopback
+      - "\\b127\\.0\\.0\\.[1-9][0-9]*\\b"
+      # Link-local (AWS IMDS)
+      - "\\b169\\.254\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b"
+      # IPv6 private
+      - "\\bfc[0-9a-f]{2}:"
+      - "\\bfd[0-9a-f]{2}:"
+      - "::1\\b"
+      # In JSON field contexts (higher confidence)
+      - "\"internal_ip\"\\s*:\\s*\"(10|172\\.(1[6-9]|2[0-9]|3[01])|192\\.168)\\."
+      - "\"server_ip\"\\s*:\\s*\"(10|172\\.(1[6-9]|2[0-9]|3[01])|192\\.168)\\."
+      - "\"host\"\\s*:\\s*\"(10|172\\.(1[6-9]|2[0-9]|3[01])|192\\.168)\\."
+      # Stack traces / error messages revealing IPs
+      - "Connection refused.*\\b(10|172\\.(1[6-9]|2[0-9]|3[01])|192\\.168)\\."
+      - "connect ECONNREFUSED (10|172\\.(1[6-9]|2[0-9]|3[01])|192\\.168)\\."
+
+report:
+  title: "Internal IP Address Exposed in Response"
+  description: |
+    The API response contains private/internal IP addresses, revealing the internal
+    network topology to potential attackers. This aids in network reconnaissance,
+    SSRF exploitation, and lateral movement planning.
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-200"
+  severity: medium
+  cvssScore: "5.3"
+  mitigation: |
+    1. Suppress internal IP addresses from all API responses and error messages.
+    2. Use generic error messages instead of raw exception output.
+    3. Configure reverse proxies to strip or rewrite internal IP references.
+    4. Never expose infrastructure topology in API responses.
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response body for RFC 1918 private IP ranges or loopback addresses.
+  tags: "internal-ip,network-disclosure,ssrf,recon,medium"
+  impact: "Aids attacker reconnaissance, enables targeted SSRF attacks, reveals internal architecture."

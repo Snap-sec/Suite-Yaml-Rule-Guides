@@ -1,0 +1,99 @@
+rule_name: Stack Trace Exposure in Response
+description: "Detects server-side stack traces and exception details leaked in API responses across Java, Python, Node.js, .NET, PHP, Ruby, and Go."
+
+single_match: true
+
+match_on:
+  status:
+    notIn: [404, 301, 302]
+  body:
+    contains:
+      # ---- Java / Spring ----
+      - "at org\\.springframework\\."
+      - "at java\\.lang\\."
+      - "at javax\\.servlet\\."
+      - "java\\.lang\\.NullPointerException"
+      - "java\\.lang\\.RuntimeException"
+      - "java\\.lang\\.IllegalArgumentException"
+      - "java\\.io\\.IOException"
+      - "Caused by:"
+      - "Exception in thread"
+
+      # ---- Python / Django / Flask ----
+      - "Traceback (most recent call last):"
+      - "in <module>"
+      - "File \"/.*\\.py\", line [0-9]+"
+      - "django\\.core\\.exceptions"
+      - "flask\\.exceptions"
+      - "raise ValueError"
+      - "AttributeError:"
+      - "KeyError:"
+      - "ModuleNotFoundError:"
+
+      # ---- Node.js / Express ----
+      - "at Object\\.<anonymous>"
+      - "at Module\\._compile"
+      - "at Function\\.Module\\._load"
+      - "at process\\.EventEmitter\\.emit"
+      - "UnhandledPromiseRejectionWarning"
+      - "TypeError: Cannot read propert"
+      - "ReferenceError:"
+      - "node_modules/express"
+
+      # ---- .NET / C# / ASP.NET ----
+      - "System\\.NullReferenceException"
+      - "System\\.ArgumentException"
+      - "System\\.InvalidOperationException"
+      - "Microsoft\\.AspNetCore"
+      - "at Microsoft\\.AspNetCore\\."
+      - "at System\\.Web\\.HttpApplication"
+      - "Server Error in '/' Application"
+      - "Stack Trace:"
+
+      # ---- PHP ----
+      - "PHP Fatal error:"
+      - "PHP Parse error:"
+      - "PHP Warning:"
+      - "PHP Notice:"
+      - "Fatal error: Uncaught"
+      - "in /var/www/"
+      - "Stack trace:"
+      - "thrown in /"
+
+      # ---- Ruby / Rails ----
+      - "ActionController::RoutingError"
+      - "ActionView::MissingTemplate"
+      - "ActiveRecord::RecordNotFound"
+      - "app/controllers/"
+      - "app/models/"
+      # ---- Go ----
+      - "goroutine [0-9]+ \\[running\\]"
+      - "runtime\\.goexit"
+      - "panic: runtime error"
+
+report:
+  title: "Stack Trace / Exception Details Exposed in Response"
+  description: |
+    The API response contains a server-side stack trace or exception message.
+    Stack traces reveal internal file paths, framework versions, class names,
+    and logic flow — significantly lowering the effort required to exploit other vulnerabilities.
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-209"
+  severity: medium
+  cvssScore: "5.3"
+  mitigation: |
+    1. Disable detailed error output in production (set DEBUG=False / NODE_ENV=production).
+    2. Return generic error messages to clients (e.g., "An error occurred").
+    3. Log full stack traces server-side only — never include them in API responses.
+    4. Use a global exception handler / middleware to sanitize error responses.
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response body for framework-specific exception strings or file paths.
+  tags: "stack-trace,error-disclosure,information-leakage,medium,owasp-api7"
+  impact: "Reveals internal architecture, file paths, library versions — aids targeted attacks."

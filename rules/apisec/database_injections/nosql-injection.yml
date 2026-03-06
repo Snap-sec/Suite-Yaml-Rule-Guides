@@ -1,0 +1,96 @@
+rule_name: NoSQL Injection - Error Based Detection
+description: "Detects NoSQL injection vulnerabilities by triggering and identifying database-specific error messages."
+
+transform:
+  body:
+    transformations:
+      - replace_all_values_one_by_one:
+          # MongoDB operator injections — break query parsing or trigger type errors
+          - "{\"$gt\": \"\"}"
+          - "{\"$ne\": null}"
+          - "{\"$gt\": \"\", \"$lt\": \"zzzzz\"}"
+          - "{\"$regex\": \".*\"}"
+          - "{\"$where\": \"1==1\"}"
+          - "{\"$where\": \"function(){return true;}\"}"
+          - "{\"$exists\": true}"
+          # Type confusion — pass an array where a scalar is expected
+          - "[\"injected\"]"
+          # Nested operator confusion
+          - "{\"$or\": [{\"a\": 1}, {\"b\": 1}]}"
+  query:
+    transformations:
+      - replace_all_values_one_by_one:
+          # URL-encoded MongoDB operators for query string injection
+          - "[$gt]="
+          - "[$ne]=1"
+          - "[$regex]=.*"
+          - "[$exists]=true"
+          - "[$where]=1==1"
+
+match_on:
+  # Do NOT match on 200 — errors are what confirm injection
+  status:
+    in: [500, 400, 422, 503]
+  body:
+    contains:
+      # ---- MongoDB / Mongoose ----
+      - "MongoError"
+      - "MongoServerError"
+      - "MongoNetworkError"
+      - "CastError"
+      - "ValidationError"
+      - "BSONTypeError"
+      - "mongoose"
+      - "Mongoose"
+      # ---- Generic NoSQL / query operator leakage ----
+      - "unknown operator"
+      - "invalid operator"
+      - "\\$where"
+      - "\\$regex"
+      - "\\$gt"
+      # ---- CouchDB ----
+      - "badmatch"
+      - "invalid_query"
+      # ---- DynamoDB ----
+      - "ValidationException"
+      - "com.amazonaws.services.dynamodbv2"
+      # ---- Redis ----
+      - "WRONGTYPE Operation against a key"
+      - "ERR wrong number of arguments"
+
+report:
+  title: "NoSQL Injection - Database Error Triggered"
+  description: |
+    The application returned a database-specific error after injecting MongoDB/NoSQL
+    operator payloads (e.g., {"$gt":""}, {"$where":"1==1"}) into request parameters.
+
+    The error message in the response confirms that:
+    - User input is being passed directly to a NoSQL query without sanitization.
+    - The database engine processed the injected operator before failing.
+
+    Original Request:
+    {{original}}
+
+    Transformed Request:
+    {{req}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-943"
+  severity: critical
+  cvssScore: "9.8"
+  mitigation: |
+    1. Never pass raw user input directly to NoSQL query objects.
+    2. Use a strict schema/type validation layer (e.g., Joi, Zod) before querying.
+    3. Sanitize input — strip or reject keys starting with '$' or '.'.
+    4. Use parameterized query builders provided by your ORM/ODM.
+    5. Disable $where and JavaScript execution in MongoDB (--noscripting).
+  stepsToReproduce: |
+    1. Send the original request to {{req.url}}.
+    2. Replace a body/query string value with a MongoDB operator payload:
+       e.g., {"$gt": ""} or {"$ne": null}.
+    3. Observe the response status (400/500) and body containing a DB error string
+       such as "MongoError", "CastError", or "unknown operator".
+  tags: "nosql,mongodb,injection,database,owasp-api8,critical"
+  impact: "Authentication bypass, unauthorized data access, full database enumeration, or denial of service."
