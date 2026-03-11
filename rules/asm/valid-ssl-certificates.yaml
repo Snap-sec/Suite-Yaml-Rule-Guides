@@ -1,0 +1,19 @@
+name: 'Valid SSL Certificates'
+description: >-
+  Marking Valid SSL Ceritificates as Safe
+product: asm
+severity: info
+isUniversal: false
+match:
+  conditions:
+    - field: type
+      operator: '=='
+      value: certificate
+    - field: properties.certificate_is_expired
+      operator: '=='
+      value: false
+set:
+  - field: exposure_status
+    value: not_exposed
+  - field: exposure_reason
+    value: SSL Certificate is valid and working.

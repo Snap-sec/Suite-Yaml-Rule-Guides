@@ -1,0 +1,19 @@
+name: 'internal IP Addresses'
+description: >-
+  Marking Internal IP Addresses as safe
+product: asm
+severity: info
+isUniversal: false
+match:
+  conditions:
+    - field: type
+      operator: '=='
+      value: ip
+    - field: is_internal
+      operator: '=='
+      value: true
+set:
+  - field: exposure_status
+    value: not_exposed
+  - field: exposure_reason
+    value: This ip is internal; Hence its not externally reachable.
