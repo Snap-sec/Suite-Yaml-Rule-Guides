@@ -1,6 +1,6 @@
 rule_name: JWT None Algorithm Attack
 description: "Detects servers that accept JWTs signed with 'alg: none', bypassing signature verification entirely."
-
+single_match: true
 transform:
   header:
     transformations:
