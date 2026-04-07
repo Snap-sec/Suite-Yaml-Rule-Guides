@@ -1,4 +1,4 @@
-name: '[CERTIFICATE] - Expired SSL/TLS Certificate'
+name: 'Expired SSL/TLS Certificate on Subdomains'
 description: >-
   Detects SSL/TLS certificates that have expired, which can cause trust errors
   and indicates a lack of maintenance.
@@ -14,8 +14,8 @@ match:
       operator: '=='
       value: true
 set:
-  - field: exposure_status
-    value: exposed
+  - field: risk
+    value: high
   - field: exposure_reason
     value: The SSL/TLS certificate has expired.
 
