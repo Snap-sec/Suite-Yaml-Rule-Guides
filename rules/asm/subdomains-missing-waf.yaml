@@ -1,4 +1,4 @@
-name: '[SUBDOMAIN] - Subdomain Missing WAF'
+name: 'Subdomain Missing WAF'
 description: >-
   Detects active subdomains that are not protected by a Web Application Firewall
   (WAF).
@@ -17,7 +17,7 @@ match:
       operator: '=='
       value: false
 set:
-  - field: exposure_status
-    value: exposed
+  - field: risk
+    value: medium
   - field: exposure_reason
     value: The active subdomain is not protected by a Web Application Firewall (WAF).
