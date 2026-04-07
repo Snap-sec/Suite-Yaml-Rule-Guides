@@ -17,8 +17,8 @@ match:
       operator: regex
       value: (stg|dev|test)
 set:
-  - field: exposure_status
-    value: exposed
+  - field: risk
+    value: high
   - field: exposure_reason
     value: >-
       The subdomain appears to be a non-production environment (staging, dev,
