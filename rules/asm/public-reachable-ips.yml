@@ -1,0 +1,19 @@
+name: 'Publicly Reachable IP Address'
+description: >-
+  Detects IP addresses that are externally reachable over the internet.
+product: asm
+severity: info
+isUniversal: true
+match:
+  conditions:
+    - field: type
+      operator: '=='
+      value: ip
+    - field: externally_reachable
+      operator: '=='
+      value: true
+set:
+  - field: exposure_reason
+    value: IP address is publicly reachable from the internet
+  - field: risk
+    value: low

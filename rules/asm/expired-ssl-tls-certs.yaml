@@ -1,10 +1,9 @@
-name: 'Expired SSL/TLS Certificate on Subdomains'
+name: 'Expired Certificates'
 description: >-
-  Detects SSL/TLS certificates that have expired, which can cause trust errors
-  and indicates a lack of maintenance.
+  Marking Expired Certificates as Unsafe
 product: asm
-severity: high
-isUniversal: true
+severity: info
+isUniversal: false
 match:
   conditions:
     - field: type
@@ -15,7 +14,6 @@ match:
       value: true
 set:
   - field: risk
-    value: high
+    value: medium
   - field: exposure_reason
-    value: The SSL/TLS certificate has expired.
-
+    value: SSL Certificate is Expired

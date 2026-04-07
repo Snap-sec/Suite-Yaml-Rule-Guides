@@ -1,0 +1,22 @@
+name: 'Publicly Exposed Database Port'
+description: >-
+  Detects publicly accessible database services.
+product: asm
+severity: critical
+isUniversal: true
+match:
+  conditions:
+    - field: type
+      operator: '=='
+      value: ip
+    - field: properties.open_ports
+      operator: 'contains_any'
+      value: [3306, 5432, 6379, 27017]
+    - field: externally_reachable
+      operator: '=='
+      value: true
+set:
+  - field: exposure_reason
+    value: Publicly exposed database service detected
+  - field: risk
+    value: critical

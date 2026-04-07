@@ -1,8 +1,8 @@
-name: 'Publicly Exposed Staging/Development Subdomain'
+name: 'Sensitive Keyword in Subdomain'
 description: >-
-  Active subdomains that appear to be for staging, development, or testing.
+  Subdomain contains sensitive keywords.
 product: asm
-severity: info
+severity: medium
 isUniversal: true
 match:
   conditions:
@@ -14,12 +14,14 @@ match:
       value: live
     - field: value
       operator: 'regex'
-      value: (stg|dev|test)
+      value: (internal|private|backup|db|vpn)
     - field: externally_reachable
       operator: '=='
       value: true
+
+
 set:
   - field: exposure_reason
-    value: The subdomain appears to be a non-production environment (staging, dev, test) and is publicly accessible.
+    value: Sensitive keyword in subdomain
   - field: risk
-    value: high
+    value: medium

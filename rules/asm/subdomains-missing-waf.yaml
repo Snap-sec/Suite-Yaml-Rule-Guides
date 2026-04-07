@@ -1,9 +1,8 @@
 name: 'Subdomain Missing WAF'
 description: >-
-  Detects active subdomains that are not protected by a Web Application Firewall
-  (WAF).
+  Detects active subdomains that are not protected by WAF
 product: asm
-severity: high
+severity: info
 isUniversal: true
 match:
   conditions:
@@ -16,6 +15,9 @@ match:
     - field: hasWaf
       operator: '=='
       value: false
+    - field: network_scope
+      operator: '=='
+      value: external
 set:
   - field: risk
     value: medium
