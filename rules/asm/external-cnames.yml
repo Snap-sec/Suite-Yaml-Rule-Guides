@@ -1,0 +1,20 @@
+name: 'CNAME to External Domain'
+description: >-
+  DNS record points to an external third-party domain.
+product: asm
+match:
+  conditions:
+    - field: type
+      operator: '=='
+      value: dns
+    - field: properties.dns_class
+      operator: '=='
+      value: CNAME
+    - field: value
+      operator: '=='
+      value: ^(?!site\.com$).+
+set:
+  - field: exposure_reason
+    value: CNAME points to external domain
+  - field: risk
+    value: medium
