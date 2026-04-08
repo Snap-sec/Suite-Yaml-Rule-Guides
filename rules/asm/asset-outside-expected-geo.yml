@@ -1,0 +1,26 @@
+name: 'Asset Outside Expected Geo Location'
+description: >-
+  Detects IP assets whose hosting country does not match the organization's expected
+  geographic region. Assets hosted in unexpected countries may indicate rogue infrastructure,
+  misconfiguration, or compromise.
+product: asm
+severity: medium
+isUniversal: false
+match:
+  and:
+    - conditions:
+        - field: type
+          operator: '=='
+          value: ip
+        - field: externally_reachable
+          operator: '=='
+          value: true
+    - conditions:
+        - field: properties.ip_country
+          operator: 'not_in'
+          value: ['SA']
+set:
+  - field: exposure_reason
+    value: Asset is hosted in an unexpected geographic region outside the organization's approved countries
+  - field: risk
+    value: medium

@@ -1,0 +1,27 @@
+name: 'Service with Banner Disclosure'
+description: >-
+  Detects open ports broadcasting a service banner that exposes software name, version,
+  or platform details. Banner disclosure assists attackers in fingerprinting services
+  and targeting known CVEs.
+product: asm
+severity: low
+isUniversal: true
+match:
+  conditions:
+    - field: type
+      operator: '=='
+      value: port
+    - field: properties.port_status
+      operator: '=='
+      value: open
+    - field: properties.port_banner
+      operator: '!='
+      value: null
+    - field: externally_reachable
+      operator: '=='
+      value: true
+set:
+  - field: exposure_reason
+    value: Service banner is publicly visible, disclosing software name and version to potential attackers
+  - field: risk
+    value: low

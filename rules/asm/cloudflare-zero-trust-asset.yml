@@ -1,0 +1,24 @@
+name: 'Asset Behind Cloudflare Zero Trust'
+description: >-
+  Identifies assets that are protected by Cloudflare Zero Trust (ZTNA/Access).
+  These assets require identity-based verification before access and are considered
+  well-protected. Useful for audit and compliance visibility.
+product: asm
+severity: info
+isUniversal: true
+match:
+  conditions:
+    - field: type
+      operator: '=='
+      value: subdomain
+    - field: properties.subdomain_status
+      operator: '=='
+      value: live
+    - field: properties.cloudflare_zero_trust
+      operator: '=='
+      value: true
+set:
+  - field: exposure_reason
+    value: Asset is behind Cloudflare Zero Trust — access requires identity verification
+  - field: risk
+    value: info

@@ -1,0 +1,24 @@
+name: 'DNS Record with Internal IP Leakage'
+description: >-
+  Detects DNS A/AAAA records that resolve to private or RFC-1918 IP addresses from public DNS.
+  Leaking internal IPs in public DNS exposes internal network topology to attackers.
+product: asm
+severity: medium
+isUniversal: true
+match:
+  conditions:
+    - field: type
+      operator: '=='
+      value: dns
+    - field: properties.dns_class
+      operator: 'in'
+      transformer: 'List'
+      value: 'A,AAAA'
+    - field: properties.ip_is_public
+      operator: '=='
+      value: false
+set:
+  - field: exposure_reason
+    value: Public DNS record resolves to a private/internal IP address, leaking internal network topology
+  - field: risk
+    value: medium

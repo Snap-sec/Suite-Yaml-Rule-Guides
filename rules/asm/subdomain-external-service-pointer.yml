@@ -1,0 +1,24 @@
+name: 'Subdomain Pointing to External Service'
+description: >-
+  Detects live subdomains whose DNS CNAME records resolve to external third-party services
+  (e.g., AWS, GitHub Pages, Heroku). If the external service is unclaimed this may be
+  vulnerable to subdomain takeover.
+product: asm
+severity: high
+isUniversal: true
+match:
+  conditions:
+    - field: type
+      operator: '=='
+      value: subdomain
+    - field: properties.subdomain_status
+      operator: '=='
+      value: live
+    - field: properties.cname_external
+      operator: '=='
+      value: true
+set:
+  - field: exposure_reason
+    value: Subdomain CNAME points to an external third-party service — potential takeover risk
+  - field: risk
+    value: high

@@ -1,0 +1,27 @@
+name: 'Certificate About to Expire'
+description: >-
+  Detects TLS/SSL certificates that are valid but will expire within 30 days.
+  Expiring certificates can lead to service outages and browser security warnings
+  if not renewed in time.
+product: asm
+severity: medium
+isUniversal: true
+match:
+  and:
+    - conditions:
+        - field: type
+          operator: '=='
+          value: certificate
+        - field: properties.certificate_is_expired
+          operator: '=='
+          value: false
+    - conditions:
+        - field: properties.certificate_valid_to
+          operator: '<='
+          transformer: 'Date'
+          value: '+30 days'
+set:
+  - field: exposure_reason
+    value: TLS/SSL certificate is valid but will expire within 30 days — renewal required
+  - field: risk
+    value: medium

@@ -1,0 +1,23 @@
+name: 'IP Responding to Ping/ICMP Requests'
+description: >-
+  Detects public-facing IP addresses that respond to ICMP (ping) requests. This reveals
+  asset existence to external attackers and can facilitate network reconnaissance.
+product: asm
+severity: low
+isUniversal: true
+match:
+  conditions:
+    - field: type
+      operator: '=='
+      value: ip
+    - field: externally_reachable
+      operator: '=='
+      value: true
+    - field: properties.icmp_enabled
+      operator: '=='
+      value: true
+set:
+  - field: exposure_reason
+    value: IP address responds to ICMP/ping requests, exposing asset presence to external reconnaissance
+  - field: risk
+    value: low
