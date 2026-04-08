@@ -2,6 +2,8 @@ name: 'CNAME to External Domain'
 description: >-
   DNS record points to an external third-party domain.
 product: asm
+severity: info
+isUniversal: false
 match:
   conditions:
     - field: type
@@ -11,7 +13,7 @@ match:
       operator: '=='
       value: CNAME
     - field: value
-      operator: '=='
+      operator: 'regex'
       value: ^(?!site\.com$).+
 set:
   - field: exposure_reason

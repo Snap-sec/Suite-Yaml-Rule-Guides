@@ -14,12 +14,10 @@ match:
       value: live
     - field: value
       operator: 'regex'
-      value: (internal|private|backup|db|vpn)
+      value: (internal|private|backup|db|vpn|admin|portal|dashboard|manage|management|manager|control|panel|cpanel|webmail|mail|smtp|ftp|sftp|ssh|rdp|remote|bastion|jump|gateway|proxy|firewall|waf|auth|login|sso|ldap|ad|corp|intranet|infra|infrastructure|devops|ci|jenkins|gitlab|github|sonar|jira|confluence|grafana|kibana|elastic|splunk|zabbix|nagios|monitor|logging|log|api|rest|graphql|swagger|debug|test|staging|dev|uat|qa|preprod|sandbox|demo|beta|legacy|old|temp|bak|archive|data|hadoop|kafka|redis|mongo|mysql|postgres|oracle|mssql|database|queue|rabbitmq|vault|secrets|pki|cert)
     - field: externally_reachable
       operator: '=='
       value: true
-
-
 set:
   - field: exposure_reason
     value: Sensitive keyword in subdomain
