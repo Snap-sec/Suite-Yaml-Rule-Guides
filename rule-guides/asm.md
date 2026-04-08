@@ -31,9 +31,9 @@ match:
       value: true
 
 set:
-  - field: "exposure_status"
+  - field: "risk"
     value: "exposed"
-  - field: "exposure_reason"
+  - field: "reason"
     value: "Expired certificate"
 ```
 
@@ -136,9 +136,9 @@ Defines the MongoDB `$set` operation to update asset fields when the match succe
 
 ```yaml
 set:
-  - field: "exposure_status"
+  - field: "risk"
     value: "exposed"
-  - field: "exposure_reason"
+  - field: "reason"
     value: "Open SSH port detected"
   - field: "marked_by"
     value: "auto_rule_engine"
@@ -167,9 +167,9 @@ match:
       operator: "=="
       value: true
 set:
-  - field: "exposure_status"
+  - field: "risk"
     value: "exposed"
-  - field: "exposure_reason"
+  - field: "reason"
     value: "Certificate expired"
   - field: "marked_by"
     value: "auto_rule_engine"
@@ -200,9 +200,9 @@ match:
           operator: "=="
           value: true
 set:
-  - field: "exposure_status"
+  - field: "risk"
     value: "exposed"
-  - field: "exposure_reason"
+  - field: "reason"
     value: "Admin port open on public IP"
 ```
 
@@ -230,9 +230,9 @@ match:
               transformer: "Number"
               value: 2048
 set:
-  - field: "exposure_status"
+  - field: "risk"
     value: "exposed"
-  - field: "exposure_reason"
+  - field: "reason"
     value: "Weak TLS or small key size"
 ```
 
@@ -253,9 +253,9 @@ match:
       transformer: "Date"
       value: "-7 days"
 set:
-  - field: "exposure_status"
+  - field: "risk"
     value: "not_exposed"
-  - field: "exposure_reason"
+  - field: "reason"
     value: "Newly discovered, pending review"
 ```
 
@@ -274,9 +274,9 @@ match:
       options:
         matchType: "elemMatch"
 set:
-  - field: "exposure_status"
+  - field: "risk"
     value: "exposed"
-  - field: "exposure_reason"
+  - field: "reason"
     value: "Contains admin-related subdomain"
 ```
 
