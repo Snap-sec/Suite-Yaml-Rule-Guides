@@ -7,26 +7,24 @@ product: asm
 severity: medium
 isUniversal: true
 match:
-  and:
-    - conditions:
-        - field: type
-          operator: '=='
-          value: port
-        - field: properties.port_status
-          operator: '=='
-          value: open
-        - field: properties.port_service
-          operator: 'in'
-          transformer: 'List'
-          value: 'http,https'
-    - conditions:
-        - field: properties.port_number
-          operator: 'not_in'
-          value: '80,443'
-          transformer: List
-        - field: externally_reachable
-          operator: '=='
-          value: true
+  conditions:
+    - field: type
+      operator: '=='
+      value: port
+    - field: properties.port_status
+      operator: '=='
+      value: open
+    - field: properties.port_service
+      operator: 'in'
+      transformer: 'List'
+      value: 'http,https'
+    - field: properties.port_number
+      operator: 'not_in'
+      value: '80,443'
+      transformer: List
+    - field: externally_reachable
+      operator: '=='
+      value: true
 set:
   - field: exposure_reason
     value: Web server is running on a non-standard port (not 80/443), potentially bypassing perimeter controls
