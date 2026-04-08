@@ -1,4 +1,4 @@
-name: 'Subdomain Missing WAF'
+name: 'Externally Exposed Subdomain Missing WAF'
 description: >-
   Detects active subdomains that are not protected by WAF
 product: asm
