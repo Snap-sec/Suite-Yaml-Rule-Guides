@@ -10,8 +10,9 @@ match:
       operator: '=='
       value: ip
     - field: properties.open_ports
-      operator: 'contains_any'
-      value: [3306, 5432, 6379, 27017]
+      operator: 'in'
+      value: '3306,5432,6379,27017'
+      transformer: List
     - field: externally_reachable
       operator: '=='
       value: true

@@ -2,7 +2,7 @@ name: 'Publicly Reachable IP Address'
 description: >-
   Detects IP addresses that are externally reachable over the internet.
 product: asm
-severity: info
+severity: critical
 isUniversal: true
 match:
   conditions:

@@ -1,25 +1,20 @@
-name: 'High-Risk Service Port Exposed (SSH/RDP)'
+name: 'Publicly Exposed SSH/RDP Port'
 description: >-
-  Detects publicly exposed SSH (port 22) or RDP (port 3389) services on internet-facing assets.
-  These protocols are frequent targets for brute-force attacks and exploitation.
+  Detects publicly accessible database services.
 product: asm
-severity: critical
+severity: info
 isUniversal: true
 match:
-  and:
-    - conditions:
-        - field: type
-          operator: '=='
-          value: ip
-        - field: externally_reachable
-          operator: '=='
-          value: true
-    - conditions:
-        - field: properties.open_ports
-          operator: 'contains_any'
-          value: [22, 3389]
+  conditions:
+    - field: type
+      operator: '=='
+      value: port
+    - field: value
+      operator: 'in'
+      value: 22,3389
+      transformer: List
 set:
   - field: exposure_reason
-    value: High-risk admin service (SSH/RDP) is exposed on a public-facing IP
+    value: Publicly exposed database service detected
   - field: risk
     value: critical

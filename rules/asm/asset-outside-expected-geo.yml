@@ -18,7 +18,8 @@ match:
     - conditions:
         - field: properties.ip_country
           operator: 'not_in'
-          value: ['SA']
+          value: 'SA'
+          transformer: List
 set:
   - field: exposure_reason
     value: Asset is hosted in an unexpected geographic region outside the organization's approved countries

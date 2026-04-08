@@ -22,7 +22,8 @@ match:
     - conditions:
         - field: properties.port_number
           operator: 'not_in'
-          value: [80, 443]
+          value: '80,443'
+          transformer: List
         - field: externally_reachable
           operator: '=='
           value: true
