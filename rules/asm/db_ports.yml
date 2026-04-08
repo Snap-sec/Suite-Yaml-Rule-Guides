@@ -2,20 +2,23 @@ name: 'Publicly Exposed Database Port'
 description: >-
   Detects publicly accessible database services.
 product: asm
-severity: critical
+severity: info
 isUniversal: true
 match:
   conditions:
     - field: type
       operator: '=='
-      value: ip
-    - field: properties.open_ports
+      value: port
+    - field: value
       operator: 'in'
-      value: '3306,5432,6379,27017'
+      value: 3306,5432,6379,27017
       transformer: List
-    - field: externally_reachable
+    - field: properties.port_status
       operator: '=='
-      value: true
+      value: open
+    - field: properties.port_service_version
+      operator: '!='
+      value: cloudflare
 set:
   - field: exposure_reason
     value: Publicly exposed database service detected
