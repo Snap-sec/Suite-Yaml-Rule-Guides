@@ -1,6 +1,10 @@
 name: 'Expired Certificates'
 description: >-
-  Marking Expired Certificates as Unsafe
+  Detects SSL/TLS certificates within the asset inventory that have passed their
+  expiration date. Expired certificates break the chain of trust, cause browser
+  security warnings that erode user confidence, and may leave encrypted channels
+  vulnerable to man-in-the-middle attacks. They can also indicate abandoned or
+  unmaintained services that remain exposed without active security oversight.
 product: asm
 severity: info
 isUniversal: false

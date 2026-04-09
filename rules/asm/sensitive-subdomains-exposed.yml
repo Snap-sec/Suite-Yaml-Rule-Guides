@@ -1,6 +1,11 @@
 name: 'Sensitive Keyword in Subdomain'
 description: >-
-  Subdomain contains sensitive keywords.
+  Detects live, externally reachable subdomains whose names contain sensitive keywords
+  indicating internal infrastructure, administrative panels, CI/CD tooling, databases,
+  or non-production environments (e.g., admin, vpn, jenkins, staging, redis). These
+  naming patterns significantly aid attacker reconnaissance by revealing the technology
+  stack, internal architecture, and potential high-value targets without any active
+  scanning required.
 product: asm
 severity: medium
 isUniversal: true

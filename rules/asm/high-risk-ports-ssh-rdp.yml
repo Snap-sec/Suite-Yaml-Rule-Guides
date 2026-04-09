@@ -1,6 +1,10 @@
 name: 'Publicly Exposed SSH/RDP Port'
 description: >-
-  Detects publicly accessible database services.
+  Detects publicly accessible SSH (port 22) and RDP (port 3389) remote access services.
+  These ports are among the most heavily targeted by automated scanners, botnets, and
+  credential-stuffing campaigns. Exposed remote access services provide a direct path
+  for attackers to gain interactive shell or desktop access, making them a critical
+  entry point for ransomware deployment, lateral movement, and full environment compromise.
 product: asm
 severity: info
 isUniversal: true

@@ -1,6 +1,10 @@
 name: 'CNAME to External Domain'
 description: >-
-  DNS record points to an external third-party domain.
+  Detects DNS CNAME records that alias to domains outside the organization's primary
+  domain. External CNAME delegation transfers trust to a third party — if the target
+  domain expires, is misconfigured, or is compromised, attackers can serve malicious
+  content under the organization's domain. This is a common vector for subdomain
+  takeover attacks and can undermine brand integrity and user trust.
 product: asm
 severity: info
 isUniversal: false

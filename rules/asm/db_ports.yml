@@ -1,6 +1,11 @@
 name: 'Publicly Exposed Database Port'
 description: >-
-  Detects publicly accessible database services.
+  Detects open database service ports (MySQL 3306, PostgreSQL 5432, Redis 6379,
+  MongoDB 27017) that are publicly accessible over the internet. Exposed database
+  ports are high-value targets for attackers, enabling brute-force authentication
+  attacks, data exfiltration, and remote code execution via known vulnerabilities.
+  Database services should never be directly reachable from the public internet and
+  must be shielded behind firewalls, VPNs, or private network segments.
 product: asm
 severity: info
 isUniversal: true

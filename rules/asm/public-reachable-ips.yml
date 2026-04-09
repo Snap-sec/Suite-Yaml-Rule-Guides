@@ -1,6 +1,11 @@
-name: 'Publicly Reachable IP Address'
+name: 'Externally Exposed IP Address'
 description: >-
-  Detects IP addresses that are externally reachable over the internet.
+  Detects IP addresses within the organization's asset inventory that are directly
+  reachable from the public internet. Externally exposed IPs expand the attack surface
+  by allowing adversaries to perform reconnaissance, port scanning, and service
+  enumeration. Without proper hardening, firewall rules, or network segmentation,
+  these IPs can become entry points for exploitation of vulnerable services,
+  lateral movement, or denial-of-service attacks.
 product: asm
 severity: critical
 isUniversal: true

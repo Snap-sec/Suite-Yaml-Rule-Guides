@@ -1,6 +1,10 @@
 name: 'DNS Record with Internal IP Leakage'
 description: >-
-  www
+  Detects public DNS A or AAAA records that resolve to private or reserved IP addresses
+  (e.g., 10.x.x.x, 172.16-31.x.x, 192.168.x.x, fc00::/7, or link-local ranges).
+  This misconfiguration leaks internal network topology to external parties, enabling
+  attackers to map the organization's private infrastructure, identify potential pivot
+  points, and craft targeted attacks against internal services.
 product: asm
 severity: info
 isUniversal: true

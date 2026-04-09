@@ -1,6 +1,10 @@
 name: 'Externally Exposed Subdomain Missing WAF'
 description: >-
-  Detects active subdomains that publicly exposed and are not protected by WAF
+  Detects live, externally facing subdomains that lack Web Application Firewall (WAF)
+  protection. Without a WAF, web applications are directly exposed to common attack
+  vectors including SQL injection, cross-site scripting (XSS), request smuggling, and
+  automated vulnerability scanning. WAF coverage gaps leave these subdomains as the
+  path of least resistance for attackers targeting the organization's web perimeter.
 product: asm
 severity: info
 isUniversal: true
