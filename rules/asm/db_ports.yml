@@ -7,7 +7,7 @@ description: >-
   Database services should never be directly reachable from the public internet and
   must be shielded behind firewalls, VPNs, or private network segments.
 product: asm
-severity: info
+severity: high
 isUniversal: true
 remediation: >-
   Immediately restrict database ports from public access using firewall rules or

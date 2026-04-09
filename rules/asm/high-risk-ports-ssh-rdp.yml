@@ -6,7 +6,7 @@ description: >-
   for attackers to gain interactive shell or desktop access, making them a critical
   entry point for ransomware deployment, lateral movement, and full environment compromise.
 product: asm
-severity: info
+severity: high
 isUniversal: true
 remediation: >-
   Block public access to SSH and RDP ports using firewall rules or security groups.

@@ -4,7 +4,7 @@ description: >-
   or platform details. Banner disclosure assists attackers in fingerprinting services
   and targeting known CVEs.
 product: asm
-severity: low
+severity: medium
 isUniversal: true
 remediation: >-
   Configure each exposed service to suppress or customize its banner so that software

@@ -6,7 +6,7 @@ description: >-
   data residency and sovereignty regulations. Identifying these assets helps enforce
   compliance with geographic policies and reduces exposure from unmonitored regions.
 product: asm
-severity: info
+severity: high
 isUniversal: false
 remediation: >-
   Verify whether the asset's geographic location is intentional. If unauthorized,

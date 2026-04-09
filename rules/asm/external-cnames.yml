@@ -6,7 +6,7 @@ description: >-
   content under the organization's domain. This is a common vector for subdomain
   takeover attacks and can undermine brand integrity and user trust.
 product: asm
-severity: info
+severity: medium
 isUniversal: false
 remediation: >-
   Audit CNAME records pointing to external domains and verify that the target services

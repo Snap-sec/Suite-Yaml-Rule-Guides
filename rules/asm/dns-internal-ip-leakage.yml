@@ -6,7 +6,7 @@ description: >-
   attackers to map the organization's private infrastructure, identify potential pivot
   points, and craft targeted attacks against internal services.
 product: asm
-severity: info
+severity: high
 isUniversal: true
 remediation: >-
   Update or remove the public DNS record so it no longer resolves to a private or

@@ -6,7 +6,7 @@ description: >-
   vulnerable to man-in-the-middle attacks. They can also indicate abandoned or
   unmaintained services that remain exposed without active security oversight.
 product: asm
-severity: info
+severity: medium
 isUniversal: false
 remediation: >-
   Renew or replace the expired certificate immediately using a trusted certificate

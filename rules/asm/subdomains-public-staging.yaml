@@ -7,7 +7,7 @@ description: >-
   pre-release code, test data that may mirror production, and a lower-security entry
   point into the organization's infrastructure.
 product: asm
-severity: info
+severity: high
 isUniversal: true
 remediation: >-
   Restrict staging, development, and test subdomains from public internet access using

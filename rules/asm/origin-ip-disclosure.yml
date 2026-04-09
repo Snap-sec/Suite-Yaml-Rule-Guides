@@ -6,7 +6,7 @@ description: >-
   such as DDoS mitigation and WAF rules, and launch targeted attacks against the
   unprotected origin server directly.
 product: asm
-severity: info
+severity: high
 isUniversal: false
 remediation: >-
   Rotate or change the origin server's IP address and ensure it is never referenced

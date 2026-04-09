@@ -7,7 +7,7 @@ description: >-
   stack, internal architecture, and potential high-value targets without any active
   scanning required.
 product: asm
-severity: medium
+severity: low
 isUniversal: true
 remediation: >-
   Restrict public access to subdomains containing sensitive keywords by placing them

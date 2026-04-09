@@ -6,7 +6,7 @@ description: >-
   automated vulnerability scanning. WAF coverage gaps leave these subdomains as the
   path of least resistance for attackers targeting the organization's web perimeter.
 product: asm
-severity: info
+severity: high
 isUniversal: true
 remediation: >-
   Deploy a Web Application Firewall in front of all externally facing subdomains to
