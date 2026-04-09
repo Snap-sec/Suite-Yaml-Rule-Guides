@@ -1,4 +1,4 @@
-name: 'Publicly Exposed SSH/RDP Port'
+name: 'Public Exposure of Remote Access Services'
 description: >-
   Detects publicly accessible SSH (port 22) and RDP (port 3389) remote access services.
   These ports are among the most heavily targeted by automated scanners, botnets, and
@@ -20,5 +20,5 @@ match:
       value: port
     - field: value
       operator: 'in'
-      value: 22,3389
+      value: 22,3389,5900
       transformer: List
