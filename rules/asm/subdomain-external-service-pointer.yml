@@ -6,6 +6,11 @@ description: >-
 product: asm
 severity: high
 isUniversal: true
+remediation: >-
+  Verify that the external service referenced by the CNAME is still actively claimed
+  and controlled by the organization. Remove DNS records pointing to deprovisioned or
+  unclaimed third-party resources to eliminate subdomain takeover risk. Maintain a
+  registry of external service dependencies and audit CNAME records on a regular schedule.
 match:
   conditions:
     - field: type
@@ -17,8 +22,3 @@ match:
     - field: properties.cname_external
       operator: '=='
       value: true
-set:
-  - field: exposure_reason
-    value: Subdomain CNAME points to an external third-party service — potential takeover risk
-  - field: risk
-    value: high

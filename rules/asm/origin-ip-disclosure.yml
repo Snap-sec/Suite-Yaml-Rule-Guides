@@ -1,0 +1,27 @@
+name: 'Origin IP Address Disclosure via DNS'
+description: >-
+  Detects DNS A or AAAA records that expose the true origin IP address of an asset
+  that is expected to be fronted by a CDN or proxy (e.g., Cloudflare). When the
+  direct-to-origin IP is publicly resolvable, attackers can bypass CDN-level protections
+  such as DDoS mitigation and WAF rules, and launch targeted attacks against the
+  unprotected origin server directly.
+product: asm
+severity: info
+isUniversal: false
+remediation: >-
+  Rotate or change the origin server's IP address and ensure it is never referenced
+  in public DNS. Configure your CDN to proxy all traffic and restrict origin server
+  firewall rules to accept connections only from CDN IP ranges. Audit DNS history
+  via services like SecurityTrails to confirm the original IP is no longer discoverable.
+match:
+  conditions:
+    - field: type
+      operator: '=='
+      value: dns
+    - field: value
+      operator: 'regex'
+      value: ^(?!104\.18\.)(?!10\.)(?!127\.)(?!169\.254\.)(?!172\.(1[6-9]|2[0-9]|3[0-1])\.)(?!192\.168\.)\d{1,3}(\.\d{1,3}){3}$
+    - field: properties.dns_class
+      operator: 'in'
+      value: A,AAAA
+      transformer: List

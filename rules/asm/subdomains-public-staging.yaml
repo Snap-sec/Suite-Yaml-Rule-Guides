@@ -9,6 +9,11 @@ description: >-
 product: asm
 severity: info
 isUniversal: true
+remediation: >-
+  Restrict staging, development, and test subdomains from public internet access using
+  VPN, IP allowlists, or authentication gateways. Disable debug modes, verbose error
+  pages, and default credentials on all non-production environments. If public access
+  is unavoidable, apply the same security hardening standards used in production.
 match:
   conditions:
     - field: type
@@ -23,8 +28,3 @@ match:
     - field: externally_reachable
       operator: '=='
       value: true
-set:
-  - field: exposure_reason
-    value: The subdomain appears to be a non-production environment (staging, dev, test) and is publicly accessible.
-  - field: risk
-    value: high

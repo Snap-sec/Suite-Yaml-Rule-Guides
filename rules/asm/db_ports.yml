@@ -9,6 +9,11 @@ description: >-
 product: asm
 severity: info
 isUniversal: true
+remediation: >-
+  Immediately restrict database ports from public access using firewall rules or
+  security groups. Place database services behind a VPN or private subnet with no
+  direct internet exposure. Enable strong authentication, enforce encrypted connections,
+  and audit access logs regularly to detect unauthorized connection attempts.
 match:
   conditions:
     - field: type
@@ -24,8 +29,3 @@ match:
     - field: properties.port_service_version
       operator: '!='
       value: cloudflare
-set:
-  - field: exposure_reason
-    value: Publicly exposed database service detected
-  - field: risk
-    value: critical

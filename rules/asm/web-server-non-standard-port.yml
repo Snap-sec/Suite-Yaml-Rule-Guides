@@ -6,6 +6,11 @@ description: >-
 product: asm
 severity: medium
 isUniversal: true
+remediation: >-
+  Migrate web services to standard ports 80 and 443 so they fall under existing WAF,
+  load balancer, and perimeter security controls. If non-standard ports are required,
+  ensure they are covered by the same firewall rules, TLS configuration, and monitoring
+  as standard ports. Investigate whether the service represents shadow IT or a misconfiguration.
 match:
   conditions:
     - field: type
@@ -25,8 +30,3 @@ match:
     - field: externally_reachable
       operator: '=='
       value: true
-set:
-  - field: exposure_reason
-    value: Web server is running on a non-standard port (not 80/443), potentially bypassing perimeter controls
-  - field: risk
-    value: medium

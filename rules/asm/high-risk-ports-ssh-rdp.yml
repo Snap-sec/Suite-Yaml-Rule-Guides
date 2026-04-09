@@ -8,6 +8,11 @@ description: >-
 product: asm
 severity: info
 isUniversal: true
+remediation: >-
+  Block public access to SSH and RDP ports using firewall rules or security groups.
+  Require connections through a VPN, bastion host, or zero-trust network access solution.
+  Enforce key-based authentication for SSH, enable network-level authentication for RDP,
+  and apply multi-factor authentication to all remote access sessions.
 match:
   conditions:
     - field: type
@@ -17,8 +22,3 @@ match:
       operator: 'in'
       value: 22,3389
       transformer: List
-set:
-  - field: exposure_reason
-    value: Publicly exposed database service detected
-  - field: risk
-    value: critical

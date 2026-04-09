@@ -6,6 +6,11 @@ description: >-
 product: asm
 severity: low
 isUniversal: true
+remediation: >-
+  Configure each exposed service to suppress or customize its banner so that software
+  name, version, and platform details are not disclosed. For web servers, set
+  server-header directives to minimal values. Use reverse proxies to normalize responses
+  and strip identifying headers before they reach external clients.
 match:
   conditions:
     - field: type
@@ -20,8 +25,3 @@ match:
     - field: externally_reachable
       operator: '=='
       value: true
-set:
-  - field: exposure_reason
-    value: Service banner is publicly visible, disclosing software name and version to potential attackers
-  - field: risk
-    value: low

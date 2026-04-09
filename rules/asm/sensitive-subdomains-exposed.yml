@@ -9,6 +9,11 @@ description: >-
 product: asm
 severity: medium
 isUniversal: true
+remediation: >-
+  Restrict public access to subdomains containing sensitive keywords by placing them
+  behind a VPN, IP allowlist, or zero-trust access proxy. Where possible, rename
+  subdomains to avoid revealing internal tooling or infrastructure details. Enforce
+  authentication on all administrative and internal-facing endpoints exposed to the internet.
 match:
   conditions:
     - field: type
@@ -23,8 +28,3 @@ match:
     - field: externally_reachable
       operator: '=='
       value: true
-set:
-  - field: exposure_reason
-    value: Sensitive keyword in subdomain
-  - field: risk
-    value: medium

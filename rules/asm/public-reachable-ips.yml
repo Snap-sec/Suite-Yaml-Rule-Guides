@@ -9,6 +9,11 @@ description: >-
 product: asm
 severity: critical
 isUniversal: true
+remediation: >-
+  Evaluate whether the IP address needs to be publicly reachable. If not, place it
+  behind a firewall, NAT gateway, or private subnet to remove direct internet exposure.
+  For IPs that must remain public, harden all exposed services, apply strict security
+  group rules, enable intrusion detection, and continuously monitor for anomalous traffic.
 match:
   conditions:
     - field: type
@@ -17,8 +22,3 @@ match:
     - field: externally_reachable
       operator: '=='
       value: true
-set:
-  - field: exposure_reason
-    value: IP address is publicly reachable from the internet
-  - field: risk
-    value: low

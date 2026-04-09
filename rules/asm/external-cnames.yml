@@ -8,6 +8,11 @@ description: >-
 product: asm
 severity: info
 isUniversal: false
+remediation: >-
+  Audit CNAME records pointing to external domains and verify that the target services
+  are still active and owned by the organization. Remove dangling CNAMEs that reference
+  decommissioned or unclaimed resources to prevent subdomain takeover. Maintain an
+  inventory of third-party DNS delegations and review them periodically.
 match:
   conditions:
     - field: type
@@ -19,8 +24,3 @@ match:
     - field: value
       operator: 'regex'
       value: ^(?!site\.com$).+
-set:
-  - field: exposure_reason
-    value: CNAME points to external domain
-  - field: risk
-    value: medium

@@ -8,6 +8,12 @@ description: >-
 product: asm
 severity: info
 isUniversal: false
+remediation: >-
+  Renew or replace the expired certificate immediately using a trusted certificate
+  authority. Implement automated certificate lifecycle management with tools like
+  Let's Encrypt or ACME-based solutions to prevent future expirations. Set up
+  monitoring alerts well before expiry dates and decommission any abandoned services
+  still presenting stale certificates.
 match:
   conditions:
     - field: type
@@ -16,8 +22,3 @@ match:
     - field: properties.certificate_is_expired
       operator: '=='
       value: true
-set:
-  - field: risk
-    value: medium
-  - field: exposure_reason
-    value: SSL Certificate is Expired

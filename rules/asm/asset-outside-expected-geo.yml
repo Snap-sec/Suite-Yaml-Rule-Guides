@@ -8,6 +8,11 @@ description: >-
 product: asm
 severity: info
 isUniversal: false
+remediation: >-
+  Verify whether the asset's geographic location is intentional. If unauthorized,
+  migrate the workload to an approved region or decommission the resource. Update
+  infrastructure-as-code templates to enforce region constraints and implement cloud
+  provider policies that prevent future deployments outside sanctioned geographies.
 match:
   conditions:
     - field: type
@@ -20,8 +25,3 @@ match:
     - field: network_scope
       operator: '=='
       value: external
-set:
-  - field: exposure_reason
-    value: Asset is hosted in an unexpected geographic region outside the organization's approved countries
-  - field: risk
-    value: medium

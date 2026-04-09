@@ -8,6 +8,11 @@ description: >-
 product: asm
 severity: info
 isUniversal: true
+remediation: >-
+  Deploy a Web Application Firewall in front of all externally facing subdomains to
+  filter malicious traffic before it reaches the application. Use managed WAF services
+  from your CDN or cloud provider for rapid rollout. Configure rulesets to block OWASP
+  Top 10 attack patterns and enable logging to monitor blocked requests continuously.
 match:
   conditions:
     - field: type
@@ -22,8 +27,3 @@ match:
     - field: network_scope
       operator: '=='
       value: external
-set:
-  - field: risk
-    value: medium
-  - field: exposure_reason
-    value: The active subdomain is not protected by a Web Application Firewall (WAF).
