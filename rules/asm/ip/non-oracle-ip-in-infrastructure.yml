@@ -8,7 +8,7 @@ description: >-
   Detecting these assets ensures adherence to vendor consolidation policies
   and reduces supply-chain risk from unvetted providers.
 product: asm
-severity: info
+severity: medium
 isUniversal: false
 remediation: >-
   Investigate the origin and purpose of the non-Oracle IP address. If the asset
