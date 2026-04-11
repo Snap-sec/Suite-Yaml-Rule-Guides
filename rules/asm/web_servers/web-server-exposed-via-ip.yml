@@ -1,18 +1,9 @@
 name: 'Web Server Directly Exposed via Public IP Address'
 description: >-
-  Detects web servers that are externally reachable and whose asset value resolves
-  directly to a public IP address rather than a domain name. Hosting a web server
-  on a bare IP bypasses DNS-based security controls, CDN protection, and WAF coverage.
-  It also exposes the server to automated scanners targeting raw IP ranges and makes
-  it harder to rotate infrastructure without breaking access.
+  Detects web servers that are externally reachable and whose asset value resolves directly to a public IP address rather than a domain name. Hosting a web server on a bare IP bypasses DNS-based security controls, CDN protection, and WAF coverage. It also exposes the server to automated scanners targeting raw IP ranges and makes it harder to rotate infrastructure without breaking access.
 product: asm
-severity: medium
+severity: info
 isUniversal: true
-remediation: >-
-  Place the web server behind a domain name with CDN and WAF protection rather than
-  exposing it directly via a public IP. Apply firewall rules to restrict inbound HTTP/HTTPS
-  traffic to CDN or load balancer IP ranges only. Ensure TLS certificates are issued
-  to a domain, not the IP, to maintain a valid and trusted encryption chain.
 match:
   conditions:
     - field: type
@@ -23,4 +14,4 @@ match:
       value: external
     - field: value
       operator: 'regex'
-      value: ^(?!10\.)(?!127\.)(?!169\.254\.)(?!172\.(1[6-9]|2[0-9]|3[0-1])\.)(?!192\.168\.)\d{1,3}(\.\d{1,3}){3}$
+      value: (?!10\.)(?!127\.)(?!169\.254\.)(?!172\.(1[6-9]|2[0-9]|3[0-1])\.)(?!192\.168\.)\d{1,3}(\.\d{1,3}){3}
