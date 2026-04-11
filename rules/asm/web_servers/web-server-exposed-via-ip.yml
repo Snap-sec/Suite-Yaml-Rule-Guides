@@ -2,7 +2,7 @@ name: 'Web Server Directly Exposed via Public IP Address'
 description: >-
   Detects web servers that are externally reachable and whose asset value resolves directly to a public IP address rather than a domain name. Hosting a web server on a bare IP bypasses DNS-based security controls, CDN protection, and WAF coverage. It also exposes the server to automated scanners targeting raw IP ranges and makes it harder to rotate infrastructure without breaking access.
 product: asm
-severity: info
+severity: high
 isUniversal: true
 match:
   conditions:
@@ -14,4 +14,4 @@ match:
       value: external
     - field: value
       operator: 'regex'
-      value: (?!10\.)(?!127\.)(?!169\.254\.)(?!172\.(1[6-9]|2[0-9]|3[0-1])\.)(?!192\.168\.)\d{1,3}(\.\d{1,3}){3}
+      value: ^(https?:\/\/)(?!10\.)(?!127\.)(?!169\.254\.)(?!172\.(1[6-9]|2\d|3[0-1])\.)(?!192\.168\.)(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}:\d{1,5}$
