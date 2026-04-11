@@ -1,0 +1,27 @@
+name: 'Exposing Server Version in Headers'
+description: >-
+  Detects web servers that disclose their software name or version through the
+  HTTP Server response header. Revealing server technology and version details
+  enables attackers to fingerprint the stack and quickly identify known CVEs,
+  default credentials, or platform-specific exploit techniques. Suppressing
+  this header is a low-effort hardening step that removes a valuable
+  reconnaissance signal from the external attack surface.
+product: asm
+severity: info
+isUniversal: false
+remediation: >-
+  Configure the web server or reverse proxy to suppress or genericize the Server
+  response header. In Apache use ServerTokens Prod, in Nginx use server_tokens off,
+  and in IIS remove the header via URL Rewrite rules. Validate the change with a
+  curl request and incorporate the setting into infrastructure-as-code templates.
+match:
+  conditions:
+    - field: type
+      operator: '=='
+      value: web_server
+    - field: properties.subdomain_headers.server
+      operator: 'regex'
+      value: .
+    - field: value
+      operator: 'regex'
+      value: "^(https?:\/\/)(?!10\\.)(?!127\\.)(?!169\\.254\\.)(?!172\\.(1[6-9]|2\\d|3[0-1])\\.)(?!192\\.168\\.)(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\\.(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}:\\d{1,5}$"
