@@ -1,0 +1,870 @@
+Rule Ideas
+==========
+- Finding new Subdomains using isNew property
+- Finding new Ports using isNew property
+- Finding new IPs using isNew property
+- Finding new Certificates using isNew property
+
+
+
+
+Subdomains Schema
+=================
+
+{
+    "_id": "69d8bcc804be9867c2bdba23",
+    "subdomain": "gateway-stg.hala.com",
+    "scanId": "69d8bc3e864574beb8306de9",
+    "domain": "hala.com",
+    "orgId": "67737d32f40664c2052c5c5b",
+    "value": "gateway-stg.hala.com",
+    "type": "subdomain",
+    "__v": 0,
+    "associatedSubdomains": [],
+    "createdAt": "2026-04-10T09:03:04.535Z",
+    "isNew": false,
+    "network_scope": "external",
+    "properties": {
+        "technology_categories": [],
+        "port_status": "unknown",
+        "subdomain_status": "live",
+        "subdomain_status_code": "403",
+        "subdomain_title": "Attention Required! | Cloudflare",
+        "subdomain_headers": {
+            "date": "Fri, 10 Apr 2026 09:01:49 GMT",
+            "content-type": "text/html; charset=UTF-8",
+            "transfer-encoding": "chunked",
+            "connection": "close",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "referrer-policy": "same-origin",
+            "x-frame-options": "SAMEORIGIN",
+            "x-content-type-options": "nosniff",
+            "set-cookie": [
+                "__cf_bm=.ei9WXBUumTFPDbN5OEpMBnkAzdPGXuXSw5ho2_j8LA-1775811709.3297064-1.0.1.1-FU.Gi3ogAbj39PA0iAdXpX7fxwx5LvA68dmbmfPZHEaysH5aJrsPeVOsFBNsBw4hWxrfmnnbe5C0_VekLo8_bwiUFms1n.wj2zpoGQU1LUI9.p_deO_5cqUDUYg1r63N; HttpOnly; Path=/; Domain=hala.com; Expires=Fri, 10 Apr 2026 09:31:49 GMT"
+            ],
+            "server": "cloudflare",
+            "cf-ray": "9ea091af4eeacb8b-MXP"
+        },
+        "certificate_alt_names": []
+    },
+    "scanner": "subdomain_scanner",
+    "updatedAt": "2026-04-10T09:25:16.682Z",
+    "wafs": [],
+    "hasWaf": false,
+    "externally_reachable": true,
+    "associated_ports": [
+        {
+            "_id": "69d8d9d47612e252bfb512e8",
+            "subdomain": "gateway-stg.hala.com",
+            "orgId": "67737d32f40664c2052c5c5b",
+            "domain": "hala.com",
+            "ip": null,
+            "type": "port",
+            "value": "80",
+            "scanId": "69d8bc3e864574beb8306de9",
+            "__v": 1,
+            "associatedSubdomains": [
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "gateway-stg.hala.com"
+                }
+            ],
+            "createdAt": "2026-04-10T11:07:00.724Z",
+            "isNew": false,
+            "network_scope": "external",
+            "properties": {
+                "technology_categories": [],
+                "port_status": "open",
+                "subdomain_status": "live",
+                "certificate_alt_names": []
+            },
+            "updatedAt": "2026-04-10T13:10:00.894Z",
+            "hasWaf": false,
+            "wafs": []
+        },
+        {
+            "_id": "69d8d9d47612e252bfb512e7",
+            "scanId": "69d8bc3e864574beb8306de9",
+            "ip": null,
+            "domain": "hala.com",
+            "orgId": "67737d32f40664c2052c5c5b",
+            "subdomain": "gateway-stg.hala.com",
+            "type": "port",
+            "value": "443",
+            "__v": 1,
+            "associatedSubdomains": [
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "gateway-stg.hala.com"
+                }
+            ],
+            "createdAt": "2026-04-10T11:07:00.707Z",
+            "isNew": false,
+            "network_scope": "external",
+            "properties": {
+                "technology_categories": [],
+                "port_status": "open",
+                "subdomain_status": "live",
+                "certificate_alt_names": []
+            },
+            "updatedAt": "2026-04-10T13:10:00.967Z",
+            "hasWaf": false,
+            "wafs": []
+        },
+        {
+            "_id": "69d8d9d47612e252bfb512e9",
+            "scanId": "69d8bc3e864574beb8306de9",
+            "ip": null,
+            "domain": "hala.com",
+            "orgId": "67737d32f40664c2052c5c5b",
+            "type": "port",
+            "value": "8443",
+            "subdomain": "gateway-stg.hala.com",
+            "__v": 1,
+            "associatedSubdomains": [
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "gateway-stg.hala.com"
+                }
+            ],
+            "createdAt": "2026-04-10T11:07:00.742Z",
+            "isNew": false,
+            "network_scope": "external",
+            "properties": {
+                "technology_categories": [],
+                "port_status": "open",
+                "subdomain_status": "live",
+                "certificate_alt_names": []
+            },
+            "updatedAt": "2026-04-10T13:10:01.003Z",
+            "hasWaf": false,
+            "wafs": []
+        },
+        {
+            "_id": "69d8d9d47612e252bfb512ea",
+            "type": "port",
+            "orgId": "67737d32f40664c2052c5c5b",
+            "domain": "hala.com",
+            "ip": null,
+            "value": "8080",
+            "subdomain": "gateway-stg.hala.com",
+            "scanId": "69d8bc3e864574beb8306de9",
+            "__v": 1,
+            "associatedSubdomains": [
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "gateway-stg.hala.com"
+                }
+            ],
+            "createdAt": "2026-04-10T11:07:00.759Z",
+            "isNew": false,
+            "network_scope": "external",
+            "properties": {
+                "technology_categories": [],
+                "port_status": "open",
+                "subdomain_status": "live",
+                "certificate_alt_names": []
+            },
+            "updatedAt": "2026-04-10T13:10:00.930Z",
+            "hasWaf": false,
+            "wafs": []
+        }
+    ],
+    "associated_ip": [
+        {
+            "_id": "69d8bccb04be9867c2bdba99",
+            "scanId": "69d8bc3e864574beb8306de9",
+            "orgId": "67737d32f40664c2052c5c5b",
+            "type": "ip",
+            "value": "2606:4700::6812:fcf",
+            "__v": 1,
+            "associatedSubdomains": [
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "identity.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "pay.online.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "opsmanager.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "mms.stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "supp2.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "suppliers.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "api-stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "messagelinks.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tailscale-derper-02.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "gateway.stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "supp1.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tailscale-derper-04.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "n8n.internal.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tms.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tms-stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "api.online.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tms.stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tailscale-derper-03.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "signup.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "desk.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "accounts.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "sdb.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "accounts-admin.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "assets.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "login.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "jira.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tailscale-derper-2.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "settle.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tailscale-derper-01.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "www.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "pay.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "qradar.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tms-portal.stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "receipts.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "hangfire.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "login-stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "inspect.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tailscale-derper-1.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "cdn.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "appsec.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "survey.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "metabase.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "portal.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "sentry.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "ndr.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "control.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "collect.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "gateway.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "accounts-stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "gateway-stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "eid-card.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tms-portal.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "api.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "corporate.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "s.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "sre-911-call.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "business.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "hala.com"
+                }
+            ],
+            "createdAt": "2026-04-10T09:03:07.827Z",
+            "domain": "hala.com",
+            "isNew": false,
+            "network_scope": "external",
+            "properties": {
+                "technology_categories": [],
+                "port_status": "unknown",
+                "ip_version": "IPv6",
+                "subdomain_status": "live",
+                "certificate_alt_names": [],
+                "ip_city": "San Francisco",
+                "ip_coordinates": "37.7621,-122.3971",
+                "ip_country": "US",
+                "ip_location": "San Francisco, California, US",
+                "ip_org": "AS13335 Cloudflare, Inc.",
+                "ip_region": "California"
+            },
+            "scanner": "ip_scanner",
+            "subdomain": "control.hala.com",
+            "updatedAt": "2026-04-10T11:45:01.208Z",
+            "hasWaf": false,
+            "wafs": [],
+            "externally_reachable": true
+        },
+        {
+            "_id": "69d8bccb04be9867c2bdba9f",
+            "value": "2606:4700::6812:ecf",
+            "type": "ip",
+            "orgId": "67737d32f40664c2052c5c5b",
+            "scanId": "69d8bc3e864574beb8306de9",
+            "__v": 1,
+            "associatedSubdomains": [
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "identity.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "pay.online.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "opsmanager.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "mms.stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "suppliers.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "api-stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "messagelinks.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tailscale-derper-02.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "gateway.stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "supp1.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tailscale-derper-04.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "n8n.internal.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tms.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tms-stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "api.online.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tms.stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tailscale-derper-03.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "signup.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "desk.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "accounts.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "sdb.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "accounts-admin.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "assets.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "login.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "jira.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tailscale-derper-2.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "settle.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tailscale-derper-01.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "www.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "pay.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "qradar.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tms-portal.stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "receipts.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "hangfire.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "login-stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "inspect.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "supp2.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tailscale-derper-1.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "cdn.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "appsec.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "survey.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "metabase.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "portal.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "sentry.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "ndr.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "control.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "collect.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "gateway.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "accounts-stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "gateway-stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "eid-card.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "tms-portal.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "api.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "corporate.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "s.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "sre-911-call.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "business.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "hala.com"
+                }
+            ],
+            "createdAt": "2026-04-10T09:03:07.890Z",
+            "domain": "hala.com",
+            "isNew": true,
+            "network_scope": "external",
+            "properties": {
+                "technology_categories": [],
+                "port_status": "unknown",
+                "ip_version": "IPv6",
+                "subdomain_status": "live",
+                "certificate_alt_names": [],
+                "ip_city": "San Francisco",
+                "ip_coordinates": "37.7621,-122.3971",
+                "ip_country": "US",
+                "ip_location": "San Francisco, California, US",
+                "ip_org": "AS13335 Cloudflare, Inc.",
+                "ip_region": "California"
+            },
+            "scanner": "ip_scanner",
+            "subdomain": "gateway.hala.com",
+            "updatedAt": "2026-04-10T09:03:07.890Z",
+            "hasWaf": false,
+            "wafs": [],
+            "externally_reachable": true
+        },
+        {
+            "_id": "69d8bcd404be9867c2bdbbfe",
+            "value": "158.101.233.78",
+            "type": "ip",
+            "orgId": "67737d32f40664c2052c5c5b",
+            "scanId": "69d8bc3e864574beb8306de9",
+            "__v": 1,
+            "associatedSubdomains": [
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "gateway-stg.hala.com"
+                },
+                {
+                    "domain": "hala.com",
+                    "type": "subdomain",
+                    "value": "gateway.stg.hala.com"
+                }
+            ],
+            "createdAt": "2026-04-10T09:03:16.077Z",
+            "domain": "hala.com",
+            "isNew": false,
+            "network_scope": "external",
+            "properties": {
+                "technology_categories": [],
+                "port_status": "unknown",
+                "ip_version": "IPv4",
+                "subdomain_status": "live",
+                "certificate_alt_names": [],
+                "ip_city": "Jeddah",
+                "ip_coordinates": "21.4901,39.1862",
+                "ip_country": "SA",
+                "ip_location": "Jeddah, Mecca Region, SA",
+                "ip_org": "AS31898 Oracle Corporation",
+                "ip_region": "Mecca Region"
+            },
+            "scanner": "ip_scanner",
+            "subdomain": "gateway.stg.hala.com",
+            "updatedAt": "2026-04-10T12:32:00.434Z",
+            "hasWaf": false,
+            "wafs": [],
+            "externally_reachable": true
+        }
+    ],
+    "total_signals": 0
+}
