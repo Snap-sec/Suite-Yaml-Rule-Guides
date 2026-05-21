@@ -30,7 +30,7 @@ transform:
 match_on:
   # Do NOT match on 200 — errors are what confirm injection
   status:
-    in: [500, 400, 422, 503]
+    in: [200, 500, 400, 422, 503]
   body:
     contains:
       # ---- MongoDB / Mongoose ----

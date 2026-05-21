@@ -1,4 +1,4 @@
-rule_name: Auth Not Required - 200 JSON without credentials
+rule_name: Auth Not Required - Successful JSON response without credentials
 description: "Detects unprotected JSON endpoints accessible without authentication."
 
 transform:
@@ -13,7 +13,7 @@ transform:
       - Authentication
 
 match_on:
-  status: 200
+  status: [200, 201, 204]
   header:
     Content-Type:
       contains: json
@@ -21,7 +21,7 @@ match_on:
 report:
   title: "Unprotected JSON endpoint (no auth required)"
   description: >-
-    The endpoint returned 200 OK with a JSON response even after removing all
+    The endpoint returned a successful status (200, 201, or 204) with a JSON response even after removing all
     authentication headers, cookies, and common token parameters.
     Original: {{original.method}} {{original.url}}
     Tested: {{req.method}} {{req.url}}
@@ -34,7 +34,7 @@ report:
   stepsToReproduce: |
     1) Send the original request.
     2) Re-send without Authorization/Cookie and without token params (as above).
-    3) Observe 200 OK and JSON Content-Type. Response: {{res.status}} {{res.statusText}}
+    3) Observe a successful status code (200/201/204) and JSON Content-Type. Response: {{res.status}} {{res.statusText}}
   tags: "auth,access-control,misconfiguration"
   impact: >-
     Unauthenticated access to JSON data/functionality may expose sensitive
