@@ -143,7 +143,7 @@ match_on:
     contains:
       # Linux: /etc/passwd indicators
       - "root:x:0:0:"
-      - "root:*:0:0:"
+      - "root:\\*:0:0:"
       - "daemon:x:"
       - "nobody:x:"
       # Linux: id command output
@@ -151,11 +151,11 @@ match_on:
       # Linux: uname output
       - "GNU/Linux"
       # Windows: win.ini indicators
-      - "[fonts]"
+      - "\\[fonts\\]"
       - "; for 16-bit app support"
-      - "[extensions]"
+      - "\\[extensions\\]"
       # Windows: hosts file indicator
-      - "# Copyright (c) 1993-"
+      - "# Copyright \\(c\\) 1993-"
       # Windows: systeminfo output
       - "OS Name:"
       - "Microsoft Windows"
