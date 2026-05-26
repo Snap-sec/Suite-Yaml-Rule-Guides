@@ -153,6 +153,39 @@ match_on:
       - value: 'near \"\.\":\ syntax error'
         options:
           regex: true
+      - "[SQLITE_ERROR]"
+      - "SQLite3::Exception:"
+      - "SQLiteException"
+      - "no such table:"
+      - "no such column:"
+      - "has no column named"
+      - "SQLITE_CONSTRAINT"
+
+      - "org.h2.jdbc.JdbcSQLSyntaxErrorException"
+      - "Syntax error in SQL statement"
+      - "org.h2.message.DbException"
+
+      - "Unexpected token"
+      - "user lacks privilege or object not found"
+      - "org.hsqldb.jdbc.JDBCDriver"
+
+      - "DB2 SQL Error"
+      - "SQLCODE="
+
+      - "ISAM error:"
+
+      - "SybSQLException"
+      - "Sybase message"
+
+      - "Microsoft JET Database Engine"
+      - "Microsoft Access Database Engine"
+
+      - "net.snowflake.client.jdbc.SnowflakeSQLException"
+
+      - "ClickHouse exception"
+      - value: 'Code: \d+\. DB::Exception'
+        options:
+          regex: true
 
       - value: 'SQLSTATE\[42000\]'
         options:
