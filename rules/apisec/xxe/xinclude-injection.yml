@@ -3,15 +3,14 @@ description: "Detects XInclude Injection vulnerabilities by attempting to includ
 
 transform:
   query:
-    replace_all_values_one_by_one:
-      - '<asd xmlns:xi="http://www.w3.org/2001/XInclude"><xi:include parse="text" href="file:///etc/passwd"/></asd>'
-      - '<asd xmlns:xi="http://www.w3.org/2001/XInclude"><xi:include parse="text" href="file:///c:/windows/win.ini"/></asd>'
+    transformations:
+      - replace_all_values_one_by_one:
+          - '<asd xmlns:xi="http://www.w3.org/2001/XInclude"><xi:include parse="text" href="file:///etc/passwd"/></asd>'
+          - '<asd xmlns:xi="http://www.w3.org/2001/XInclude"><xi:include parse="text" href="file:///c:/windows/win.ini"/></asd>'
 
 match_on:
   body:
-    regex: 
-      - "root:.*:0:0:"
-      - "for 16-bit app support"
+    regex: "root:.*:0:0:|for 16-bit app support"
 
 report:
   title: "XInclude Injection"
@@ -29,6 +28,7 @@ report:
     {{res}}
 
   cwe: "CWE-611"
+  severity: high
   cvssScore: "8.2"
   mitigation: |
     1. Disable XInclude processing in your XML parser configuration.

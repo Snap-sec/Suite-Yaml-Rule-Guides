@@ -34,3 +34,6 @@ report:
     Example:
     Content-Security-Policy: default-src 'self'; script-src 'self'
   tags: "security-headers,csp,xss,hardening"
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response headers for the absence of Content-Security-Policy.

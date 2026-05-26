@@ -4,25 +4,28 @@ description: "Detects Server-Side Request Forgery by monitoring internal access 
 transform:
   query:
     transformations:
-      - replace_all_values_one_by_one: "http://169.254.169.254/latest/meta-data/iam/security-credentials/"
-      - replace_all_values_one_by_one: "http://169.254.169.254/latest/meta-data/"
-      - replace_all_values_one_by_one: "http://127.0.0.1/"
-      - replace_all_values_one_by_one: "http://127.0.0.1:5984/_all_dbs"
-      - replace_all_values_one_by_one: "http://localhost/"
-      - replace_all_values_one_by_one: "http://169.254.169.254/latest/meta-data/iam/security-credentials/admin"
-      - replace_all_values_one_by_one: "http://[::1]/"
+      - replace_all_values_one_by_one:
+          - "http://169.254.169.254/latest/meta-data/iam/security-credentials/"
+          - "http://169.254.169.254/latest/meta-data/"
+          - "http://127.0.0.1/"
+          - "http://127.0.0.1:5984/_all_dbs"
+          - "http://localhost/"
+          - "http://169.254.169.254/latest/meta-data/iam/security-credentials/admin"
+          - "http://[::1]/"
   body:
     transformations:
-      - replace_all_values_one_by_one: "http://169.254.169.254/latest/meta-data/iam/security-credentials/"
-      - replace_all_values_one_by_one: "http://127.0.0.1:5984/_all_dbs"
-      - replace_all_values_one_by_one: "http://localhost:5984/_all_dbs"
-      - replace_all_values_one_by_one: "http://127.0.0.1/"
-      - replace_all_values_one_by_one: "http://169.254.169.254/2009-04-04/meta-data/"
+      - replace_all_values_one_by_one:
+          - "http://169.254.169.254/latest/meta-data/iam/security-credentials/"
+          - "http://127.0.0.1:5984/_all_dbs"
+          - "http://localhost:5984/_all_dbs"
+          - "http://127.0.0.1/"
+          - "http://169.254.169.254/2009-04-04/meta-data/"
   header:
     transformations:
-      - replace_all_values_one_by_one: "http://169.254.169.254/latest/meta-data/iam/security-credentials/"
-      - replace_all_values_one_by_one: "http://127.0.0.1/"
-      - replace_all_values_one_by_one: "http://localhost/"
+      - replace_all_values_one_by_one:
+          - "http://169.254.169.254/latest/meta-data/iam/security-credentials/"
+          - "http://127.0.0.1/"
+          - "http://localhost/"
 
 match_on:
   status: [200, 201, 202, 301, 302, 400, 401, 403, 404, 500]

@@ -3,7 +3,7 @@ single_match: true
 description: "Detects excessive trust of arbitrary subdomains in CORS configuration."
 transform:
   header:
-    replace:
+    modify:
       Origin: "https://evil.snapsec.co"
 match_on:
   status: 200

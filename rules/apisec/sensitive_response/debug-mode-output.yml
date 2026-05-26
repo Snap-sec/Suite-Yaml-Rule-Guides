@@ -63,7 +63,7 @@ report:
     Response:
     {{res}}
 
-  cwe: "CWE-94"
+  cwe: "CWE-215"
   severity: high
   cvssScore: "7.5"
   mitigation: |

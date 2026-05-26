@@ -3,7 +3,7 @@ single_match: true
 description: "Detects weak regex validation in Origin header allowing unauthorized domains."
 transform:
   header:
-    replace:
+    modify:
       Origin: "https://snapsec.evil.com" 
 match_on:
   status: 200

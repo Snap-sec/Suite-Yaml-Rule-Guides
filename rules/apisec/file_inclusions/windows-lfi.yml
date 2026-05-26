@@ -44,10 +44,7 @@ transform:
 
 match_on:
   body:
-    regex: 
-      - "\\[fonts\\]"
-      - "\\[extensions\\]"
-      - "for 16-bit app support"
+    regex: "\\[fonts\\]|\\[extensions\\]|for 16-bit app support"
 
 report:
   title: "Windows Local File Inclusion"

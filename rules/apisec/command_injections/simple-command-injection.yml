@@ -4,47 +4,37 @@ description: "Detects OS command injection vulnerabilities by attempting to exec
 transform:
   query:
     transformations:
-      - replace_all_values_one_by_one: "; uname -a"
-      - replace_all_values_one_by_one: "&& uname -a"
-      - replace_all_values_one_by_one: "| uname -a"
-      - replace_all_values_one_by_one: "`uname -a`"
-      - replace_all_values_one_by_one: "$(uname -a)"
-      - replace_all_values_one_by_one: "|| uname -a"
-      - replace_all_values_one_by_one: "; /bin/uname -a"
-      - replace_all_values_one_by_one: "&& /bin/uname -a"
+      - replace_all_values_one_by_one:
+          - "; uname -a"
+          - "&& uname -a"
+          - "| uname -a"
+          - "`uname -a`"
+          - "$(uname -a)"
+          - "|| uname -a"
+          - "; /bin/uname -a"
+          - "&& /bin/uname -a"
 
   body:
     transformations:
-      - replace_all_values_one_by_one: "; uname -a"
-      - replace_all_values_one_by_one: "&& uname -a"
-      - replace_all_values_one_by_one: "| uname -a"
-      - replace_all_values_one_by_one: "`uname -a`"
-      - replace_all_values_one_by_one: "$(uname -a)"
-      - replace_all_values_one_by_one: "|| uname -a"
-      - replace_all_values_one_by_one: "; /bin/uname -a"
+      - replace_all_values_one_by_one:
+          - "; uname -a"
+          - "&& uname -a"
+          - "| uname -a"
+          - "`uname -a`"
+          - "$(uname -a)"
+          - "|| uname -a"
+          - "; /bin/uname -a"
 
   header:
     transformations:
-      - replace_all_values_one_by_one: "; uname -a"
-      - replace_all_values_one_by_one: "&& uname -a"
-      - replace_all_values_one_by_one: "`uname -a`"
-      - replace_all_values_one_by_one: "$(uname -a)"
+      - replace_all_values_one_by_one:
+          - "; uname -a"
+          - "&& uname -a"
+          - "`uname -a`"
+          - "$(uname -a)"
 
 match_on:
   body:
-    contains:
-      - "Linux"
-      - "Darwin"
-      - "FreeBSD"
-      - "SunOS"
-      - "uname -a"
-      - "kernel"
-      - "GNU/Linux"
-      - "MINGW"
-      - "CYGWIN"
-      - "Windows"
-      - "Microsoft"
-  header:
     contains:
       - "Linux"
       - "Darwin"

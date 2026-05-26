@@ -4,19 +4,21 @@ description: "Detects Open Redirect vulnerabilities by injecting external absolu
 transform:
   query:
     transformations:
-      - replace_all_values_one_by_one: "https://example.com/"
-      - replace_all_values_one_by_one: "http://example.com/"
-      - replace_all_values_one_by_one: "//example.com/"
-      - replace_all_values_one_by_one: "https://example.com/evil"
-      - replace_all_values_one_by_one: "//example.com/evil"
-      - replace_all_values_one_by_one: "https:%2F%2Fexample.com"
-      - replace_all_values_one_by_one: "https://%65xample.com/"
-      - replace_all_values_one_by_one: "///example.com"
+      - replace_all_values_one_by_one:
+          - "https://example.com/"
+          - "http://example.com/"
+          - "//example.com/"
+          - "https://example.com/evil"
+          - "//example.com/evil"
+          - "https:%2F%2Fexample.com"
+          - "https://%65xample.com/"
+          - "///example.com"
 
 match_on:
   status: [301, 302, 303, 307, 308, 200]
   header:
-    Location: "example.com"
+    Location:
+      contains: "example.com"
 
 report:
   title: "Open Redirect — external absolute URL accepted"

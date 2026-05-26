@@ -39,3 +39,6 @@ report:
 
     Ensure this header is only served over HTTPS.
   tags: "security-headers,hsts,transport-security,hardening"
+  stepsToReproduce: |
+    1. Send a request to {{req.url}} over HTTPS.
+    2. Inspect the response headers for the absence of Strict-Transport-Security.

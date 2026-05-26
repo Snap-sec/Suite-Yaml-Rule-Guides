@@ -7,7 +7,7 @@ transform:
       - replace_all_values_one_by_one: "<script>alert(0)</script>"
   body:
     transformations:
-      - replace_all_one_by_one: "<script>alert(0)</script>"
+      - replace_all_values_one_by_one: "<script>alert(0)</script>"
   header:
     transformations:
       - replace_all_values_one_by_one: "<script>alert(0)</script>"
