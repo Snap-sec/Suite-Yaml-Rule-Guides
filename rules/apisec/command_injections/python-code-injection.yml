@@ -141,27 +141,54 @@ transform:
 match_on:
   body:
     contains:
-      # Linux: /etc/passwd indicators
-      - "root:x:0:0:"
-      - "root:\\*:0:0:"
-      - "daemon:x:"
-      - "nobody:x:"
-      # Linux: id command output
-      - "uid="
-      # Linux: uname output
-      - "GNU/Linux"
-      # Windows: win.ini indicators
-      - "\\[fonts\\]"
-      - "; for 16-bit app support"
-      - "\\[extensions\\]"
-      # Windows: hosts file indicator
-      - "# Copyright \\(c\\) 1993-"
-      # Windows: systeminfo output
-      - "OS Name:"
-      - "Microsoft Windows"
-      # Windows: ipconfig output
-      - "Windows IP Configuration"
-      - "IPv4 Address"
+      # ── Linux: /etc/passwd output ───────────────────────────────────────────
+      # These substrings are structural fields from /etc/passwd — the colon-
+      # delimited format makes them extremely specific to actual file content.
+      - "root:x:0:0:"                  # Root user passwd entry (standard shadow)
+      - "root:*:0:0:"                  # Root user passwd entry (BSD/locked variant)
+      - "daemon:x:1:1:"                # Daemon user with UID:GID — more specific than "daemon:x:"
+      - "nobody:x:65534:"              # Linux nobody UID is always 65534
+      - "nobody:*:65534:"              # BSD nobody variant
+      - "www-data:x:33:"              # Debian/Ubuntu web server user entry
+      - ":/bin/bash"                   # Shell field in passwd — only in actual file dumps
+      - ":/bin/sh"                     # Minimal shell field — passwd file artifact
+      - ":/sbin/nologin"               # No-login shell field — passwd file artifact
+      - ":/usr/sbin/nologin"           # Ubuntu/Debian nologin path variant
+
+      # ── Linux: id(1) command output ─────────────────────────────────────────
+      # The `id` command always outputs: uid=N(name) gid=N(name) groups=N(name),...
+      # Matching the full uid=N(name) gid=N(name) pattern eliminates the
+      # "uid=" false positive (which fires on ?uid=123, JSON uid fields, etc.)
+      - "uid=0(root) gid=0(root)"      # Root id output — most definitive indicator
+      - "uid=33(www-data) gid=33"      # Apache/nginx user on Debian/Ubuntu
+      - "uid=48(apache) gid=48"        # Apache user on RHEL/CentOS
+      - "uid=1000("                    # Standard first non-root user (uid=1000(username))
+      - ") gid="                       # The ") gid=" transition only appears in id(1) output
+
+      # ── Linux: uname -a structured output ───────────────────────────────────
+      - "x86_64 GNU/Linux"             # Arch + OS suffix — never in normal page content
+      - "aarch64 GNU/Linux"            # ARM64 variant
+      - " SMP "                        # SMP kernel flag — unique to kernel banner
+      - "Linux version "               # /proc/version prefix
+
+      # ── Windows: win.ini file content ───────────────────────────────────────
+      # win.ini always starts with these two lines — matching both together via
+      # any single match avoids false positives from generic words.
+      - "; for 16-bit app support"     # Verbatim win.ini comment — highly specific
+      - "[fonts]"                      # win.ini [fonts] section header
+      - "[extensions]"                 # win.ini [extensions] section header
+
+      # ── Windows: hosts file content ─────────────────────────────────────────
+      - "# Copyright (c) 1993-"        # Verbatim MS hosts file copyright comment
+
+      # ── Windows: systeminfo output ──────────────────────────────────────────
+      - "OS Name:                   Microsoft Windows"   # systeminfo verbatim line with padding
+      - "OS Version:                "  # systeminfo OS Version field with padding — structural
+      - "System Type:               "  # systeminfo System Type field with padding
+
+      # ── Windows: ipconfig output ─────────────────────────────────────────────
+      - "Windows IP Configuration"     # Exact ipconfig header line
+      - "IPv4 Address. . . . . . . . ."  # ipconfig dot-padding format — unique to cmd output
 
 report:
   title: "Python Code Injection"

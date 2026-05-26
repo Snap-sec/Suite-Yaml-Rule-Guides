@@ -7,7 +7,7 @@ transform:
       - replace_all_values_one_by_one:
           # ── Unclosed quotes / broken syntax (universal) ──
           - "'"
-          - "'\""
+          - "'\"'"
           - "' AND '"
           - "\"--"
           - "';"
@@ -45,7 +45,7 @@ transform:
       - replace_all_values_one_by_one:
           # ── Unclosed quotes / broken syntax (universal) ──
           - "'"
-          - "'\""
+          - "'\"'"
           - "' AND '"
           - "\"--"
           - "';"
@@ -83,7 +83,7 @@ transform:
       - replace_all_values_one_by_one:
           # ── Unclosed quotes / broken syntax (universal) ──
           - "'"
-          - "'\""
+          - "'\"'"
           - "' AND '"
           - "\"--"
           - "';"
@@ -98,68 +98,143 @@ transform:
 match_on:
   body:
     contains:
-      # ---- MySQL ----
-      - "you have an error in your sql syntax"
-      - "sql syntax error"
-      - "warning: mysql_"
-      - "mysql_fetch_array\\(\\)"
-      - "mysql_num_rows\\(\\)"
-      - "mysql_fetch_assoc\\(\\)"
-      - "mysql_connect\\(\\)"
-      - "EXTRACTVALUE\\("
-      - "UPDATEXML\\("
-      - "Duplicate entry '.*' for key"
-      # ---- PostgreSQL ----
-      - "pg_query\\(\\)"
-      - "pg_exec\\(\\)"
-      - "unterminated quoted string"
-      - "invalid input syntax for"
-      - "ERROR:  syntax error at or near"
-      - "current transaction is aborted"
-      # ---- MSSQL ----
-      - "unclosed quotation mark after the character string"
-      - "conversion failed when converting"
-      - "mssql_query\\(\\)"
-      - "Microsoft OLE DB Provider"
-      - "Microsoft SQL Native Client"
-      - "Incorrect syntax near"
-      - "ODBC SQL Server Driver"
-      - "\\[SQL Server\\]"
-      # ---- Oracle ----
-      - "ORA-[0-9]{4,5}"
-      - "Oracle error"
-      - "quoted string not properly terminated"
-      - "oracle\\.jdbc\\.driver"
-      - "SQL command not properly ended"
-      # ---- SQLite ----
-      - "SQLite3::query\\(\\)"
-      - "sqlite3\\.OperationalError"
-      - "SQLITE_ERROR"
-      - "unrecognized token"
-      - "near \"\\.\":  syntax error"
-      # ---- Generic / Framework ----
-      - "SQLSTATE\\["
-      - "java\\.sql\\.SQLException"
-      - "org\\.hibernate\\.exception"
-      - "Unknown column '.*' in"
-      - "unterminated string literal"
-      - "PDOException"
-      - "System\\.Data\\.SqlClient"
-      - "Npgsql\\."
-      - "Syntax error in SQL statement"
-      - "SQL query syntax error"
-      - "Unexpected end of command"
+      # ── MySQL ────────────────────────────────────────────────────────────────
+      # These strings come verbatim from MySQL/MariaDB engine error output and
+      # are extremely unlikely to appear in normal application responses.
+
+      - "You have an error in your SQL syntax; check the manual"
+        # Full canonical MySQL syntax error prefix — not echoed from user input
+      - "supplied argument is not a valid MySQL result"
+        # PHP mysql_* legacy error — highly specific
+      - "mysql_fetch_array() expects parameter 1 to be resource"
+        # Exact PHP mysql_fetch_array() error text
+      - "mysql_num_rows() expects parameter 1 to be resource"
+        # Exact PHP mysql_num_rows() error text
+      - "mysql_fetch_assoc() expects parameter 1 to be resource"
+        # Exact PHP mysql_fetch_assoc() error text
+      - "Duplicate entry '"
+        # MySQL FLOOR(RAND()) GROUP BY duplicate key error — triggers on our payload
+      - "XPATH syntax error: '~"
+        # EXTRACTVALUE() tilde delimiter in XML path error output — our payload marker
+      - "XPATH syntax error: '~"
+        # Alternative: space before tilde (MariaDB variants)
+      - "Got error 'repeated'"
+        # MySQL GTID_SUBSET error format
+      - "Double value out of range in 'exp(~"
+        # MySQL EXP(~(SELECT...)) out-of-range error — exact payload trigger
+
+      # ── PostgreSQL ───────────────────────────────────────────────────────────
+      - "ERROR:  invalid input syntax for type integer:"
+        # Exact Postgres cast-failure message — our CAST(version() AS int) payload
+      - "ERROR:  unterminated quoted string at or near"
+        # Postgres tokenizer error — specific to unclosed quote injection
+      - "ERROR:  syntax error at or near \""
+        # Postgres parser error with quote context
+      - "ERROR:  operator does not exist: integer ="
+        # Postgres type-mismatch error
+      - "ERROR:  current transaction is aborted, commands ignored until end of transaction block"
+        # Postgres transaction abort state — only triggered after a real SQL error
+      - "invalid byte sequence for encoding"
+        # Postgres encoding error triggered by binary payload injection
+      - "column reference"
+        # Postgres "column reference X is ambiguous" — injection artifact
+
+      # ── MSSQL ────────────────────────────────────────────────────────────────
+      - "Unclosed quotation mark after the character string"
+        # MSSQL verbatim quote error — single-quote injection trigger
+      - "Conversion failed when converting the"
+        # MSSQL CONVERT(int,...) failure — exact our payload output
+      - "Error converting data type"
+        # MSSQL CAST/CONVERT alternative error phrasing
+      - "Microsoft OLE DB Provider for SQL Server"
+        # MSSQL OLE DB error provider banner
+      - "Microsoft SQL Server Native Client"
+        # MSSQL native client error banner
+      - "SQLServer JDBC Driver"
+        # MSSQL JDBC driver error banner (Java stack)
+      - "[Microsoft][ODBC SQL Server Driver]"
+        # MSSQL ODBC driver error — bracket format unique to MSSQL
+      - "[SQL Server]"
+        # MSSQL error suffix tag in ODBC errors
+      - "Incorrect syntax near '"
+        # MSSQL syntax error with context quote — payload trigger artifact
+      - "Statement(s) could not be prepared"
+        # MSSQL prepared statement failure on syntax break
+
+      # ── Oracle ───────────────────────────────────────────────────────────────
+      - "ORA-00907:"
+        # Missing right parenthesis — common Oracle syntax injection error
+      - "ORA-00933:"
+        # SQL command not properly ended
+      - "ORA-00936:"
+        # Missing expression — unclosed quote artifact
+      - "ORA-01756:"
+        # Quoted string not properly terminated
+      - "ORA-01789:"
+        # Query block has incorrect number of result columns
+      - "ORA-06512:"
+        # PL/SQL stack trace line — present in UTL_INADDR / CTXSYS error output
+      - "ORA-29257:"
+        # UTL_INADDR host unknown — exact trigger for our UTL_INADDR payload
+      - "ORA-20001:"
+        # CTXSYS.DRITHSX application-defined error code
+      - "oracle.jdbc.driver.OracleDriver"
+        # Oracle JDBC driver class name in Java stack trace
+      - "oracle.jdbc.OracleConnection"
+        # Oracle JDBC connection error in Java stack trace
+
+      # ── SQLite ───────────────────────────────────────────────────────────────
+      - "SQLITE_ERROR SQL error or missing database"
+        # Exact SQLite3 C API error string
+      - "SQLite3::query(): Unable to execute a query"
+        # PHP SQLite3 class verbatim error
+      - "sqlite3.OperationalError:"
+        # Python sqlite3 exception class prefix — colon makes it specific
+      - "unrecognized token: \"'"
+        # SQLite tokenizer error with the injected quote character
+      - "near \".\": syntax error"
+        # SQLite near-token syntax error — triggered by our period-injection payloads
+
+      # ── Generic DB framework errors ──────────────────────────────────────────
+      - "SQLSTATE[42000]"
+        # SQLSTATE 42000 = syntax error or access violation — DB-agnostic but specific
+      - "SQLSTATE[HY000]"
+        # SQLSTATE HY000 = general error — only in real DB error responses
+      - "SQLSTATE[22007]"
+        # SQLSTATE 22007 = invalid datetime format — type-cast payload trigger
+      - "SQLSTATE[22P02]"
+        # PostgreSQL SQLSTATE for invalid text representation (CAST failure)
+      - "java.sql.SQLException:"
+        # Java JDBC exception class with colon — stack trace artifact
+      - "org.hibernate.exception.SQLGrammarException"
+        # Hibernate ORM grammar exception — SQL syntax error in Java apps
+      - "org.hibernate.exception.DataException"
+        # Hibernate data conversion exception
+      - "PDOException: SQLSTATE"
+        # PHP PDO exception with SQLSTATE — combined for specificity
+      - "System.Data.SqlClient.SqlException"
+        # .NET SqlClient exception class — highly specific to MSSQL/.NET stack
+      - "Npgsql.NpgsqlException"
+        # .NET PostgreSQL driver exception class
+      - "ActiveRecord::StatementInvalid"
+        # Ruby on Rails DB error — SQL statement failed
+      - "PG::SyntaxError:"
+        # Ruby pg gem syntax error class — colon makes it precise
+      - "Caused by: java.sql.SQLSyntaxErrorException"
+        # Java SQL syntax exception in stack trace — injection evidence
 
 report:
   title: "Error-based SQL Injection indicators found"
   description: >-
     Injecting SQL metacharacters and error-extracting payloads into individual
-    parameters caused the server to return database error signatures. Payloads
-    target MySQL, PostgreSQL, MSSQL, Oracle, and SQLite to force type-cast
-    errors, syntax violations, and function-based extraction.
+    parameters caused the server to return high-fidelity database error
+    signatures. Patterns matched are verbatim engine error strings, JDBC/ORM
+    exception class names, and SQLSTATE codes — not generic phrases that appear
+    in normal page content.
     Original: {{original.method}} {{original.url}}
-    Tested: {{req.method}} {{req.url}}
-    Status: {{res.status}} | Content-Type: {{res.headers.Content-Type}}
+    Tested:   {{req.method}} {{req.url}}
+    Matched:  {{match.criteria}}
+    Status:   {{res.status}} | Content-Type: {{res.headers.Content-Type}}
   severity: critical
   cwe: "CWE-89"
   cvssScore: "9.0"
@@ -170,7 +245,7 @@ report:
   stepsToReproduce: |
     1) Send the baseline request: {{original.method}} {{original.url}}
     2) Re-send while replacing a single parameter value with a syntax-breaking or error-extracting payload.
-    3) Observe response containing database error text (e.g., SQLSTATE[…], ORA-, syntax error, EXTRACTVALUE, CONVERT).
+    3) Observe response containing a verbatim database error (e.g., "You have an error in your SQL syntax", "ORA-00907", "Conversion failed when converting", "SQLSTATE[42000]").
     4) Repeat for other parameters to confirm the scope.
   tags: "sqli,error-based,owasp-a03,mysql,postgres,mssql,oracle,sqlite"
   impact: >-
