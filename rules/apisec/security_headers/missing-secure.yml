@@ -7,7 +7,7 @@ match_on:
   status: 200
   header:
     Set-Cookie:
-      regex: "^(?!.*(?i)secure).*$"
+      regex: "^(?!.*secure).*$"
 report:
   title: "Insecure Cookie: Missing Secure Flag"
   description: |

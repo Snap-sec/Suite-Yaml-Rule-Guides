@@ -15,7 +15,7 @@ transform:
 match_on:
   header:
     set-cookie:
-      regex: "(?i)cookie_injection"
+      regex: "cookie_injection"
 
 report:
   title: "Parameter Based Cookie Injection"

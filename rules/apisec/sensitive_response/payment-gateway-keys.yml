@@ -18,38 +18,38 @@ match_on:
       # Stripe Webhook Secret
       - "whsec_[A-Za-z0-9]{32,}"
       # In JSON fields
-      - "\"stripe_secret\"\\s*:\\s*\"sk_(live|test)_[A-Za-z0-9]{24,}\""
-      - "\"stripe_key\"\\s*:\\s*\"sk_(live|test)_[A-Za-z0-9]{24,}\""
+      - '"stripe_secret"\s*:\s*"sk_(live|test)_[A-Za-z0-9]{24,}"'
+      - '"stripe_key"\s*:\s*"sk_(live|test)_[A-Za-z0-9]{24,}"'
 
       # ---- Square ----
       # Square Production Access Token
       - "EAAAl[A-Za-z0-9]{60,}"
       # Square Test Token
       - "EAAAEAaa[A-Za-z0-9]{50,}"
-      - "sandbox-sq0atb-[A-Za-z0-9\\-_]{22}"
-      - "\"square_access_token\"\\s*:\\s*\"EAAA[A-Za-z0-9]{58,}\""
+      - 'sandbox-sq0atb-[A-Za-z0-9\-_]{22}'
+      - '"square_access_token"\s*:\s*"EAAA[A-Za-z0-9]{58,}"'
 
       # ---- Braintree ----
       # Braintree Auth Fingerprint
-      - "access_token\\$production\\$[A-Za-z0-9]{16}\\$[A-Za-z0-9]{32}"
-      - "access_token\\$sandbox\\$[A-Za-z0-9]{16}\\$[A-Za-z0-9]{32}"
+      - 'access_token\$production\$[A-Za-z0-9]{16}\$[A-Za-z0-9]{32}'
+      - 'access_token\$sandbox\$[A-Za-z0-9]{16}\$[A-Za-z0-9]{32}'
       # Braintree Private Key in JSON
-      - "\"braintree_private_key\"\\s*:\\s*\"[A-Za-z0-9]{32}\""
+      - '"braintree_private_key"\s*:\s*"[A-Za-z0-9]{32}"'
 
       # ---- PayPal ----
-      - "\"paypal_secret\"\\s*:\\s*\"[A-Za-z0-9\\-_]{40,}\""
-      - "\"paypal_client_secret\"\\s*:\\s*\"[A-Za-z0-9\\-_]{40,}\""
+      - '"paypal_secret"\s*:\s*"[A-Za-z0-9\-_]{40,}"'
+      - '"paypal_client_secret"\s*:\s*"[A-Za-z0-9\-_]{40,}"'
       # PayPal NVP/SDK credentials
       - "PWD=[A-Za-z0-9!@#$%]{8,}"
 
       # ---- Adyen ----
-      - "\"ws_[a-zA-Z0-9]{8,}@Company\\.[A-Za-z0-9]+"
-      - "\"adyen_api_key\"\\s*:\\s*\"[A-Za-z0-9]{64,}\""
+      - '"ws_[a-zA-Z0-9]{8,}@Company\.[A-Za-z0-9]+'
+      - '"adyen_api_key"\s*:\s*"[A-Za-z0-9]{64,}"'
 
       # ---- Razorpay ----
       - "rzp_live_[A-Za-z0-9]{14}"
       - "rzp_test_[A-Za-z0-9]{14}"
-      - "\"razorpay_key_secret\"\\s*:\\s*\"[A-Za-z0-9]{20}\""
+      - '"razorpay_key_secret"\s*:\s*"[A-Za-z0-9]{20}"'
 
       # ---- Shopify ----
       - "shpss_[A-Za-z0-9]{32}"

@@ -9,24 +9,24 @@ match_on:
   body:
     contains:
       # US SSN: XXX-XX-XXXX (with dashes)
-      - "\\b(?!000|666|9[0-9]{2})[0-9]{3}-(?!00)[0-9]{2}-(?!0000)[0-9]{4}\\b"
+      - '\b(?!000|666|9[0-9]{2})[0-9]{3}-(?!00)[0-9]{2}-(?!0000)[0-9]{4}\b'
       # US SSN: XXXXXXXXX (no dashes, must exclude 000, 666, 9xx)
-      - "\\b(?!000|666|9[0-9]{2})(?!0{3})[0-9]{3}(?!0{2})[0-9]{2}(?!0{4})[0-9]{4}\\b"
+      - '\b(?!000|666|9[0-9]{2})(?!0{3})[0-9]{3}(?!0{2})[0-9]{2}(?!0{4})[0-9]{4}\b'
       # JSON field patterns for SSN
-      - "\"ssn\"\\s*:\\s*\"[0-9\\-]{9,11}\""
-      - "\"social_security\"\\s*:\\s*\"[0-9\\-]{9,11}\""
-      - "\"social_security_number\"\\s*:\\s*\"[0-9\\-]{9,11}\""
-      - "\"sin\"\\s*:\\s*\"[0-9 \\-]{9,11}\""
+      - '"ssn"\s*:\s*"[0-9\-]{9,11}"'
+      - '"social_security"\s*:\s*"[0-9\-]{9,11}"'
+      - '"social_security_number"\s*:\s*"[0-9\-]{9,11}"'
+      - '"sin"\s*:\s*"[0-9 \-]{9,11}"'
       # UK National Insurance Number: AB123456C
-      - "\\b[A-CEGHJ-PR-TW-Z]{1}[A-CEGHJ-NPR-TW-Z]{1}[0-9]{6}[A-D]{1}\\b"
-      - "\"nino\"\\s*:\\s*\"[A-Z]{2}[0-9]{6}[A-D]\""
-      - "\"national_insurance\"\\s*:\\s*\"[A-Z]{2}[0-9]{6}[A-D]\""
+      - '\b[A-CEGHJ-PR-TW-Z]{1}[A-CEGHJ-NPR-TW-Z]{1}[0-9]{6}[A-D]{1}\b'
+      - '"nino"\s*:\s*"[A-Z]{2}[0-9]{6}[A-D]"'
+      - '"national_insurance"\s*:\s*"[A-Z]{2}[0-9]{6}[A-D]"'
       # Canadian SIN: XXX-XXX-XXX
-      - "\\b[0-9]{3}-[0-9]{3}-[0-9]{3}\\b"
+      - '\b[0-9]{3}-[0-9]{3}-[0-9]{3}\b'
       # Indian Aadhaar: 12 digits (groups of 4)
-      - "\\b[2-9][0-9]{3}[\\s]?[0-9]{4}[\\s]?[0-9]{4}\\b"
-      - "\"aadhaar\"\\s*:\\s*\"[0-9 ]{12,14}\""
-      - "\"aadhar\"\\s*:\\s*\"[0-9 ]{12,14}\""
+      - '\b[2-9][0-9]{3}[\s]?[0-9]{4}[\s]?[0-9]{4}\b'
+      - '"aadhaar"\s*:\s*"[0-9 ]{12,14}"'
+      - '"aadhar"\s*:\s*"[0-9 ]{12,14}"'
 
 report:
   title: "Social Security Number (SSN) / National Identity Number Exposed in Response"

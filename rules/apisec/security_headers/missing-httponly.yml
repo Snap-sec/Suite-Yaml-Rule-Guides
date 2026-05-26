@@ -7,7 +7,7 @@ match_on:
   status: 200
   header:
     Set-Cookie:
-      regex: "^(?!.*(?i)httponly).*$"
+      regex: "^(?!.*httponly).*$"
 report:
   title: "Insecure Cookie: Missing HttpOnly Flag"
   description: |

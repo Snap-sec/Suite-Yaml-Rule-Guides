@@ -22,33 +22,33 @@ match_on:
 
       # ---- GitLab ----
       # Personal Access Token
-      - "glpat-[A-Za-z0-9\\-_]{20}"
+      - 'glpat-[A-Za-z0-9\-_]{20}'
       # Pipeline Trigger Token
       - "glptt-[A-Za-z0-9]{40}"
       # Runner Registration Token
-      - "GR1348941[A-Za-z0-9\\-_]{20}"
+      - 'GR1348941[A-Za-z0-9\-_]{20}'
 
       # ---- Bitbucket ----
-      - "\"bitbucket_token\"\\s*:\\s*\"[A-Za-z0-9]{20,}\""
+      - '"bitbucket_token"\s*:\s*"[A-Za-z0-9]{20,}"'
       - "ATBB[A-Za-z0-9]{32}"
 
       # ---- npm (Node Package Manager) ----
       - "npm_[A-Za-z0-9]{36}"
 
       # ---- Docker Hub ----
-      - "dckr_pat_[A-Za-z0-9\\-_]{27}"
+      - 'dckr_pat_[A-Za-z0-9\-_]{27}'
 
       # ---- PyPI ----
-      - "pypi-[A-Za-z0-9\\-_]{32,}"
+      - 'pypi-[A-Za-z0-9\-_]{32,}'
 
       # ---- Terraform Cloud ----
-      - "[A-Za-z0-9]{14}\\.atlasv1\\.[A-Za-z0-9\\-_]{60}"
+      - '[A-Za-z0-9]{14}\.atlasv1\.[A-Za-z0-9\-_]{60}'
 
       # ---- Generic CI/CD tokens in JSON ----
-      - "\"github_token\"\\s*:\\s*\"[A-Za-z0-9\\-_]{36,}\""
-      - "\"gitlab_token\"\\s*:\\s*\"[A-Za-z0-9\\-_]{20,}\""
-      - "\"npm_token\"\\s*:\\s*\"[A-Za-z0-9\\-_]{36,}\""
-      - "\"ci_token\"\\s*:\\s*\"[A-Za-z0-9\\-_]{20,}\""
+      - '"github_token"\s*:\s*"[A-Za-z0-9\-_]{36,}"'
+      - '"gitlab_token"\s*:\s*"[A-Za-z0-9\-_]{20,}"'
+      - '"npm_token"\s*:\s*"[A-Za-z0-9\-_]{36,}"'
+      - '"ci_token"\s*:\s*"[A-Za-z0-9\-_]{20,}"'
 
 report:
   title: "Developer Platform Token (GitHub / GitLab / npm) Exposed in Response"

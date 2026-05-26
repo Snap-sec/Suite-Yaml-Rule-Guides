@@ -9,9 +9,9 @@ match_on:
   body:
     contains:
       # Framework debug mode indicators
-      - "\"debug\"\\s*:\\s*true"
-      - "\"DEBUG\"\\s*:\\s*true"
-      - "\"debug_mode\"\\s*:\\s*true"
+      - '"debug"\s*:\s*true'
+      - '"DEBUG"\s*:\s*true'
+      - '"debug_mode"\s*:\s*true'
       # Django debug page
       - "Django Version:"
       - "Exception Value:"
@@ -37,9 +37,9 @@ match_on:
       - "Rails.env.development"
       - "config.consider_all_requests_local"
       # Generic
-      - "\"environment\"\\s*:\\s*\"dev"
-      - "\"environment\"\\s*:\\s*\"local"
-      - "\"ENVIRONMENT\"\\s*:\\s*\"dev"
+      - '"environment"\s*:\s*"dev'
+      - '"environment"\s*:\s*"local'
+      - '"ENVIRONMENT"\s*:\s*"dev'
       - "XDEBUG_SESSION"
       - "\"xdebug\""
       # Verbose SQL queries in response
@@ -47,8 +47,8 @@ match_on:
       - "INSERT INTO .* VALUES"
       - "UPDATE .* SET .* WHERE"
       # Internal config exposure
-      - "\"config\"\\s*:\\s*\\{.*\"password\""
-      - "\"settings\"\\s*:\\s*\\{.*\"secret\""
+      - '"config"\s*:\s*\{.*"password"'
+      - '"settings"\s*:\s*\{.*"secret"'
 
 report:
   title: "Debug Mode / Development Output Exposed in Response"
