@@ -18,9 +18,15 @@ match_on:
       regex: 'text\/html|application\/html|application\/x?html'
   body:
     contains:
-      - "<script>alert\\(0\\)<\\/script>"
-      - "<script>\\s*alert\\s*\\(\\s*0\\s*\\)\\s*<\\/script>"
-      - "onerror\\s*=\\s*[\"']?alert\\s*\\("
+      - value: '<script>alert\(0\)<\/script>'
+        options:
+          regex: true
+      - value: '<script>\s*alert\s*\(\s*0\s*\)\s*<\/script>'
+        options:
+          regex: true
+      - value: 'onerror\s*=\s*[\"'']?alert\s*\('
+        options:
+          regex: true
 
 report:
   title: "Reflected XSS detected"

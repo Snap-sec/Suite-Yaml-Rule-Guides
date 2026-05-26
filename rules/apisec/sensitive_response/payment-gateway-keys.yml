@@ -8,52 +8,81 @@ match_on:
     notIn: [404, 301, 302]
   body:
     contains:
-      # ---- Stripe ----
-      # Live Secret Key
-      - "sk_live_[A-Za-z0-9]{24,}"
-      # Test Secret Key
-      - "sk_test_[A-Za-z0-9]{24,}"
-      # Live Restricted Key
-      - "rk_live_[A-Za-z0-9]{24,}"
-      # Stripe Webhook Secret
-      - "whsec_[A-Za-z0-9]{32,}"
-      # In JSON fields
-      - '"stripe_secret"\s*:\s*"sk_(live|test)_[A-Za-z0-9]{24,}"'
-      - '"stripe_key"\s*:\s*"sk_(live|test)_[A-Za-z0-9]{24,}"'
+      - value: 'sk_live_[A-Za-z0-9]{24,}'
+        options:
+          regex: true
+      - value: 'sk_test_[A-Za-z0-9]{24,}'
+        options:
+          regex: true
+      - value: 'rk_live_[A-Za-z0-9]{24,}'
+        options:
+          regex: true
+      - value: 'whsec_[A-Za-z0-9]{32,}'
+        options:
+          regex: true
+      - value: '"stripe_secret"\s*:\s*"sk_(live|test)_[A-Za-z0-9]{24,}"'
+        options:
+          regex: true
+      - value: '"stripe_key"\s*:\s*"sk_(live|test)_[A-Za-z0-9]{24,}"'
+        options:
+          regex: true
 
-      # ---- Square ----
-      # Square Production Access Token
-      - "EAAAl[A-Za-z0-9]{60,}"
-      # Square Test Token
-      - "EAAAEAaa[A-Za-z0-9]{50,}"
-      - 'sandbox-sq0atb-[A-Za-z0-9\-_]{22}'
-      - '"square_access_token"\s*:\s*"EAAA[A-Za-z0-9]{58,}"'
+      - value: 'EAAAl[A-Za-z0-9]{60,}'
+        options:
+          regex: true
+      - value: 'EAAAEAaa[A-Za-z0-9]{50,}'
+        options:
+          regex: true
+      - value: 'sandbox-sq0atb-[A-Za-z0-9\-_]{22}'
+        options:
+          regex: true
+      - value: '"square_access_token"\s*:\s*"EAAA[A-Za-z0-9]{58,}"'
+        options:
+          regex: true
 
-      # ---- Braintree ----
-      # Braintree Auth Fingerprint
-      - 'access_token\$production\$[A-Za-z0-9]{16}\$[A-Za-z0-9]{32}'
-      - 'access_token\$sandbox\$[A-Za-z0-9]{16}\$[A-Za-z0-9]{32}'
-      # Braintree Private Key in JSON
-      - '"braintree_private_key"\s*:\s*"[A-Za-z0-9]{32}"'
+      - value: 'access_token\$production\$[A-Za-z0-9]{16}\$[A-Za-z0-9]{32}'
+        options:
+          regex: true
+      - value: 'access_token\$sandbox\$[A-Za-z0-9]{16}\$[A-Za-z0-9]{32}'
+        options:
+          regex: true
+      - value: '"braintree_private_key"\s*:\s*"[A-Za-z0-9]{32}"'
+        options:
+          regex: true
 
-      # ---- PayPal ----
-      - '"paypal_secret"\s*:\s*"[A-Za-z0-9\-_]{40,}"'
-      - '"paypal_client_secret"\s*:\s*"[A-Za-z0-9\-_]{40,}"'
-      # PayPal NVP/SDK credentials
-      - "PWD=[A-Za-z0-9!@#$%]{8,}"
+      - value: '"paypal_secret"\s*:\s*"[A-Za-z0-9\-_]{40,}"'
+        options:
+          regex: true
+      - value: '"paypal_client_secret"\s*:\s*"[A-Za-z0-9\-_]{40,}"'
+        options:
+          regex: true
+      - value: 'PWD=[A-Za-z0-9!@#$%]{8,}'
+        options:
+          regex: true
 
-      # ---- Adyen ----
-      - '"ws_[a-zA-Z0-9]{8,}@Company\.[A-Za-z0-9]+'
-      - '"adyen_api_key"\s*:\s*"[A-Za-z0-9]{64,}"'
+      - value: '"ws_[a-zA-Z0-9]{8,}@Company\.[A-Za-z0-9]+'
+        options:
+          regex: true
+      - value: '"adyen_api_key"\s*:\s*"[A-Za-z0-9]{64,}"'
+        options:
+          regex: true
 
-      # ---- Razorpay ----
-      - "rzp_live_[A-Za-z0-9]{14}"
-      - "rzp_test_[A-Za-z0-9]{14}"
-      - '"razorpay_key_secret"\s*:\s*"[A-Za-z0-9]{20}"'
+      - value: 'rzp_live_[A-Za-z0-9]{14}'
+        options:
+          regex: true
+      - value: 'rzp_test_[A-Za-z0-9]{14}'
+        options:
+          regex: true
+      - value: '"razorpay_key_secret"\s*:\s*"[A-Za-z0-9]{20}"'
+        options:
+          regex: true
 
-      # ---- Shopify ----
-      - "shpss_[A-Za-z0-9]{32}"
-      - "shpat_[A-Za-z0-9]{32}"
+      - value: 'shpss_[A-Za-z0-9]{32}'
+        options:
+          regex: true
+      - value: 'shpat_[A-Za-z0-9]{32}'
+        options:
+          regex: true
 
 report:
   title: "Payment Gateway Secret Key Exposed in Response"

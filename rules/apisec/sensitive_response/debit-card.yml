@@ -8,27 +8,57 @@ match_on:
     notIn: [404, 301, 302]
   body:
     contains:
-      # Maestro: 6304, 6759, 6761, 6762, 6763 (12-19 digits)
-      - '\b6304[0-9]{8,15}\b'
-      - '\b6759[0-9]{8,15}\b'
-      - '\b676[123][0-9]{8,15}\b'
-      # Visa Electron: 4026, 417500, 4405, 4508, 4844, 4913, 4917
-      - '\b4026[0-9]{12}\b'
-      - '\b417500[0-9]{10}\b'
-      - '\b4508[0-9]{12}\b'
-      - '\b4844[0-9]{12}\b'
-      - '\b491[37][0-9]{12}\b'
-      # Rupay (India debit): 60, 65, 81, 82, 508
-      - '\b60[0-9]{14}\b'
-      - '\b65[0-9]{14}\b'
-      - '\b81[0-9]{14}\b'
-      - '\b508[0-9]{13}\b'
-      # Debit-labeled JSON fields — context-driven detection
-      - '"debit_card"\s*:\s*"[0-9 \-]{13,19}"'
-      - '"debit_number"\s*:\s*"[0-9 \-]{13,19}"'
-      - '"debit_card_number"\s*:\s*"[0-9 \-]{13,19}"'
-      - '"debit_pan"\s*:\s*"[0-9 \-]{13,19}"'
-      - '"card_type"\s*:\s*"debit"'
+      - value: '\b6304[0-9]{8,15}\b'
+        options:
+          regex: true
+      - value: '\b6759[0-9]{8,15}\b'
+        options:
+          regex: true
+      - value: '\b676[123][0-9]{8,15}\b'
+        options:
+          regex: true
+      - value: '\b4026[0-9]{12}\b'
+        options:
+          regex: true
+      - value: '\b417500[0-9]{10}\b'
+        options:
+          regex: true
+      - value: '\b4508[0-9]{12}\b'
+        options:
+          regex: true
+      - value: '\b4844[0-9]{12}\b'
+        options:
+          regex: true
+      - value: '\b491[37][0-9]{12}\b'
+        options:
+          regex: true
+      - value: '\b60[0-9]{14}\b'
+        options:
+          regex: true
+      - value: '\b65[0-9]{14}\b'
+        options:
+          regex: true
+      - value: '\b81[0-9]{14}\b'
+        options:
+          regex: true
+      - value: '\b508[0-9]{13}\b'
+        options:
+          regex: true
+      - value: '"debit_card"\s*:\s*"[0-9 \-]{13,19}"'
+        options:
+          regex: true
+      - value: '"debit_number"\s*:\s*"[0-9 \-]{13,19}"'
+        options:
+          regex: true
+      - value: '"debit_card_number"\s*:\s*"[0-9 \-]{13,19}"'
+        options:
+          regex: true
+      - value: '"debit_pan"\s*:\s*"[0-9 \-]{13,19}"'
+        options:
+          regex: true
+      - value: '"card_type"\s*:\s*"debit"'
+        options:
+          regex: true
 
 report:
   title: "Debit Card Number Exposed in Response"

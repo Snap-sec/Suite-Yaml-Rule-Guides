@@ -29,7 +29,7 @@ transform:
 
 match_on:
   body:
-    regex: "<h1>Example Domain</h1>|\\[fonts\\]|\\[extensions\\]"
+    regex: '<h1>Example Domain</h1>|\[fonts\]|\[extensions\]'
 
 report:
   title: "Remote File Inclusion (Windows)"

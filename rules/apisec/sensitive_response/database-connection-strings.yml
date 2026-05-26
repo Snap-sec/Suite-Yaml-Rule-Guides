@@ -8,37 +8,66 @@ match_on:
     notIn: [404, 301, 302]
   body:
     contains:
-      # MongoDB URI with credentials
-      - "mongodb://[^:]+:[^@]+@"
-      - "mongodb\\+srv://[^:]+:[^@]+@"
-      # MySQL / MariaDB
-      - "mysql://[^:]+:[^@]+@"
-      - "mysql2://[^:]+:[^@]+@"
-      # PostgreSQL
-      - "postgresql://[^:]+:[^@]+@"
-      - "postgres://[^:]+:[^@]+@"
-      # Redis with password
-      - "redis://:?[^@]+@[^/]+"
-      - "rediss://[^:]+:[^@]+@"
-      # AMQP (RabbitMQ)
-      - "amqp://[^:]+:[^@]+@"
-      - "amqps://[^:]+:[^@]+@"
-      # SQL Server / MSSQL connection strings
-      - "Server=[^;]+;Database=[^;]+;User Id=[^;]+;Password=[^;]+"
-      - "Data Source=[^;]+;Initial Catalog=[^;]+;User ID=[^;]+;Password=[^;]+"
-      - "Driver=\\{.*?\\};Server=[^;]+;Uid=[^;]+;Pwd=[^;]+"
-      # Oracle
-      - "jdbc:oracle:thin:[^@]+@"
-      - "jdbc:mysql://[^:]+:[^@]+@"
-      - "jdbc:postgresql://[^:]+:[^@]+@"
-      # Generic DSN with password
-      - "DSN=[^;]+;.*Password=[^;]+"
-      # SQLite path exposure
-      - "sqlite:///[^\"'\\s]+"
-      # Cassandra / ScyllaDB
-      - "\"contactPoints\"\\s*:\\s*.*\"password\"\\s*:\\s*\""
-      # ElasticSearch with credentials
-      - "https?://[^:]+:[^@]+@[^/]+:[0-9]+"
+      - value: 'mongodb://[^:]+:[^@]+@'
+        options:
+          regex: true
+      - value: 'mongodb\+srv://[^:]+:[^@]+@'
+        options:
+          regex: true
+      - value: 'mysql://[^:]+:[^@]+@'
+        options:
+          regex: true
+      - value: 'mysql2://[^:]+:[^@]+@'
+        options:
+          regex: true
+      - value: 'postgresql://[^:]+:[^@]+@'
+        options:
+          regex: true
+      - value: 'postgres://[^:]+:[^@]+@'
+        options:
+          regex: true
+      - value: 'redis://:?[^@]+@[^/]+'
+        options:
+          regex: true
+      - value: 'rediss://[^:]+:[^@]+@'
+        options:
+          regex: true
+      - value: 'amqp://[^:]+:[^@]+@'
+        options:
+          regex: true
+      - value: 'amqps://[^:]+:[^@]+@'
+        options:
+          regex: true
+      - value: 'Server=[^;]+;Database=[^;]+;User Id=[^;]+;Password=[^;]+'
+        options:
+          regex: true
+      - value: 'Data Source=[^;]+;Initial Catalog=[^;]+;User ID=[^;]+;Password=[^;]+'
+        options:
+          regex: true
+      - value: 'Driver=\{.*?\};Server=[^;]+;Uid=[^;]+;Pwd=[^;]+'
+        options:
+          regex: true
+      - value: 'jdbc:oracle:thin:[^@]+@'
+        options:
+          regex: true
+      - value: 'jdbc:mysql://[^:]+:[^@]+@'
+        options:
+          regex: true
+      - value: 'jdbc:postgresql://[^:]+:[^@]+@'
+        options:
+          regex: true
+      - value: 'DSN=[^;]+;.*Password=[^;]+'
+        options:
+          regex: true
+      - value: 'sqlite:///[^\"''\s]+'
+        options:
+          regex: true
+      - value: '\"contactPoints\"\s*:\s*.*\"password\"\s*:\s*\"'
+        options:
+          regex: true
+      - value: 'https?://[^:]+:[^@]+@[^/]+:[0-9]+'
+        options:
+          regex: true
 
 report:
   title: "Database Connection String with Credentials Exposed in Response"

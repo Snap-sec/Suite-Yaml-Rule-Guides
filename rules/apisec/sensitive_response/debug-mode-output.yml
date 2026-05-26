@@ -8,47 +8,60 @@ match_on:
     notIn: [404, 301, 302]
   body:
     contains:
-      # Framework debug mode indicators
-      - '"debug"\s*:\s*true'
-      - '"DEBUG"\s*:\s*true'
-      - '"debug_mode"\s*:\s*true'
-      # Django debug page
+      - value: '"debug"\s*:\s*true'
+        options:
+          regex: true
+      - value: '"DEBUG"\s*:\s*true'
+        options:
+          regex: true
+      - value: '"debug_mode"\s*:\s*true'
+        options:
+          regex: true
       - "Django Version:"
       - "Exception Value:"
       - "Exception Location:"
       - "Python Executable:"
       - "Python Version:"
       - "Python Path:"
-      # Laravel / PHP debug
-      - "\"app.debug\":true"
+      - "\\\"app.debug\\\":true"
       - "APP_DEBUG=true"
       - "Whoops! There was an error."
-      - "\"whoops\""
-      # Spring Boot actuator leak
-      - "\"activeProfiles\""
-      - "\"beanDefinitionNames\""
+      - "\\\"whoops\\\""
+      - "\\\"activeProfiles\\\""
+      - "\\\"beanDefinitionNames\\\""
       - "/actuator/env"
       - "spring.datasource.password"
-      # Express / Node debug
       - "X-Powered-By: Express"
-      - "\"NODE_ENV\":\"development\""
-      - "\"env\":\"development\""
-      # Rails debug
+      - "\\\"NODE_ENV\\\":\\\"development\\\""
+      - "\\\"env\\\":\\\"development\\\""
       - "Rails.env.development"
       - "config.consider_all_requests_local"
-      # Generic
-      - '"environment"\s*:\s*"dev'
-      - '"environment"\s*:\s*"local'
-      - '"ENVIRONMENT"\s*:\s*"dev'
+      - value: '"environment"\s*:\s*"dev'
+        options:
+          regex: true
+      - value: '"environment"\s*:\s*"local'
+        options:
+          regex: true
+      - value: '"ENVIRONMENT"\s*:\s*"dev'
+        options:
+          regex: true
       - "XDEBUG_SESSION"
-      - "\"xdebug\""
-      # Verbose SQL queries in response
-      - "SELECT .* FROM .* WHERE"
-      - "INSERT INTO .* VALUES"
-      - "UPDATE .* SET .* WHERE"
-      # Internal config exposure
-      - '"config"\s*:\s*\{.*"password"'
-      - '"settings"\s*:\s*\{.*"secret"'
+      - "\\\"xdebug\\\""
+      - value: 'SELECT .* FROM .* WHERE'
+        options:
+          regex: true
+      - value: 'INSERT INTO .* VALUES'
+        options:
+          regex: true
+      - value: 'UPDATE .* SET .* WHERE'
+        options:
+          regex: true
+      - value: '"config"\s*:\s*\{.*"password"'
+        options:
+          regex: true
+      - value: '"settings"\s*:\s*\{.*"secret"'
+        options:
+          regex: true
 
 report:
   title: "Debug Mode / Development Output Exposed in Response"

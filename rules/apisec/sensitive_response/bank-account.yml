@@ -8,24 +8,45 @@ match_on:
     notIn: [404, 301, 302]
   body:
     contains:
-      # JSON field name patterns for account numbers
-      - '"account_number"\s*:\s*"[0-9]{6,17}"'
-      - '"bank_account"\s*:\s*"[0-9]{6,17}"'
-      - '"bank_account_number"\s*:\s*"[0-9]{6,17}"'
-      - '"acct_number"\s*:\s*"[0-9]{6,17}"'
-      - '"accountNumber"\s*:\s*"[0-9]{6,17}"'
-      # US ABA Routing Number (9 digits, first digit 0-3)
-      - '"routing_number"\s*:\s*"[0-3][0-9]{8}"'
-      - '"routingNumber"\s*:\s*"[0-3][0-9]{8}"'
-      - '"aba"\s*:\s*"[0-3][0-9]{8}"'
-      # UK Sort Code: XX-XX-XX
-      - '"sort_code"\s*:\s*"[0-9]{2}-[0-9]{2}-[0-9]{2}"'
-      - '\b[0-9]{2}-[0-9]{2}-[0-9]{2}\b'
-      # Indian IFSC (11 chars: 4 alpha + 0 + 6 alphanum)
-      - '"ifsc"\s*:\s*"[A-Z]{4}0[A-Z0-9]{6}"'
-      - '"ifsc_code"\s*:\s*"[A-Z]{4}0[A-Z0-9]{6}"'
-      # Generic bank details block
-      - '"bank_details"\s*:\s*\{'
+      - value: '"account_number"\s*:\s*"[0-9]{6,17}"'
+        options:
+          regex: true
+      - value: '"bank_account"\s*:\s*"[0-9]{6,17}"'
+        options:
+          regex: true
+      - value: '"bank_account_number"\s*:\s*"[0-9]{6,17}"'
+        options:
+          regex: true
+      - value: '"acct_number"\s*:\s*"[0-9]{6,17}"'
+        options:
+          regex: true
+      - value: '"accountNumber"\s*:\s*"[0-9]{6,17}"'
+        options:
+          regex: true
+      - value: '"routing_number"\s*:\s*"[0-3][0-9]{8}"'
+        options:
+          regex: true
+      - value: '"routingNumber"\s*:\s*"[0-3][0-9]{8}"'
+        options:
+          regex: true
+      - value: '"aba"\s*:\s*"[0-3][0-9]{8}"'
+        options:
+          regex: true
+      - value: '"sort_code"\s*:\s*"[0-9]{2}-[0-9]{2}-[0-9]{2}"'
+        options:
+          regex: true
+      - value: '\b[0-9]{2}-[0-9]{2}-[0-9]{2}\b'
+        options:
+          regex: true
+      - value: '"ifsc"\s*:\s*"[A-Z]{4}0[A-Z0-9]{6}"'
+        options:
+          regex: true
+      - value: '"ifsc_code"\s*:\s*"[A-Z]{4}0[A-Z0-9]{6}"'
+        options:
+          regex: true
+      - value: '"bank_details"\s*:\s*\{'
+        options:
+          regex: true
 
 report:
   title: "Bank Account Number Exposed in Response"

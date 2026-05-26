@@ -1,6 +1,6 @@
 rule_name: Missing Content-Security-Policy Header
 
-single_match: true  # must be evaluated per page/endpoint
+single_match: true
 
 match_on:
   header:

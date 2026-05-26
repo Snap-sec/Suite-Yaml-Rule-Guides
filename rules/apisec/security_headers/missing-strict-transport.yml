@@ -1,6 +1,5 @@
 rule_name: Missing Strict-Transport-Security Header
 
-# HSTS is a host-wide policy → one finding is enough
 single_match: true
 
 match_on:

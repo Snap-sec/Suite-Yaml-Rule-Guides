@@ -5,7 +5,6 @@ transform:
   body:
     transformations:
       - replace_all_values_one_by_one:
-          # MongoDB operator injections — break query parsing or trigger type errors
           - "{\"$gt\": \"\"}"
           - "{\"$ne\": null}"
           - "{\"$gt\": \"\", \"$lt\": \"zzzzz\"}"
@@ -13,14 +12,11 @@ transform:
           - "{\"$where\": \"1==1\"}"
           - "{\"$where\": \"function(){return true;}\"}"
           - "{\"$exists\": true}"
-          # Type confusion — pass an array where a scalar is expected
           - "[\"injected\"]"
-          # Nested operator confusion
           - "{\"$or\": [{\"a\": 1}, {\"b\": 1}]}"
   query:
     transformations:
       - replace_all_values_one_by_one:
-          # URL-encoded MongoDB operators for query string injection
           - "[$gt]="
           - "[$ne]=1"
           - "[$regex]=.*"
@@ -28,30 +24,40 @@ transform:
           - "[$where]=1==1"
 
 match_on:
-  # Do NOT match on 200 — errors are what confirm injection
   status:
     in: [200, 500, 400, 422, 503]
   body:
     contains:
-      # ---- MongoDB / Mongoose ----
       - "MongoError"
       - "MongoServerError"
       - "MongoNetworkError"
-      - "CastError:.*Cast to"
+      - value: 'CastError:.*Cast to'
+        options:
+          regex: true
       - "BSONTypeError"
-      - "[Mm]ongoose.*Error"
-      # ---- Generic NoSQL / query operator leakage ----
+      - value: '[Mm]ongoose.*Error'
+        options:
+          regex: true
       - "unknown operator"
       - "invalid operator"
-      - "\$where"
-      - "\$regex"
-      - "\$gt"
-      # ---- CouchDB ----
-      - "\{error,\s*badmatch"
-      - "\"error\":\s*\"invalid_query\""
-      # ---- DynamoDB ----
-      - "com\.amazonaws\.services\.dynamodbv2"
-      # ---- Redis ----
+      - value: '\$where'
+        options:
+          regex: true
+      - value: '\$regex'
+        options:
+          regex: true
+      - value: '\$gt'
+        options:
+          regex: true
+      - value: '\{error,\s*badmatch'
+        options:
+          regex: true
+      - value: '\"error\":\s*\"invalid_query\"'
+        options:
+          regex: true
+      - value: 'com\.amazonaws\.services\.dynamodbv2'
+        options:
+          regex: true
       - "WRONGTYPE Operation against a key"
       - "ERR wrong number of arguments"
 

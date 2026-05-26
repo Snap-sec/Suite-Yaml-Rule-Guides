@@ -8,42 +8,58 @@ match_on:
     notIn: [404, 301, 302]
   body:
     contains:
-      # Linux / Unix absolute paths in common sensitive directories
       - "/etc/passwd"
       - "/etc/shadow"
       - "/etc/hosts"
       - "/var/www/"
       - "/var/log/"
-      - "/home/[a-z_][a-z0-9_\\-]*/\\.ssh"
+      - value: '/home/[a-z_][a-z0-9_\-]*/\.ssh'
+        options:
+          regex: true
       - "/root/"
       - "/tmp/"
       - "/proc/self/"
-      # App server paths
       - "/usr/local/lib/"
       - "/usr/share/"
       - "/opt/app"
       - "/srv/www"
-      # Common framework paths in errors
       - "/app/controllers/"
       - "/app/models/"
       - "/resources/views/"
       - "/src/main/java/"
       - "site-packages/"
-      # Generic Unix absolute path (starts with / followed by word chars)
-      - "\"path\"\\s*:\\s*\"\\/[a-zA-Z0-9_\\-\\/\\.]{8,}\""
-      - "\"file\"\\s*:\\s*\"\\/[a-zA-Z0-9_\\-\\/\\.]{8,}\""
-      - "\"filename\"\\s*:\\s*\"\\/[a-zA-Z0-9_\\-\\/\\.]{8,}\""
-      - "\"base_path\"\\s*:\\s*\"\\/[a-zA-Z0-9_\\-\\/\\.]{8,}\""
-      - "\"root_path\"\\s*:\\s*\"\\/[a-zA-Z0-9_\\-\\/\\.]{8,}\""
-      # Windows absolute paths
-      - "C:\\\\Windows\\\\"
-      - "C:\\\\Users\\\\"
-      - "C:\\\\inetpub\\\\wwwroot"
-      - "C:\\\\Program Files"
-      - "D:\\\\websites\\\\"
-      - "\"path\"\\s*:\\s*\"[A-Z]:\\\\\\\\"
-      # UNC paths
-      - "\\\\\\\\[A-Za-z0-9_\\-]+\\\\"
+      - value: '\"path\"\s*:\s*\"\/[a-zA-Z0-9_\-\/\.]{8,}\"'
+        options:
+          regex: true
+      - value: '\"file\"\s*:\s*\"\/[a-zA-Z0-9_\-\/\.]{8,}\"'
+        options:
+          regex: true
+      - value: '\"filename\"\s*:\s*\"\/[a-zA-Z0-9_\-\/\.]{8,}\"'
+        options:
+          regex: true
+      - value: '\"base_path\"\s*:\s*\"\/[a-zA-Z0-9_\-\/\.]{8,}\"'
+        options:
+          regex: true
+      - value: '\"root_path\"\s*:\s*\"\/[a-zA-Z0-9_\-\/\.]{8,}\"'
+        options:
+          regex: true
+      - value: 'C:\\Windows\\'
+        options:
+          regex: true
+      - "C:\\Users\\"
+      - value: 'C:\\inetpub\\wwwroot'
+        options:
+          regex: true
+      - "C:\\Program Files"
+      - value: 'D:\\websites\\'
+        options:
+          regex: true
+      - value: '\"path\"\s*:\s*\"[A-Z]:\\\\'
+        options:
+          regex: true
+      - value: '\\\\[A-Za-z0-9_\-]+\\'
+        options:
+          regex: true
 
 report:
   title: "File System Path Exposed in Response"

@@ -8,48 +8,68 @@ match_on:
     notIn: [404, 301, 302]
   body:
     contains:
-      # ---- AWS ----
-      # AWS Access Key ID (always starts with AKIA)
-      - "AKIA[0-9A-Z]{16}"
-      # AWS Temporary STS token (starts with ASIA)
-      - "ASIA[0-9A-Z]{16}"
-      # AWS Secret Access Key (40 chars base64)
-      - '"secretAccessKey"\s*:\s*"[A-Za-z0-9/+=]{40}"'
-      - '"aws_secret_access_key"\s*:\s*"[A-Za-z0-9/+=]{40}"'
-      - '"SecretAccessKey"\s*:\s*"[A-Za-z0-9/+=]{40}"'
-      # AWS Session Token
-      - '"SessionToken"\s*:\s*"[A-Za-z0-9/+=]{100,}"'
-      - '"aws_session_token"\s*:\s*"[A-Za-z0-9/+=]{100,}"'
+      - value: 'AKIA[0-9A-Z]{16}'
+        options:
+          regex: true
+      - value: 'ASIA[0-9A-Z]{16}'
+        options:
+          regex: true
+      - value: '"secretAccessKey"\s*:\s*"[A-Za-z0-9/+=]{40}"'
+        options:
+          regex: true
+      - value: '"aws_secret_access_key"\s*:\s*"[A-Za-z0-9/+=]{40}"'
+        options:
+          regex: true
+      - value: '"SecretAccessKey"\s*:\s*"[A-Za-z0-9/+=]{40}"'
+        options:
+          regex: true
+      - value: '"SessionToken"\s*:\s*"[A-Za-z0-9/+=]{100,}"'
+        options:
+          regex: true
+      - value: '"aws_session_token"\s*:\s*"[A-Za-z0-9/+=]{100,}"'
+        options:
+          regex: true
 
-      # ---- GCP / Google ----
-      # Google API Key (AIza prefix)
-      - 'AIza[0-9A-Za-z\-_]{35}'
-      # Google OAuth2 Client Secret
-      - 'GOCSPX-[0-9A-Za-z\-_]{28}'
-      # Google Service Account JSON key indicator
-      - '"type"\s*:\s*"service_account"'
-      - '"private_key_id"\s*:\s*"[a-f0-9]{40}"'
-      # Firebase Server Key (FCM)
-      - "AAAA[A-Za-z0-9_-]{7}:[A-Za-z0-9_-]{140}"
+      - value: 'AIza[0-9A-Za-z\-_]{35}'
+        options:
+          regex: true
+      - value: 'GOCSPX-[0-9A-Za-z\-_]{28}'
+        options:
+          regex: true
+      - value: '"type"\s*:\s*"service_account"'
+        options:
+          regex: true
+      - value: '"private_key_id"\s*:\s*"[a-f0-9]{40}"'
+        options:
+          regex: true
+      - value: 'AAAA[A-Za-z0-9_-]{7}:[A-Za-z0-9_-]{140}'
+        options:
+          regex: true
 
-      # ---- Azure ----
-      # Azure Storage connection string
-      - "DefaultEndpointsProtocol=https;AccountName=[^;]+;AccountKey=[A-Za-z0-9+/=]{86,88}"
-      # Azure Client Secret in JSON
-      - '"clientSecret"\s*:\s*"[A-Za-z0-9~._\-]{34,}"'
-      # Azure SAS Token
-      - "sv=[0-9]{4}-[0-9]{2}-[0-9]{2}&ss=.*&sig=[A-Za-z0-9%]+"
-      # Azure AD App Key
-      - '"appKey"\s*:\s*"[A-Za-z0-9+/=]{43,44}"'
+      - value: 'DefaultEndpointsProtocol=https;AccountName=[^;]+;AccountKey=[A-Za-z0-9+/=]{86,88}'
+        options:
+          regex: true
+      - value: '"clientSecret"\s*:\s*"[A-Za-z0-9~._\-]{34,}"'
+        options:
+          regex: true
+      - value: 'sv=[0-9]{4}-[0-9]{2}-[0-9]{2}&ss=.*&sig=[A-Za-z0-9%]+'
+        options:
+          regex: true
+      - value: '"appKey"\s*:\s*"[A-Za-z0-9+/=]{43,44}"'
+        options:
+          regex: true
 
-      # ---- Oracle Cloud ----
-      - '"fingerprint"\s*:\s*"[a-f0-9]{2}(:[a-f0-9]{2}){15}"'
+      - value: '"fingerprint"\s*:\s*"[a-f0-9]{2}(:[a-f0-9]{2}){15}"'
+        options:
+          regex: true
 
-      # ---- DigitalOcean ----
-      - "dop_v1_[a-f0-9]{64}"
+      - value: 'dop_v1_[a-f0-9]{64}'
+        options:
+          regex: true
 
-      # ---- Cloudflare ----
-      - '"X-Auth-Key"\s*:\s*"[a-f0-9]{37}"'
+      - value: '"X-Auth-Key"\s*:\s*"[a-f0-9]{37}"'
+        options:
+          regex: true
 
 report:
   title: "Cloud Provider Access Keys Exposed in Response"

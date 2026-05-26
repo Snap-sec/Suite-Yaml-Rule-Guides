@@ -8,20 +8,42 @@ match_on:
     notIn: [404, 301, 302]
   body:
     contains:
-      # JSON field name patterns for CVV/CVC
-      - '"cvv"\s*:\s*["'']?[0-9]{3,4}["'']?'
-      - '"cvc"\s*:\s*["'']?[0-9]{3,4}["'']?'
-      - '"cvv2"\s*:\s*["'']?[0-9]{3,4}["'']?'
-      - '"cvc2"\s*:\s*["'']?[0-9]{3,4}["'']?'
-      - '"cid"\s*:\s*["'']?[0-9]{3,4}["'']?'
-      - '"card_cvv"\s*:\s*["'']?[0-9]{3,4}["'']?'
-      - '"card_cvc"\s*:\s*["'']?[0-9]{3,4}["'']?'
-      - '"security_code"\s*:\s*["'']?[0-9]{3,4}["'']?'
-      - '"card_security_code"\s*:\s*["'']?[0-9]{3,4}["'']?'
-      # Plain text labels
-      - 'CVV\s*:\s*[0-9]{3,4}'
-      - 'CVC\s*:\s*[0-9]{3,4}'
-      - 'CVV2\s*:\s*[0-9]{3,4}'
+      - value: '"cvv"\s*:\s*["'''']?[0-9]{3,4}["'''']?'
+        options:
+          regex: true
+      - value: '"cvc"\s*:\s*["'''']?[0-9]{3,4}["'''']?'
+        options:
+          regex: true
+      - value: '"cvv2"\s*:\s*["'''']?[0-9]{3,4}["'''']?'
+        options:
+          regex: true
+      - value: '"cvc2"\s*:\s*["'''']?[0-9]{3,4}["'''']?'
+        options:
+          regex: true
+      - value: '"cid"\s*:\s*["'''']?[0-9]{3,4}["'''']?'
+        options:
+          regex: true
+      - value: '"card_cvv"\s*:\s*["'''']?[0-9]{3,4}["'''']?'
+        options:
+          regex: true
+      - value: '"card_cvc"\s*:\s*["'''']?[0-9]{3,4}["'''']?'
+        options:
+          regex: true
+      - value: '"security_code"\s*:\s*["'''']?[0-9]{3,4}["'''']?'
+        options:
+          regex: true
+      - value: '"card_security_code"\s*:\s*["'''']?[0-9]{3,4}["'''']?'
+        options:
+          regex: true
+      - value: 'CVV\s*:\s*[0-9]{3,4}'
+        options:
+          regex: true
+      - value: 'CVC\s*:\s*[0-9]{3,4}'
+        options:
+          regex: true
+      - value: 'CVV2\s*:\s*[0-9]{3,4}'
+        options:
+          regex: true
 
 report:
   title: "CVV / CVC Card Security Code Exposed in Response"

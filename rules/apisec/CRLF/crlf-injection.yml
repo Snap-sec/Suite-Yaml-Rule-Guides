@@ -41,7 +41,7 @@ transform:
 match_on:
   header:
     set-cookie:
-      regex: "crlfinjection=crlfinjection"
+      regex: 'crlfinjection=crlfinjection'
 
 report:
   title: "CRLF Injection"

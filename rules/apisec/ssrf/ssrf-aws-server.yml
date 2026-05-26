@@ -31,11 +31,21 @@ match_on:
   status: [200, 201, 202, 301, 302, 400, 401, 403, 404, 500]
   body:
     contains:
-      - "accessKeyId\\s*[:=]\\s*[A-Z0-9/+=]{8,}"
-      - "secretAccessKey\\s*[:=]\\s*[A-Za-z0-9/+=]{16,}"
-      - "_all_dbs\\s*[:=]?\\s*\\["
-      - "(^|\\s)root:x:0:0:"
-      - "(^|\\s)CouchDB\\s+\\w+"
+      - value: 'accessKeyId\s*[:=]\s*[A-Z0-9/+=]{8,}'
+        options:
+          regex: true
+      - value: 'secretAccessKey\s*[:=]\s*[A-Za-z0-9/+=]{16,}'
+        options:
+          regex: true
+      - value: '_all_dbs\s*[:=]?\s*\['
+        options:
+          regex: true
+      - value: '(^|\s)root:x:0:0:'
+        options:
+          regex: true
+      - value: '(^|\s)CouchDB\s+\w+'
+        options:
+          regex: true
 
 report:
   title: "Potential SSRF - internal resource accessed (high-confidence)"

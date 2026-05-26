@@ -36,72 +36,52 @@ transform:
 match_on:
   body:
     contains:
-      # ── Linux: structured uname -a output ──────────────────────────────────
-      # Real uname -a output looks like:
-      #   Linux hostname 5.15.0-76-generic #83-Ubuntu SMP ... x86_64 x86_64 x86_64 GNU/Linux
-      # These substrings only appear together in actual kernel output, not in
-      # ordinary HTML/JSON responses.
-      - " SMP "                        # Symmetric Multi-Processing flag, unique to kernel banner
-      - "x86_64 GNU/Linux"             # Arch + OS tag at end of Linux uname output
-      - "aarch64 GNU/Linux"            # ARM64 (64-bit ARM) variant
-      - "#1 SMP"                       # Debian/Ubuntu kernel build number prefix
-      - "x86_64 x86_64 x86_64"        # Triple-arch field produced only by uname -a
-      - "-generic #"                   # Ubuntu/Debian kernel release + build tag
-      - "-amd64 #"                     # Debian amd64 kernel tag
-      - "Linux version "               # /proc/version prefix — only present on real Linux output
+      - " SMP "
+      - "x86_64 GNU/Linux"
+      - "aarch64 GNU/Linux"
+      - "#1 SMP"
+      - "x86_64 x86_64 x86_64"
+      - "-generic #"
+      - "-amd64 #"
+      - "Linux version "
 
-      # ── Linux: additional architectures (gap patch) ─────────────────────────
-      - "armv7l GNU/Linux"             # ARM 32-bit hard-float (Raspberry Pi 3/4, IoT)
-      - "armv6l GNU/Linux"             # ARM 32-bit soft-float (Raspberry Pi 1/Zero)
-      - "armv5tel GNU/Linux"           # Older ARMv5 embedded devices
-      - "i686 GNU/Linux"               # 32-bit x86 Linux (i686)
-      - "i386 GNU/Linux"               # 32-bit x86 Linux (i386)
-      - "riscv64 GNU/Linux"            # RISC-V 64-bit Linux
-      - "ppc64le GNU/Linux"            # IBM POWER little-endian Linux
-      - "ppc64 GNU/Linux"              # IBM POWER big-endian Linux
-      - "s390x GNU/Linux"              # IBM Z (mainframe) Linux
-      - "mips GNU/Linux"               # MIPS Linux (routers, embedded)
-      - "mips64 GNU/Linux"             # MIPS64 Linux
+      - "armv7l GNU/Linux"
+      - "armv6l GNU/Linux"
+      - "armv5tel GNU/Linux"
+      - "i686 GNU/Linux"
+      - "i386 GNU/Linux"
+      - "riscv64 GNU/Linux"
+      - "ppc64le GNU/Linux"
+      - "ppc64 GNU/Linux"
+      - "s390x GNU/Linux"
+      - "mips GNU/Linux"
+      - "mips64 GNU/Linux"
 
-      # ── macOS / Darwin: structured uname -a output ─────────────────────────
-      # Darwin uname -a example:
-      #   Darwin Macbook.local 23.4.0 Darwin Kernel Version 23.4.0: ... RELEASE_X86_64 x86_64
-      - "Darwin Kernel Version"        # Only in real macOS kernel banner
-      - "RELEASE_X86_64 x86_64"        # macOS Intel kernel arch suffix
-      - "RELEASE_ARM64_T"              # Apple Silicon kernel release tag (T8103, T6000, etc.)
+      - "Darwin Kernel Version"
+      - "RELEASE_X86_64 x86_64"
+      - "RELEASE_ARM64_T"
 
-      # ── FreeBSD / OpenBSD / NetBSD ─────────────────────────────────────────
-      # FreeBSD uname -a:
-      #   FreeBSD host 14.0-RELEASE FreeBSD 14.0-RELEASE ... amd64
-      - "-RELEASE FreeBSD"             # FreeBSD release banner pattern (all versions)
-      - "FreeBSD 1"                    # FreeBSD 10–19
-      - "FreeBSD 9"                    # FreeBSD 9.x (gap patch — EOL but still deployed)
-      - "FreeBSD 8"                    # FreeBSD 8.x legacy (gap patch)
-      - "OpenBSD "                     # OpenBSD uname prefix (trailing space avoids partial match)
-      - "NetBSD "                      # NetBSD uname prefix
+      - "-RELEASE FreeBSD"
+      - "FreeBSD 1"
+      - "FreeBSD 9"
+      - "FreeBSD 8"
+      - "OpenBSD "
+      - "NetBSD "
 
-      # ── SunOS / Solaris ────────────────────────────────────────────────────
-      - "SunOS 5\."                    # Solaris 10/11 uname version (e.g. "SunOS 5.11")
+      - value: 'SunOS 5\.'
+        options:
+          regex: true
 
-      # ── AIX (gap patch) ────────────────────────────────────────────────────
-      # AIX uname -a example:
-      #   AIX hostname 1 7 00F84C0C4C00
-      # Format: AIX <host> <version> <release> <machine-id>
-      - "AIX "                         # AIX uname prefix (trailing space avoids partial word match)
+      - "AIX "
 
-      # ── HP-UX (gap patch) ──────────────────────────────────────────────────
-      # HP-UX uname -a example:
-      #   HP-UX hostname B.11.31 U ia64 ...
-      - "HP-UX "                       # HP-UX uname prefix
+      - "HP-UX "
 
-      # ── Windows: cmd/PowerShell output ─────────────────────────────────────
-      # These appear only in real shell output, not in normal web responses.
-      - "Microsoft Windows \[Version"  # Exact cmd.exe banner
-      - "OS Name:                   Microsoft Windows"  # systeminfo output pattern
-      - "CYGWIN_NT-"                   # Cygwin uname -a prefix, highly specific
-      - "MINGW64_NT-"                  # Git-for-Windows / MinGW 64-bit uname prefix
-      - "MINGW32_NT-"                  # MinGW 32-bit uname prefix (gap patch)
-      - "MSYS_NT-"                     # MSYS2 uname prefix
+      - "Microsoft Windows [Version"
+      - "OS Name:                   Microsoft Windows"
+      - "CYGWIN_NT-"
+      - "MINGW64_NT-"
+      - "MINGW32_NT-"
+      - "MSYS_NT-"
 
 report:
   title: "Possible Command Injection — `uname -a` output detected"

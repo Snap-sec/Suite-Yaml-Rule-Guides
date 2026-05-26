@@ -8,28 +8,48 @@ match_on:
     notIn: [404, 301, 302]
   body:
     contains:
-      # Visa: 4xxx xxxx xxxx xxxx (13 or 16 digits)
-      - '\b4[0-9]{3}[\s\-]?[0-9]{4}[\s\-]?[0-9]{4}[\s\-]?[0-9]{4}\b'
-      - '\b4[0-9]{3}[\s\-]?[0-9]{4}[\s\-]?[0-9]{4}[\s\-]?[0-9]{1}\b'
-      # Mastercard: 51-55 or 2221-2720
-      - '\b5[1-5][0-9]{2}[\s\-]?[0-9]{4}[\s\-]?[0-9]{4}[\s\-]?[0-9]{4}\b'
-      - '\b2[2-7][0-9]{2}[\s\-]?[0-9]{4}[\s\-]?[0-9]{4}[\s\-]?[0-9]{4}\b'
-      # American Express: 3[47]xx xxxxxx xxxxx (15 digits)
-      - '\b3[47][0-9]{2}[\s\-]?[0-9]{6}[\s\-]?[0-9]{5}\b'
-      # Discover: 6011, 622, 64, 65
-      - '\b6(?:011|5[0-9]{2})[\s\-]?[0-9]{4}[\s\-]?[0-9]{4}[\s\-]?[0-9]{4}\b'
-      - '\b622[0-9]{13}\b'
-      # Diners Club: 300-305, 36, 38 (14 digits)
-      - '\b3(?:0[0-5]|[68][0-9])[0-9]{2}[\s\-]?[0-9]{6}[\s\-]?[0-9]{4}\b'
-      # JCB: 3528-3589 (16 digits)
-      - '\b35(?:2[89]|[3-8][0-9])[0-9]{12}\b'
-      # UnionPay: 62xx (16-19 digits)
-      - '\b62[0-9]{14,17}\b'
-      # In JSON context keys
-      - '"card_number"\s*:\s*"[0-9 \-]{13,19}"'
-      - '"pan"\s*:\s*"[0-9 \-]{13,19}"'
-      - '"credit_card"\s*:\s*"[0-9 \-]{13,19}"'
-      - '"card_no"\s*:\s*"[0-9 \-]{13,19}"'
+      - value: '\b4[0-9]{3}[\s\-]?[0-9]{4}[\s\-]?[0-9]{4}[\s\-]?[0-9]{4}\b'
+        options:
+          regex: true
+      - value: '\b4[0-9]{3}[\s\-]?[0-9]{4}[\s\-]?[0-9]{4}[\s\-]?[0-9]{1}\b'
+        options:
+          regex: true
+      - value: '\b5[1-5][0-9]{2}[\s\-]?[0-9]{4}[\s\-]?[0-9]{4}[\s\-]?[0-9]{4}\b'
+        options:
+          regex: true
+      - value: '\b2[2-7][0-9]{2}[\s\-]?[0-9]{4}[\s\-]?[0-9]{4}[\s\-]?[0-9]{4}\b'
+        options:
+          regex: true
+      - value: '\b3[47][0-9]{2}[\s\-]?[0-9]{6}[\s\-]?[0-9]{5}\b'
+        options:
+          regex: true
+      - value: '\b6(?:011|5[0-9]{2})[\s\-]?[0-9]{4}[\s\-]?[0-9]{4}[\s\-]?[0-9]{4}\b'
+        options:
+          regex: true
+      - value: '\b622[0-9]{13}\b'
+        options:
+          regex: true
+      - value: '\b3(?:0[0-5]|[68][0-9])[0-9]{2}[\s\-]?[0-9]{6}[\s\-]?[0-9]{4}\b'
+        options:
+          regex: true
+      - value: '\b35(?:2[89]|[3-8][0-9])[0-9]{12}\b'
+        options:
+          regex: true
+      - value: '\b62[0-9]{14,17}\b'
+        options:
+          regex: true
+      - value: '"card_number"\s*:\s*"[0-9 \-]{13,19}"'
+        options:
+          regex: true
+      - value: '"pan"\s*:\s*"[0-9 \-]{13,19}"'
+        options:
+          regex: true
+      - value: '"credit_card"\s*:\s*"[0-9 \-]{13,19}"'
+        options:
+          regex: true
+      - value: '"card_no"\s*:\s*"[0-9 \-]{13,19}"'
+        options:
+          regex: true
 
 report:
   title: "Credit Card PAN Exposed in Response"

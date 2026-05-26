@@ -1,4 +1,4 @@
-rule_name: Insecure Cookie: Missing HttpOnly Flag
+rule_name: "Insecure Cookie: Missing HttpOnly Flag"
 single_match: true
 description: "Detects 'Set-Cookie' headers missing the 'HttpOnly' attribute."
 transform:
@@ -7,7 +7,7 @@ match_on:
   status: 200
   header:
     Set-Cookie:
-      regex: "^(?!.*httponly).*$"
+      regex: '^(?!.*httponly).*$'
 report:
   title: "Insecure Cookie: Missing HttpOnly Flag"
   description: |

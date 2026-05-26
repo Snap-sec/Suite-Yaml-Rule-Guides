@@ -9,7 +9,7 @@ match_on:
   status: 200
   header:
     Access-Control-Allow-Origin: 
-      regex: ".*\\.evil\\.com"
+      regex: '.*\.evil\.com'
     Access-Control-Allow-Credentials: "true"
 report:
   title: "CORS: Weak Regex Origin Validation"

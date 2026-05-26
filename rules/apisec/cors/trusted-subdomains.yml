@@ -9,7 +9,7 @@ match_on:
   status: 200
   header:
     Access-Control-Allow-Origin: 
-      regex: "https://evil\\..*"
+      regex: 'https://evil\..*'
     Access-Control-Allow-Credentials: "true"
 report:
   title: "CORS: Arbitrary Subdomain Trusted"

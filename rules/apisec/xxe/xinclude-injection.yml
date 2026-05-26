@@ -10,7 +10,7 @@ transform:
 
 match_on:
   body:
-    regex: "root:.*:0:0:|for 16-bit app support"
+    regex: 'root:.*:0:0:|for 16-bit app support'
 
 report:
   title: "XInclude Injection"
