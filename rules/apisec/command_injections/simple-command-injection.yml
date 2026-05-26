@@ -81,7 +81,7 @@ match_on:
       - "NetBSD "                      # NetBSD uname prefix
 
       # ── SunOS / Solaris ────────────────────────────────────────────────────
-      - "SunOS 5."                     # Solaris 10/11 uname version (e.g. "SunOS 5.11")
+      - "SunOS 5\."                    # Solaris 10/11 uname version (e.g. "SunOS 5.11")
 
       # ── AIX (gap patch) ────────────────────────────────────────────────────
       # AIX uname -a example:
@@ -96,7 +96,7 @@ match_on:
 
       # ── Windows: cmd/PowerShell output ─────────────────────────────────────
       # These appear only in real shell output, not in normal web responses.
-      - "Microsoft Windows [Version"   # Exact cmd.exe banner
+      - "Microsoft Windows \[Version"  # Exact cmd.exe banner
       - "OS Name:                   Microsoft Windows"  # systeminfo output pattern
       - "CYGWIN_NT-"                   # Cygwin uname -a prefix, highly specific
       - "MINGW64_NT-"                  # Git-for-Windows / MinGW 64-bit uname prefix
