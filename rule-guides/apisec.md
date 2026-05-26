@@ -4,7 +4,6 @@
 
 1. [Basic Structure](#basic-structure)
 2. [Transformation](#transformation)
-
    * [Supported Request Mutations](#supported-request-mutations)
    * [Query Transformer](#query-transformer)
    * [Header Transformer](#header-transformer)
@@ -12,7 +11,6 @@
    * [URL Rebuilding](#url-rebuilding)
 3. [Matching](#matching)
 4. [Report Generation](#report-generation)
-
    * [Template Evaluation](#template-evaluation)
 
 ---
@@ -244,16 +242,20 @@ status:
 
 The `body` matcher supports:
 
-* **contains** (string or list)
+* **contains** (string, list, or object for regex)
 * **regex** (raw JS regex)
 
-### **Contains (regex-capable)**
+### **Contains**
 
+The `contains` matcher performs **exact substring matching** by default. It can be dynamically configured to perform regex matching using an object structure. Note that non-string response bodies (like JSON) are automatically stringified before being evaluated.
+
+**Substring Match (Single String):**
 ```yaml
 body:
   contains: "admin"
 ```
 
+**Substring Match (Array of Strings):**
 ```yaml
 body:
   contains:
@@ -261,13 +263,35 @@ body:
     - "privilege"
 ```
 
-Matches if **any** of the patterns match the response body.
+**Regex Match (Single Object):**
+To configure regex matching, pass an object with the `value` and `options.regex` keys:
+```yaml
+body:
+  contains:
+    value: "admin"
+    options:
+      regex: true
+```
+
+**Mixed Matches (Array of Objects and Strings):**
+You can mix standard string evaluations with customized regex checks inside an array.
+```yaml
+body:
+  contains:
+    - value: "admin"
+      options:
+        regex: true
+    - "privilege"
+```
+
+Matches if **any** of the patterns in the `contains` block match the response body.
 
 ### **Full regex match**
 
+Alternative to `contains`, you can apply regex across the whole body constraint natively:
 ```yaml
 body:
-  regex: "^\{.*admin.*\}$"
+  regex: "^\\{.*admin.*\\}$"
 ```
 
 ---
@@ -285,12 +309,25 @@ header:
   X-Admin: "true"
 ```
 
-### **Contains** (regex-capable)
+### **Contains**
 
+Like the body matcher, this performs exact substring matching by default. You can use an object with `options.regex: true` to perform regex matching instead.
+
+**Substring match:**
 ```yaml
 header:
   server:
     contains: "nginx"
+```
+
+**Regex match:**
+```yaml
+header:
+  server:
+    contains:
+      value: "nginx"
+      options:
+        regex: true
 ```
 
 ### **Regex match**
