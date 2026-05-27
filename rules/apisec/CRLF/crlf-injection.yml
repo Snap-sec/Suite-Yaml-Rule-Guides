@@ -1,5 +1,4 @@
 rule_name: CRLF Injection
-description: "Detects CRLF injection vulnerabilities potentially leading to HTTP Response Splitting."
 
 transform:
   query:
@@ -15,6 +14,7 @@ transform:
           - "%0d%0a%20Set-Cookie:crlfinjection=crlfinjection"
           - "%0d%20Set-Cookie:crlfinjection=crlfinjection"
           - "%20Set-Cookie:crlfinjection=crlfinjection"
+          
           - "%20%0aSet-Cookie:crlfinjection=crlfinjection"
           - "%20%0dSet-Cookie:crlfinjection=crlfinjection"
           - "%20%0d%0aSet-Cookie:crlfinjection=crlfinjection"
@@ -28,20 +28,22 @@ transform:
           - "%2f%2e%2e%0d%0aSet-Cookie:crlfinjection=crlfinjection"
           - "%2f..%0d%0aSet-Cookie:crlfinjection=crlfinjection"
           - "%3fSet-Cookie:crlfinjection=crlfinjection"
+          
           - "%3f%0aSet-Cookie:crlfinjection=crlfinjection"
           - "%3f%0dSet-Cookie:crlfinjection=crlfinjection"
           - "%3f%0d%0aSet-Cookie:crlfinjection=crlfinjection"
-          - "\\rSet-Cookie:crlfinjection=crlfinjection"
-          - "\\r%20Set-Cookie:crlfinjection=crlfinjection"
-          - "\\r\\nSet-Cookie:crlfinjection=crlfinjection"
-          - "\\r\\n%20Set-Cookie:crlfinjection=crlfinjection"
-          - "\\r\\n\\tSet-Cookie:crlfinjection=crlfinjection"
-          - "\\r\\tSet-Cookie:crlfinjection=crlfinjection"
+          - "\rSet-Cookie:crlfinjection=crlfinjection"
+          - "\r%20Set-Cookie:crlfinjection=crlfinjection"
+          - "\r\nSet-Cookie:crlfinjection=crlfinjection"
+          - "\r\n%20Set-Cookie:crlfinjection=crlfinjection"
+          - "\r\n\tSet-Cookie:crlfinjection=crlfinjection"
+          - "\r\tSet-Cookie:crlfinjection=crlfinjection"
 
 match_on:
   header:
     set-cookie:
-      regex: 'crlfinjection=crlfinjection'
+      contains:
+        - "crlfinjection=crlfinjection"
 
 report:
   title: "CRLF Injection"
