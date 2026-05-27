@@ -1,51 +1,49 @@
 rule_name: SSRF - high-confidence internal access detection
-description: "Detects Server-Side Request Forgery by monitoring internal access indicators."
 
 transform:
   query:
     transformations:
-      - replace_all_values_one_by_one:
-          - "http://169.254.169.254/latest/meta-data/iam/security-credentials/"
-          - "http://169.254.169.254/latest/meta-data/"
-          - "http://127.0.0.1/"
-          - "http://127.0.0.1:5984/_all_dbs"
-          - "http://localhost/"
-          - "http://169.254.169.254/latest/meta-data/iam/security-credentials/admin"
-          - "http://[::1]/"
+      - replace_all_values_one_by_one: "http://169.254.169.254/latest/meta-data/iam/security-credentials/"
+      - replace_all_values_one_by_one: "http://169.254.169.254/latest/meta-data/"
+      - replace_all_values_one_by_one: "http://127.0.0.1/"
+      - replace_all_values_one_by_one: "http://127.0.0.1:5984/_all_dbs"
+      - replace_all_values_one_by_one: "http://localhost/"
+      - replace_all_values_one_by_one: "http://169.254.169.254/latest/meta-data/iam/security-credentials/admin"
+      - replace_all_values_one_by_one: "http://[::1]/"
+      - replace_all_values_one_by_one: "https://example.com"
   body:
     transformations:
-      - replace_all_values_one_by_one:
-          - "http://169.254.169.254/latest/meta-data/iam/security-credentials/"
-          - "http://127.0.0.1:5984/_all_dbs"
-          - "http://localhost:5984/_all_dbs"
-          - "http://127.0.0.1/"
-          - "http://169.254.169.254/2009-04-04/meta-data/"
+      - replace_all_values_one_by_one: "http://169.254.169.254/latest/meta-data/iam/security-credentials/"
+      - replace_all_values_one_by_one: "http://127.0.0.1:5984/_all_dbs"
+      - replace_all_values_one_by_one: "http://localhost:5984/_all_dbs"
+      - replace_all_values_one_by_one: "http://127.0.0.1/"
+      - replace_all_values_one_by_one: "http://169.254.169.254/2009-04-04/meta-data/"
+      - replace_all_values_one_by_one: "https://example.com"
   header:
     transformations:
-      - replace_all_values_one_by_one:
-          - "http://169.254.169.254/latest/meta-data/iam/security-credentials/"
-          - "http://127.0.0.1/"
-          - "http://localhost/"
+      - replace_all_values_one_by_one: "http://169.254.169.254/latest/meta-data/iam/security-credentials/"
+      - replace_all_values_one_by_one: "http://127.0.0.1/"
+      - replace_all_values_one_by_one: "http://localhost/"
+      - replace_all_values_one_by_one: "https://example.com"
 
 match_on:
   status: [200, 201, 202, 301, 302, 400, 401, 403, 404, 500]
   body:
     contains:
-      - value: 'accessKeyId\s*[:=]\s*[A-Z0-9/+=]{8,}'
+      - value: "(?i)accessKeyId\\\"?\\s*[:=]\\s*\\\"?[A-Z0-9/+=]{8,}"
         options:
           regex: true
-      - value: 'secretAccessKey\s*[:=]\s*[A-Za-z0-9/+=]{16,}'
+      - value: "(?i)secretAccessKey\\\"?\\s*[:=]\\s*\\\"?[A-Za-z0-9/+=]{16,}"
         options:
           regex: true
-      - value: '_all_dbs\s*[:=]?\s*\['
+      - value: "\\[\"_users\"\\s*,\\s*\"_replicator\"\\]"
         options:
           regex: true
-      - value: '(^|\s)root:x:0:0:'
+      - value: "(^|\\s)root:x:0:0:"
         options:
           regex: true
-      - value: '(^|\s)CouchDB\s+\w+'
-        options:
-          regex: true
+      - value: "(^|\\s)CouchDB\\s+\\w+"
+      - "This domain is for use in documentation examples without needing permission"
 
 report:
   title: "Potential SSRF - internal resource accessed (high-confidence)"
