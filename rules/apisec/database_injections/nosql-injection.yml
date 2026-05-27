@@ -1,99 +1,108 @@
 rule_name: NoSQL Injection - Error Based Detection
-description: "Detects NoSQL injection vulnerabilities by triggering and identifying database-specific error messages."
+description: >-
+  Detects NoSQL injection by injecting MongoDB operator payloads and matching
+  verbatim database engine error signatures — not reflected payload content.
+  Covers MongoDB/Mongoose, DynamoDB, Redis, Couchbase, and RethinkDB.
 
 transform:
   body:
     transformations:
       - replace_all_values_one_by_one:
-          - "{\"$gt\": \"\"}"
+          # Comparison operator — triggers CastError on typed fields
           - "{\"$ne\": null}"
-          - "{\"$gt\": \"\", \"$lt\": \"zzzzz\"}"
-          - "{\"$regex\": \".*\"}"
+          # $where with JS — triggers MongoError when scripting is off or schema rejects it
           - "{\"$where\": \"1==1\"}"
-          - "{\"$where\": \"function(){return true;}\"}"
+          # $exists on non-schema fields — triggers Mongoose validation/cast errors
           - "{\"$exists\": true}"
-          - "[\"injected\"]"
-          - "{\"$or\": [{\"a\": 1}, {\"b\": 1}]}"
+          # Nested operator object — broadest coverage for operator injection errors
+          - "{\"$gt\": \"\", \"$nin\": []}"
   query:
     transformations:
       - replace_all_values_one_by_one:
-          - "[$gt]="
+          # URL-encoded bracket notation for MongoDB operator injection in query strings
           - "[$ne]=1"
-          - "[$regex]=.*"
+          - "[$gt]=1"
           - "[$exists]=true"
           - "[$where]=1==1"
 
 match_on:
   status:
-    in: [200, 500, 400, 422, 503]
+    in: [400, 422, 500, 503]
   body:
     contains:
-      - "MongoError"
+
+      # ── MongoDB / Mongoose ───────────────────────────────────────────────────
       - "MongoServerError"
       - "MongoNetworkError"
+      - value: 'MongoError'
+        options:
+          regex: true
       - value: 'CastError:.*Cast to'
         options:
           regex: true
       - "BSONTypeError"
-      - value: '[Mm]ongoose.*Error'
+      - value: '[Mm]ongoose.*ValidationError'
         options:
           regex: true
-      - "unknown operator"
-      - "invalid operator"
-      - value: '\$where'
+      - value: '[Mm]ongoose.*CastError'
         options:
           regex: true
-      - value: '\$regex'
+      # Specific "unknown operator" only when prefixed by MongoDB's $ — avoids generic API messages
+      - value: 'unknown operator: \$'
         options:
           regex: true
-      - value: '\$gt'
-        options:
-          regex: true
-      - value: '\{error,\s*badmatch'
-        options:
-          regex: true
-      - value: '\"error\":\s*\"invalid_query\"'
-        options:
-          regex: true
+
+      # ── AWS DynamoDB ─────────────────────────────────────────────────────────
       - value: 'com\.amazonaws\.services\.dynamodbv2'
         options:
           regex: true
-      - "WRONGTYPE Operation against a key"
-      - "ERR wrong number of arguments"
+      - "ResourceNotFoundException"
+      - "ValidationException: Value provided in ExpressionAttributeValues"
+
+      # ── Redis ────────────────────────────────────────────────────────────────
+      # WRONGTYPE is emitted only when a command is issued against a wrong Redis data type
+      - "WRONGTYPE Operation against a key holding the wrong kind of value"
+
+      # ── Couchbase ────────────────────────────────────────────────────────────
+      - value: 'com\.couchbase\.client'
+        options:
+          regex: true
+      - "PARSE_ERROR"
+      - "PlanningFailureException"
+
+      # ── RethinkDB / Erlang ───────────────────────────────────────────────────
+      - value: '\{error,\s*badmatch'
+        options:
+          regex: true
+      - "ReqlQueryLogicError"
+      - "ReqlCompileError"
 
 report:
   title: "NoSQL Injection - Database Error Triggered"
-  description: |
-    The application returned a database-specific error after injecting MongoDB/NoSQL
-    operator payloads (e.g., {"$gt":""}, {"$where":"1==1"}) into request parameters.
+  description: >-
+    Injecting MongoDB/NoSQL operator payloads into request parameters caused the
+    server to return a verbatim database engine error. The matched error strings
+    are engine-specific (MongoServerError, CastError, BSONTypeError, etc.) and
+    do not appear in normal API responses, ensuring high-fidelity detection.
 
-    The error message in the response confirms that:
-    - User input is being passed directly to a NoSQL query without sanitization.
-    - The database engine processed the injected operator before failing.
-
-    Original Request:
-    {{original}}
-
-    Transformed Request:
-    {{req}}
-
-    Response:
-    {{res}}
-
+    Original: {{original.method}} {{original.url}}
+    Tested:   {{req.method}} {{req.url}}
+    Matched:  {{match.criteria}}
+    Status:   {{res.status}}
   cwe: "CWE-943"
   severity: critical
   cvssScore: "9.8"
   mitigation: |
-    1. Never pass raw user input directly to NoSQL query objects.
-    2. Use a strict schema/type validation layer (e.g., Joi, Zod) before querying.
-    3. Sanitize input — strip or reject keys starting with '$' or '.'.
+    1. Never pass raw user input directly into NoSQL query objects.
+    2. Apply strict schema/type validation (e.g., Joi, Zod) before querying.
+    3. Sanitize input — reject or strip keys starting with '$' or '.'.
     4. Use parameterized query builders provided by your ORM/ODM.
     5. Disable $where and JavaScript execution in MongoDB (--noscripting).
   stepsToReproduce: |
-    1. Send the original request to {{req.url}}.
-    2. Replace a body/query string value with a MongoDB operator payload:
-       e.g., {"$gt": ""} or {"$ne": null}.
-    3. Observe the response status (400/500) and body containing a DB error string
-       such as "MongoError", "CastError", or "unknown operator".
+    1. Send the original request: {{original.method}} {{original.url}}
+    2. Replace a body/query parameter value with a NoSQL operator payload:
+       e.g., {"$ne": null} or {"$where": "1==1"}
+    3. Observe the response containing a verbatim DB error such as
+       "MongoServerError", "CastError: Cast to", or "BSONTypeError".
   tags: "nosql,mongodb,injection,database,owasp-api8,critical"
   impact: "Authentication bypass, unauthorized data access, full database enumeration, or denial of service."

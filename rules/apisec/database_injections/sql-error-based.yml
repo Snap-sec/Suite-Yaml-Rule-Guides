@@ -5,8 +5,6 @@ transform:
   query:
     transformations:
       - replace_all_values_one_by_one:
-          - "'"
-          - "\""
           - "')--"
           - "\")--"
           - "';--"
@@ -16,8 +14,6 @@ transform:
   body:
     transformations:
       - replace_all_values_one_by_one:
-          - "'"
-          - "\""
           - "')--"
           - "\")--"
           - "';--"
@@ -27,8 +23,6 @@ transform:
   header:
     transformations:
       - replace_all_values_one_by_one:
-          - "'"
-          - "\""
           - "')--"
           - "\")--"
           - "';--"
@@ -64,7 +58,6 @@ match_on:
       - "ERROR:  operator does not exist: integer ="
       - "ERROR:  current transaction is aborted, commands ignored until end of transaction block"
       - "invalid byte sequence for encoding"
-      - "column reference"
 
       - "Unclosed quotation mark after the character string"
       - "Conversion failed when converting the"
@@ -125,7 +118,6 @@ match_on:
       - "has no column named"
 
       - "org.h2.jdbc.JdbcSQLSyntaxErrorException"
-      - "Syntax error in SQL statement"
       - "org.h2.message.DbException"
 
       # ── HSQLDB ───────────────────────────────────────────────────────────────
@@ -207,10 +199,7 @@ match_on:
       - value: 'mysqli_sql_exception'
         options:
           regex: true
-      - "DatabaseError"
-      - value: 'QueryException'
-        options:
-          regex: true
+
 
 report:
   title: "Error-based SQL Injection indicators found"
