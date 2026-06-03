@@ -2,23 +2,7 @@ rule_name: Remote File Inclusion (Windows)
 description: "Detects Remote File Inclusion on Windows systems via UNC paths or URLs."
 
 transform:
-  query:
-    transformations:
-      - replace_all_values_one_by_one:
-          - "\\\\127.0.0.1\\c$\\windows\\win.ini"
-          - "http://example.com"
-          - "http://example.com/index.html"
-          - "http://example.com?"
-          - "http://example.com%00"
-  body:
-    transformations:
-      - replace_all_values_one_by_one:
-          - "\\\\127.0.0.1\\c$\\windows\\win.ini"
-          - "http://example.com"
-          - "http://example.com/index.html"
-          - "http://example.com?"
-          - "http://example.com%00"
-  header:
+  all:
     transformations:
       - replace_all_values_one_by_one:
           - "\\\\127.0.0.1\\c$\\windows\\win.ini"

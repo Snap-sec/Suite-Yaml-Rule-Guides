@@ -2,33 +2,7 @@ rule_name: Linux Local File Inclusion
 description: "Detects Linux Local File Inclusion by attempting to read /etc/passwd."
 
 transform:
-  query:
-    transformations:
-      - replace_all_values_one_by_one:
-          - "/etc/passwd"
-          - "../../../../etc/passwd"
-          - "../../../../../../../../etc/passwd"
-          - "....//....//....//etc/passwd"
-          - "..%2f..%2f..%2f..%2fetc%2fpasswd"
-          - "%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd"
-          - "file:///etc/passwd"
-          - "/bn/../../etc/passwd"
-          - "c:/windows/win.ini"
-          - "/etc/passwd%00"
-  body:
-    transformations:
-      - replace_all_values_one_by_one:
-          - "/etc/passwd"
-          - "../../../../etc/passwd"
-          - "../../../../../../../../etc/passwd"
-          - "....//....//....//etc/passwd"
-          - "..%2f..%2f..%2f..%2fetc%2fpasswd"
-          - "%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd"
-          - "file:///etc/passwd"
-          - "/bn/../../etc/passwd"
-          - "c:/windows/win.ini"
-          - "/etc/passwd%00"
-  header:
+  all:
     transformations:
       - replace_all_values_one_by_one:
           - "/etc/passwd"

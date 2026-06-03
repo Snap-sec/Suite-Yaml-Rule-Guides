@@ -1,16 +1,6 @@
 rule_name: Open Redirect - high confidence (absolute external targets)
 transform:
-  query:
-    transformations:
-      - replace_all_values_one_by_one: "https://example.com/"
-      - replace_all_values_one_by_one: "http://example.com/"
-      - replace_all_values_one_by_one: "//example.com/"
-      - replace_all_values_one_by_one: "https://example.com/evil"
-      - replace_all_values_one_by_one: "//example.com/evil"
-      - replace_all_values_one_by_one: "https:%2F%2Fexample.com"
-      - replace_all_values_one_by_one: "https://%65xample.com/"
-      - replace_all_values_one_by_one: "///example.com"
-  body:
+  all:
     transformations:
       - replace_all_values_one_by_one: "https://example.com/"
       - replace_all_values_one_by_one: "http://example.com/"

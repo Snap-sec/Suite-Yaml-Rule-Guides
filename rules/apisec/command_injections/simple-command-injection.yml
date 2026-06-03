@@ -2,7 +2,7 @@ rule_name: Command Injection - single command (uname -a)
 description: "Detects OS command injection vulnerabilities by attempting to execute system commands."
 
 transform:
-  query:
+  all:
     transformations:
       - replace_all_values_one_by_one:
           - "; uname -a"
@@ -13,25 +13,6 @@ transform:
           - "|| uname -a"
           - "; /bin/uname -a"
           - "&& /bin/uname -a"
-
-  body:
-    transformations:
-      - replace_all_values_one_by_one:
-          - "; uname -a"
-          - "&& uname -a"
-          - "| uname -a"
-          - "`uname -a`"
-          - "$(uname -a)"
-          - "|| uname -a"
-          - "; /bin/uname -a"
-
-  header:
-    transformations:
-      - replace_all_values_one_by_one:
-          - "; uname -a"
-          - "&& uname -a"
-          - "`uname -a`"
-          - "$(uname -a)"
 
 match_on:
   body:

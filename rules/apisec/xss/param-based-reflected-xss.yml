@@ -2,13 +2,7 @@ rule_name: Reflected XSS
 description: "Detects Reflected Cross-Site Scripting vulnerabilities via parameter reflection."
 
 transform:
-  query:
-    transformations:
-      - replace_all_values_one_by_one: "<script>alert(0)</script>"
-  body:
-    transformations:
-      - replace_all_values_one_by_one: "<script>alert(0)</script>"
-  header:
+  all:
     transformations:
       - replace_all_values_one_by_one: "<script>alert(0)</script>"
 
