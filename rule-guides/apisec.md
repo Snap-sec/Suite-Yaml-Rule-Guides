@@ -8,6 +8,7 @@
    * [Query Transformer](#query-transformer)
    * [Header Transformer](#header-transformer)
    * [Body Transformer](#body-transformer)
+   * [All Transformer](#all-transformer)
    * [URL Rebuilding](#url-rebuilding)
 3. [Matching](#matching)
 4. [Report Generation](#report-generation)
@@ -170,6 +171,22 @@ body:
   add: { role: "admin" }
   modify: { user_id: "admin" }
 ```
+
+---
+
+## All Transformer
+
+The `all` block acts as a unified transformer. It applies the same mutations to **query parameters, headers, and request bodies** simultaneously, generating separate requests for each part. This is highly useful for scanning broad classes of parameter-based vulnerabilities (such as SQL Injection or Cross-Site Scripting) across all inputs.
+
+```yaml
+transform:
+  all:
+    replace_all_values_one_by_one: "<script>alert(0)</script>"
+```
+
+### Features
+* Automatically splits into `query`, `header`, and `body` requests depending on what fields are present in the original request.
+* Sets the `transformedPart` metadata appropriately to preserve context and aid in de-duplication/tracking.
 
 ---
 
