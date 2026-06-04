@@ -50,7 +50,7 @@ report:
     {{res}}
 
   cwe: "CWE-650"
-  severity: high
+  severity: low
   cvssScore: "7.5"
   mitigation: |
     1. Ignore method override headers unless strictly necessary for legacy clients.
