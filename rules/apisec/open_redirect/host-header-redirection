@@ -1,0 +1,53 @@
+rule_name: Host Header Poisoning (Open Redirect / Routing Bypass)
+description: "Detects Host header poisoning by injecting a malicious host and observing if it reflects in routing or Location headers."
+
+single_match: true
+
+transform:
+  header:
+    add:
+      X-Forwarded-Host: "evil.snapsec.co"
+      X-Host: "evil.snapsec.co"
+    modify:
+      Host: "evil.snapsec.co"
+
+match_on:
+  status:
+    in: [301, 302, 307, 308]
+  header:
+    Location:
+      contains:
+        - value: "(?i)^https?://evil\\.snapsec\\.co.*"
+          options:
+            regex: true
+
+report:
+  title: "Host Header Poisoning Detected"
+  description: |
+    The application is vulnerable to Host header poisoning. 
+    By manipulating the 'Host', 'X-Forwarded-Host', or 'X-Host' headers, the application 
+    was tricked into reflecting the attacker-controlled domain in the 'Location' header.
+    
+    This can lead to Open Redirects, Password Reset Poisoning, or Web Cache Poisoning.
+
+    Original Request:
+    {{original}}
+
+    Transformed Request:
+    {{req}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-601"
+  severity: medium
+  cvssScore: "6.1"
+  mitigation: |
+    1. Do not rely on the 'Host' header or 'X-Forwarded-Host' for absolute URL generation.
+    2. Use a statically configured server name or base URL in application settings.
+    3. Validate the Host header against an allowlist of trusted domains.
+  stepsToReproduce: |
+    1. Send a request with 'X-Forwarded-Host: evil.snapsec.co'.
+    2. Observe the server responding with a 3xx redirect to 'http://evil.snapsec.co/...'.
+  tags: "host-poisoning,open-redirect,headers,medium"
+  impact: "Phishing via Open Redirect or Password Reset token theft."
