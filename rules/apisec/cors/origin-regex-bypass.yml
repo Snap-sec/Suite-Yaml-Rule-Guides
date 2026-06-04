@@ -1,0 +1,44 @@
+rule_name: CORS Origin Regex Bypass
+single_match: true
+description: "Detects weak regex validation in Origin header allowing unauthorized domains."
+transform:
+  header:
+    modify:
+      Origin: "https://nexusbank.com.evil.com" 
+match_on:
+  status: 200
+  header:
+    Access-Control-Allow-Origin: 
+      contains:
+        - value: ".*\\.evil\\.com"
+          options:
+            regex: true
+    Access-Control-Allow-Credentials: "true"
+report:
+  title: "CORS: Weak Regex Origin Validation"
+  description: |
+    The application appears to allow an origin ending in '.evil.com', suggesting it matches the authorized domain loosely (e.g. via weak regex).
+    
+    We attempted sending: {{req.headers.Origin}}
+    The server reflected: {{res.headers.Access-Control-Allow-Origin}}
+
+    Original Request:
+    {{original}}
+
+    Transformed Request:
+    {{req}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-942"
+  severity: high
+  cvssScore: "7.5"
+  mitigation: |
+    1. Use exact string matching for origins.
+    2. If using regex, anchor start (^) and end ($) and escape dots (\.).
+  stepsToReproduce: |
+    1. Send request with 'Origin: https://snapsec.evil.com'
+    2. Observe reflection of the malicious origin with credentials.
+  tags: "cors,bypass,high"
+  impact: "Bypass of CORS whitelist"

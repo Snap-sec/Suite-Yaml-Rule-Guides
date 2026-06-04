@@ -1,0 +1,41 @@
+rule_name: Missing Strict-Transport-Security Header
+
+# HSTS is a host-wide policy → one finding is enough
+single_match: true
+
+match_on:
+  header:
+    strict-transport-security:
+      notExists: true
+
+report:
+  title: "Missing Strict-Transport-Security (HSTS) Header"
+  description: |
+    The application does not include the Strict-Transport-Security (HSTS) header.
+
+    HSTS enforces HTTPS communication and prevents:
+    - SSL stripping attacks
+    - Protocol downgrade attacks
+    - Accidental access over HTTP
+
+    Since HSTS is applied at the host level, this issue affects the entire application.
+
+    Affected Host:
+    {{host}}
+
+    Sample Affected Endpoint:
+    {{req.url}}
+
+  cwe: "CWE-319"
+  severity: "high"
+  cvssScore: "7.5"
+  impact: |
+    An attacker can force users to access the application over HTTP,
+    potentially intercepting or modifying sensitive traffic.
+  mitigation: |
+    Enable HSTS by adding the following header on HTTPS responses:
+
+    Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+    Ensure this header is only served over HTTPS.
+  tags: "security-headers,hsts,transport-security,hardening"

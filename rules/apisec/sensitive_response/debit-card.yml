@@ -1,0 +1,56 @@
+rule_name: Debit Card Number Exposure in Response
+description: "Detects plaintext debit card numbers in API responses including Maestro, Visa Electron, and debit-labeled JSON fields."
+
+single_match: true
+
+match_on:
+  status:
+    notIn: [404, 301, 302]
+  body:
+    contains:
+      # Maestro: 6304, 6759, 6761, 6762, 6763 (12-19 digits)
+      - "\\b6304[0-9]{8,15}\\b"
+      - "\\b6759[0-9]{8,15}\\b"
+      - "\\b676[123][0-9]{8,15}\\b"
+      # Visa Electron: 4026, 417500, 4405, 4508, 4844, 4913, 4917
+      - "\\b4026[0-9]{12}\\b"
+      - "\\b417500[0-9]{10}\\b"
+      - "\\b4508[0-9]{12}\\b"
+      - "\\b4844[0-9]{12}\\b"
+      - "\\b491[37][0-9]{12}\\b"
+      # Rupay (India debit): 60, 65, 81, 82, 508
+      - "\\b60[0-9]{14}\\b"
+      - "\\b65[0-9]{14}\\b"
+      - "\\b81[0-9]{14}\\b"
+      - "\\b508[0-9]{13}\\b"
+      # Debit-labeled JSON fields — context-driven detection
+      - "\"debit_card\"\\s*:\\s*\"[0-9 \\-]{13,19}\""
+      - "\"debit_number\"\\s*:\\s*\"[0-9 \\-]{13,19}\""
+      - "\"debit_card_number\"\\s*:\\s*\"[0-9 \\-]{13,19}\""
+      - "\"debit_pan\"\\s*:\\s*\"[0-9 \\-]{13,19}\""
+      - "\"card_type\"\\s*:\\s*\"debit\""
+
+report:
+  title: "Debit Card Number Exposed in Response"
+  description: |
+    The API response contains a plaintext debit card number.
+    Exposing debit card numbers enables direct financial theft from linked bank accounts.
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-312"
+  severity: critical
+  cvssScore: "9.9"
+  mitigation: |
+    1. Never return debit card numbers in API responses — mask to last 4 digits.
+    2. Apply field-level tokenization at the storage layer.
+    3. Audit all response serializers to exclude raw card number fields.
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response body for debit card number patterns or labeled debit fields.
+  tags: "pci-dss,debit-card,financial,critical,compliance"
+  impact: "Direct unauthorized bank account withdrawals, financial loss, regulatory penalties."

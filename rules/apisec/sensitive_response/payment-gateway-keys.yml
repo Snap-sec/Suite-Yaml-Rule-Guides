@@ -1,0 +1,86 @@
+rule_name: Payment Gateway Secret Keys Exposure in Response
+description: "Detects live and test secret keys for Stripe, Square, Braintree, PayPal, and other payment gateways in API responses."
+
+single_match: true
+
+match_on:
+  status:
+    notIn: [404, 301, 302]
+  body:
+    contains:
+      # ---- Stripe ----
+      # Live Secret Key
+      - "sk_live_[A-Za-z0-9]{24,}"
+      # Test Secret Key
+      - "sk_test_[A-Za-z0-9]{24,}"
+      # Live Restricted Key
+      - "rk_live_[A-Za-z0-9]{24,}"
+      # Stripe Webhook Secret
+      - "whsec_[A-Za-z0-9]{32,}"
+      # In JSON fields
+      - "\"stripe_secret\"\\s*:\\s*\"sk_(live|test)_[A-Za-z0-9]{24,}\""
+      - "\"stripe_key\"\\s*:\\s*\"sk_(live|test)_[A-Za-z0-9]{24,}\""
+
+      # ---- Square ----
+      # Square Production Access Token
+      - "EAAAl[A-Za-z0-9]{60,}"
+      # Square Test Token
+      - "EAAAEAaa[A-Za-z0-9]{50,}"
+      - "sandbox-sq0atb-[A-Za-z0-9\\-_]{22}"
+      - "\"square_access_token\"\\s*:\\s*\"EAAA[A-Za-z0-9]{58,}\""
+
+      # ---- Braintree ----
+      # Braintree Auth Fingerprint
+      - "access_token\\$production\\$[A-Za-z0-9]{16}\\$[A-Za-z0-9]{32}"
+      - "access_token\\$sandbox\\$[A-Za-z0-9]{16}\\$[A-Za-z0-9]{32}"
+      # Braintree Private Key in JSON
+      - "\"braintree_private_key\"\\s*:\\s*\"[A-Za-z0-9]{32}\""
+
+      # ---- PayPal ----
+      - "\"paypal_secret\"\\s*:\\s*\"[A-Za-z0-9\\-_]{40,}\""
+      - "\"paypal_client_secret\"\\s*:\\s*\"[A-Za-z0-9\\-_]{40,}\""
+      # PayPal NVP/SDK credentials
+      - "PWD=[A-Za-z0-9!@#$%]{8,}"
+
+      # ---- Adyen ----
+      - "\"ws_[a-zA-Z0-9]{8,}@Company\\.[A-Za-z0-9]+"
+      - "\"adyen_api_key\"\\s*:\\s*\"[A-Za-z0-9]{64,}\""
+
+      # ---- Razorpay ----
+      - "rzp_live_[A-Za-z0-9]{14}"
+      - "rzp_test_[A-Za-z0-9]{14}"
+      - "\"razorpay_key_secret\"\\s*:\\s*\"[A-Za-z0-9]{20}\""
+
+      # ---- Shopify ----
+      - "shpss_[A-Za-z0-9]{32}"
+      - "shpat_[A-Za-z0-9]{32}"
+
+report:
+  title: "Payment Gateway Secret Key Exposed in Response"
+  description: |
+    The API response contains a live or test secret key for a payment gateway
+    (Stripe, Square, Braintree, PayPal, Razorpay, Shopify, or Adyen).
+    An attacker with a live secret key can initiate or capture payments, issue
+    refunds, access all transaction history, and steal customer payment data.
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-312"
+  severity: critical
+  cvssScore: "10.0"
+  mitigation: |
+    1. Immediately revoke the exposed key from the payment gateway dashboard.
+    2. Rotate all payment keys and audit transaction logs for unauthorized use.
+    3. Never expose secret keys in API responses, logs, or client-side code.
+    4. Use publishable/public keys only on the client — keep secret keys server-side.
+    5. Store secret keys in a secrets manager with strict access controls.
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response for payment key patterns
+       (e.g., sk_live_..., rzp_live_..., EAAAl...).
+  tags: "stripe,square,braintree,paypal,razorpay,payment,secrets,critical,pci-dss"
+  impact: "Fraudulent charges, refund abuse, full payment data access, PCI-DSS breach."

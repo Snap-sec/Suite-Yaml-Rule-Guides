@@ -1,0 +1,79 @@
+rule_name: GitHub / GitLab / npm Token Exposure in Response
+description: "Detects developer platform access tokens (GitHub, GitLab, Bitbucket, npm) leaked in API responses."
+
+single_match: true
+
+match_on:
+  status:
+    notIn: [404, 301, 302]
+  body:
+    contains:
+      # ---- GitHub ----
+      # Classic Personal Access Token (ghp_)
+      - "ghp_[A-Za-z0-9]{36}"
+      # Fine-grained PAT (github_pat_)
+      - "github_pat_[A-Za-z0-9_]{82}"
+      # OAuth App Token
+      - "gho_[A-Za-z0-9]{36}"
+      # GitHub App Token
+      - "ghs_[A-Za-z0-9]{36}"
+      # GitHub Refresh Token
+      - "ghr_[A-Za-z0-9]{76}"
+
+      # ---- GitLab ----
+      # Personal Access Token
+      - "glpat-[A-Za-z0-9\\-_]{20}"
+      # Pipeline Trigger Token
+      - "glptt-[A-Za-z0-9]{40}"
+      # Runner Registration Token
+      - "GR1348941[A-Za-z0-9\\-_]{20}"
+
+      # ---- Bitbucket ----
+      - "\"bitbucket_token\"\\s*:\\s*\"[A-Za-z0-9]{20,}\""
+      - "ATBB[A-Za-z0-9]{32}"
+
+      # ---- npm (Node Package Manager) ----
+      - "npm_[A-Za-z0-9]{36}"
+
+      # ---- Docker Hub ----
+      - "dckr_pat_[A-Za-z0-9\\-_]{27}"
+
+      # ---- PyPI ----
+      - "pypi-[A-Za-z0-9\\-_]{32,}"
+
+      # ---- Terraform Cloud ----
+      - "[A-Za-z0-9]{14}\\.atlasv1\\.[A-Za-z0-9\\-_]{60}"
+
+      # ---- Generic CI/CD tokens in JSON ----
+      - "\"github_token\"\\s*:\\s*\"[A-Za-z0-9\\-_]{36,}\""
+      - "\"gitlab_token\"\\s*:\\s*\"[A-Za-z0-9\\-_]{20,}\""
+      - "\"npm_token\"\\s*:\\s*\"[A-Za-z0-9\\-_]{36,}\""
+      - "\"ci_token\"\\s*:\\s*\"[A-Za-z0-9\\-_]{20,}\""
+
+report:
+  title: "Developer Platform Token (GitHub / GitLab / npm) Exposed in Response"
+  description: |
+    The API response contains a developer platform access token for GitHub, GitLab,
+    Bitbucket, or npm. An attacker with this token can access private repositories,
+    modify source code, publish malicious packages, or exfiltrate all source code.
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-312"
+  severity: critical
+  cvssScore: "9.3"
+  mitigation: |
+    1. Immediately revoke the exposed token from the respective platform.
+    2. Rotate all tokens and audit recent access logs for unauthorized use.
+    3. Never store or return developer tokens in API responses.
+    4. Use short-lived tokens and store them in a secrets manager.
+    5. Implement CI/CD secret scanning (GitHub Secret Scanning, GitLab SAST).
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response for token patterns (ghp_..., glpat-..., npm_...).
+  tags: "github,gitlab,npm,token,secrets,source-code,critical,supply-chain"
+  impact: "Source code theft, supply chain attack via malicious package publish, full repository takeover."

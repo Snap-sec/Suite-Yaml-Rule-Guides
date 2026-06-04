@@ -1,0 +1,51 @@
+rule_name: HTTP Method Override Bypass
+description: "Detects authorization bypass or WAF evasion by spoofing the HTTP method via override headers."
+
+single_match: true
+
+transform:
+  header:
+    add:
+      X-HTTP-Method-Override: "PUT"
+      X-Method-Override: "PUT"
+      X-Forwarded-Method: "PUT"
+      X-HTTP-Method: "PUT"
+
+match_on:
+  status: 200
+  body:
+    contains:
+      - value: "(?i)(success|updated|created|modified|admin|true)"
+        options:
+          regex: true
+
+report:
+  title: "Authorization Bypass via HTTP Method Override"
+  description: |
+    The application processes HTTP Method Override headers (e.g., X-HTTP-Method-Override) 
+    and successfully executed a restricted action or bypassed authorization controls.
+    
+    This technique is often used to bypass Web Application Firewalls (WAFs) or 
+    poorly configured routing rules that only protect specific verbs like POST or DELETE.
+
+    Original Request:
+    {{original}}
+
+    Transformed Request:
+    {{req}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-650"
+  severity: high
+  cvssScore: "7.5"
+  mitigation: |
+    1. Ignore method override headers unless strictly necessary for legacy clients.
+    2. Ensure authorization checks are applied consistently regardless of the HTTP method.
+    3. Configure WAFs to block requests containing unexpected method override headers.
+  stepsToReproduce: |
+    1. Send the request with 'X-HTTP-Method-Override: PUT' added to the headers.
+    2. Observe that the server treats the request as a PUT and succeeds.
+  tags: "bypass,authorization,headers,high"
+  impact: "Unauthorized data modification or access control bypass."

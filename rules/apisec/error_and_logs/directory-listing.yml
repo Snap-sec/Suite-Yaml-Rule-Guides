@@ -1,0 +1,47 @@
+rule_name: Directory Listing Enabled
+description: "Detects exposed web directories and file listings by recursively checking parent paths."
+
+single_match: true
+
+transform:
+  recursive: true
+  method: ["GET"]
+
+match_on:
+  status: 200
+  body:
+    contains:
+      - "Index of /"
+      - "Parent Directory"
+      - "[To Parent Directory]"
+      - "Directory Listing For"
+      - "<title>Index of"
+      - "Directory contents of"
+
+report:
+  title: "Directory Listing Enabled"
+  description: |
+    The web server is configured to display a directory listing when a directory 
+    is requested without a default index file (e.g., index.html). 
+    
+    This can expose sensitive source code, configuration files, backup archives, 
+    and other internal application assets.
+
+    Affected Endpoint (and parents):
+    {{req.url}}
+
+    Response Extract:
+    {{res.body}}
+
+  cwe: "CWE-548"
+  severity: medium
+  cvssScore: "5.3"
+  mitigation: |
+    1. Disable directory listing (Options -Indexes in Apache, autoindex off in Nginx).
+    2. Ensure an empty index.html is present in sensitive directories if listing cannot be disabled globally.
+    3. Ensure no sensitive files are stored in publicly accessible web roots.
+  stepsToReproduce: |
+    1. Navigate to the parent directory of the current endpoint (e.g., strip the filename).
+    2. Observe the auto-generated HTML index of files.
+  tags: "directory-listing,misconfiguration,information-disclosure,medium"
+  impact: "Information Disclosure, exposing source code or backups."

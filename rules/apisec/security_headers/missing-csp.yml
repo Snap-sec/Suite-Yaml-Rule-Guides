@@ -1,0 +1,36 @@
+rule_name: Missing Content-Security-Policy Header
+
+single_match: true  # must be evaluated per page/endpoint
+
+match_on:
+  header:
+    content-security-policy:
+      notExists: true
+
+report:
+  title: "Missing Content-Security-Policy (CSP) Header"
+  description: |
+    The response does not include a Content-Security-Policy (CSP) header.
+
+    CSP is a critical security control that helps prevent:
+    - Cross-Site Scripting (XSS)
+    - Data injection attacks
+    - Malicious third-party script execution
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response Headers:
+    {{res.headers}}
+
+  cwe: "CWE-693"
+  severity: "high"
+  cvssScore: "8.0"
+  impact: |
+    Without a CSP, attackers may inject and execute malicious scripts,
+    leading to session hijacking, data exfiltration, or full account takeover.
+  mitigation: |
+    Define and enforce a strict Content-Security-Policy header.
+    Example:
+    Content-Security-Policy: default-src 'self'; script-src 'self'
+  tags: "security-headers,csp,xss,hardening"

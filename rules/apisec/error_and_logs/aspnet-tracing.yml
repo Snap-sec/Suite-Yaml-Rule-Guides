@@ -1,0 +1,37 @@
+rule_name: ASP.NET Tracing Enabled
+single_match: true
+description: "Detects enabled and accessible ASP.NET Tracing via trace.axd."
+transform:
+  path: "/trace.axd" 
+match_on:
+  status: 200
+  body:
+    contains:
+      - "Application Trace"
+      - "Request Details"
+      - "Trace Information"
+report:
+  title: "ASP.NET Tracing Enabled"
+  description: |
+    ASP.NET Tracing is enabled and accessible.
+    This exposes sensitive information about requests, session state, and server configuration.
+    
+    Verified at: {{req.url}}
+
+    Original Request:
+    {{original}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-215"
+  severity: medium
+  cvssScore: "5.3"
+  mitigation: |
+    1. Disable tracing in web.config: <trace enabled="false" ... />
+    2. Restrict access to trace.axd.
+  stepsToReproduce: |
+    1. Navigate to {{req.url}} (trace.axd)
+    2. Observe detailed trace output.
+  tags: "misconfiguration,info-disclosure,aspnet,medium"
+  impact: "Leakage of session IDs, physical paths, and request data"

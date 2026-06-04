@@ -1,0 +1,50 @@
+rule_name: CVV / CVC Code Exposure in Response
+description: "Detects CVV, CVC, or card security codes returned in plaintext API responses — a direct PCI-DSS violation."
+
+single_match: true
+
+match_on:
+  status:
+    notIn: [404, 301, 302]
+  body:
+    contains:
+      # JSON field name patterns for CVV/CVC
+      - "\"cvv\"\\s*:\\s*[\"']?[0-9]{3,4}[\"']?"
+      - "\"cvc\"\\s*:\\s*[\"']?[0-9]{3,4}[\"']?"
+      - "\"cvv2\"\\s*:\\s*[\"']?[0-9]{3,4}[\"']?"
+      - "\"cvc2\"\\s*:\\s*[\"']?[0-9]{3,4}[\"']?"
+      - "\"cid\"\\s*:\\s*[\"']?[0-9]{3,4}[\"']?"
+      - "\"card_cvv\"\\s*:\\s*[\"']?[0-9]{3,4}[\"']?"
+      - "\"card_cvc\"\\s*:\\s*[\"']?[0-9]{3,4}[\"']?"
+      - "\"security_code\"\\s*:\\s*[\"']?[0-9]{3,4}[\"']?"
+      - "\"card_security_code\"\\s*:\\s*[\"']?[0-9]{3,4}[\"']?"
+      # Plain text labels
+      - "CVV\\s*:\\s*[0-9]{3,4}"
+      - "CVC\\s*:\\s*[0-9]{3,4}"
+      - "CVV2\\s*:\\s*[0-9]{3,4}"
+
+report:
+  title: "CVV / CVC Card Security Code Exposed in Response"
+  description: |
+    The API response contains a plaintext CVV or CVC card security code.
+    Storing or returning CVV/CVC is explicitly prohibited by PCI-DSS standard
+    (requirement 3.2) — even with full database encryption.
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-312"
+  severity: critical
+  cvssScore: "10.0"
+  mitigation: |
+    1. Never store CVV/CVC values after authorization — this is a hard PCI-DSS requirement.
+    2. Remove all CVV fields from API response serializers immediately.
+    3. Conduct a PCI-DSS audit to confirm no CVV storage exists anywhere.
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response for cvv, cvc, cvv2, or security_code fields containing 3-4 digits.
+  tags: "pci-dss,cvv,cvc,financial,critical,compliance"
+  impact: "Enables card-not-present fraud. Direct and severe PCI-DSS violation."

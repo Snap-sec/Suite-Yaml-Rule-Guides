@@ -1,0 +1,32 @@
+rule_name: Missing Referrer-Policy Header
+
+single_match: true
+
+match_on:
+  header:
+    referrer-policy:
+      notExists: true
+
+report:
+  title: "Missing Referrer-Policy Header"
+  description: |
+    The response does not include a Referrer-Policy header.
+
+    The Referrer-Policy HTTP header controls how much referrer information (sent with the Referer header) should be included with requests.
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response Headers:
+    {{res.headers}}
+
+  cwe: "CWE-693"
+  severity: "medium"
+  cvssScore: "5.3"
+  impact: |
+    Without this header, the browser may leak sensitive information in the Referer header to third-party sites.
+  mitigation: |
+    Set the Referrer-Policy header to a secure value.
+    Example:
+    Referrer-Policy: strict-origin-when-cross-origin
+  tags: "security-headers,referrer-policy,privacy"

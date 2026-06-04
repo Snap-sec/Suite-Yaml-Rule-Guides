@@ -1,0 +1,47 @@
+rule_name: IBAN Exposure in Response
+description: "Detects plaintext International Bank Account Numbers (IBANs) in API responses."
+
+single_match: true
+
+match_on:
+  status:
+    notIn: [404, 301, 302]
+  body:
+    contains:
+      # Standard IBAN: 2 letter country code + 2 check digits + up to 30 alphanum (total 15-34 chars)
+      # Common country prefixes included for specificity
+      - "\\b(GB|DE|FR|ES|IT|NL|BE|AT|CH|SE|NO|DK|FI|PT|IE|PL|CZ|HU|RO|HR|SK|SI|BG|LT|LV|EE|CY|MT|LU|GR)[0-9]{2}[A-Z0-9]{10,30}\\b"
+      # Middle East / Asia
+      - "\\b(AE|SA|QA|KW|BH|TR|IN|PK)[0-9]{2}[A-Z0-9]{10,30}\\b"
+      # Americas
+      - "\\b(BR|CR|GT|MX|DO)[0-9]{2}[A-Z0-9]{10,30}\\b"
+      # JSON field patterns
+      - "\"iban\"\\s*:\\s*\"[A-Z]{2}[0-9]{2}[A-Z0-9]{10,30}\""
+      - "\"IBAN\"\\s*:\\s*\"[A-Z]{2}[0-9]{2}[A-Z0-9]{10,30}\""
+      - "\"bank_iban\"\\s*:\\s*\"[A-Z]{2}[0-9]{2}[A-Z0-9]{10,30}\""
+
+report:
+  title: "IBAN Exposed in Response"
+  description: |
+    The API response contains a plaintext International Bank Account Number (IBAN).
+    IBAN exposure enables unauthorized SEPA/wire transfers and violates GDPR
+    and PSD2 data minimization requirements.
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-312"
+  severity: high
+  cvssScore: "8.5"
+  mitigation: |
+    1. Mask IBAN in responses — show only country code + last 4 digits.
+    2. Restrict IBAN visibility to authenticated and authorized roles only.
+    3. Encrypt IBAN at rest using field-level encryption.
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response body for IBAN patterns (e.g., GB29NWBK60161331926819).
+  tags: "iban,bank,financial,pii,gdpr,psd2"
+  impact: "Unauthorized international bank transfers, GDPR violations, financial loss."

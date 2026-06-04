@@ -1,0 +1,42 @@
+rule_name: CORS Trusted Arbitrary Subdomain
+single_match: true
+description: "Detects excessive trust of arbitrary subdomains in CORS configuration."
+transform:
+  header:
+    modify:
+      Origin: "https://evil.nexusbank.com"
+match_on:
+  status: 200
+  header:
+    Access-Control-Allow-Origin: 
+      contains:
+        - value: "https://evil\\..*"
+          options:
+            regex: true
+    Access-Control-Allow-Credentials: "true"
+report:
+  title: "CORS: Arbitrary Subdomain Trusted"
+  description: |
+    The application trusts arbitrary subdomains (e.g. 'evil.target.com').
+    If an attacker can claim a subdomain or find XSS in any subdomain, they can compromise the main application.
+
+    Original Request:
+    {{original}}
+
+    Transformed Request:
+    {{req}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-942"
+  severity: medium
+  cvssScore: "6.0"
+  mitigation: |
+    1. Explicitly whitelist only required subdomains.
+    2. Avoid wildcard subdomain trust (*.example.com) if possible.
+  stepsToReproduce: |
+    1. Send request with 'Origin: https://evil.snapsec.co'
+    2. Observe reflection of the origin with credentials.
+  tags: "cors,misconfiguration,medium"
+  impact: "Expanded attack surface via subdomains"

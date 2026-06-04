@@ -2,7 +2,13 @@ rule_name: Reflected XSS
 description: "Detects Reflected Cross-Site Scripting vulnerabilities via parameter reflection."
 
 transform:
-  all:
+  query:
+    transformations:
+      - replace_all_values_one_by_one: "<script>alert(0)</script>"
+  body:
+    transformations:
+      - replace_all_one_by_one: "<script>alert(0)</script>"
+  header:
     transformations:
       - replace_all_values_one_by_one: "<script>alert(0)</script>"
 
@@ -12,15 +18,9 @@ match_on:
       regex: 'text\/html|application\/html|application\/x?html'
   body:
     contains:
-      - value: '<script>alert\(0\)<\/script>'
-        options:
-          regex: true
-      - value: '<script>\s*alert\s*\(\s*0\s*\)\s*<\/script>'
-        options:
-          regex: true
-      - value: 'onerror\s*=\s*[\"'']?alert\s*\('
-        options:
-          regex: true
+      - "<script>alert\\(0\\)<\\/script>"
+      - "<script>\\s*alert\\s*\\(\\s*0\\s*\\)\\s*<\\/script>"
+      - "onerror\\s*=\\s*[\"']?alert\\s*\\("
 
 report:
   title: "Reflected XSS detected"

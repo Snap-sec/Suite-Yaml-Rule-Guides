@@ -1,0 +1,80 @@
+rule_name: Cloud Access Keys Exposure in Response
+description: "Detects plaintext cloud provider access keys and secrets (AWS, GCP, Azure) in API responses."
+
+single_match: true
+
+match_on:
+  status:
+    notIn: [404, 301, 302]
+  body:
+    contains:
+      # ---- AWS ----
+      # AWS Access Key ID (always starts with AKIA)
+      - "AKIA[0-9A-Z]{16}"
+      # AWS Temporary STS token (starts with ASIA)
+      - "ASIA[0-9A-Z]{16}"
+      # AWS Secret Access Key (40 chars base64)
+      - "\"secretAccessKey\"\\s*:\\s*\"[A-Za-z0-9/+=]{40}\""
+      - "\"aws_secret_access_key\"\\s*:\\s*\"[A-Za-z0-9/+=]{40}\""
+      - "\"SecretAccessKey\"\\s*:\\s*\"[A-Za-z0-9/+=]{40}\""
+      # AWS Session Token
+      - "\"SessionToken\"\\s*:\\s*\"[A-Za-z0-9/+=]{100,}\""
+      - "\"aws_session_token\"\\s*:\\s*\"[A-Za-z0-9/+=]{100,}\""
+
+      # ---- GCP / Google ----
+      # Google API Key (AIza prefix)
+      - "AIza[0-9A-Za-z\\-_]{35}"
+      # Google OAuth2 Client Secret
+      - "GOCSPX-[0-9A-Za-z\\-_]{28}"
+      # Google Service Account JSON key indicator
+      - "\"type\"\\s*:\\s*\"service_account\""
+      - "\"private_key_id\"\\s*:\\s*\"[a-f0-9]{40}\""
+      # Firebase Server Key (FCM)
+      - "AAAA[A-Za-z0-9_-]{7}:[A-Za-z0-9_-]{140}"
+
+      # ---- Azure ----
+      # Azure Storage connection string
+      - "DefaultEndpointsProtocol=https;AccountName=[^;]+;AccountKey=[A-Za-z0-9+/=]{86,88}"
+      # Azure Client Secret in JSON
+      - "\"clientSecret\"\\s*:\\s*\"[A-Za-z0-9~._\\-]{34,}\""
+      # Azure SAS Token
+      - "sv=[0-9]{4}-[0-9]{2}-[0-9]{2}&ss=.*&sig=[A-Za-z0-9%]+"
+      # Azure AD App Key
+      - "\"appKey\"\\s*:\\s*\"[A-Za-z0-9+/=]{43,44}\""
+
+      # ---- Oracle Cloud ----
+      - "\"fingerprint\"\\s*:\\s*\"[a-f0-9]{2}(:[a-f0-9]{2}){15}\""
+
+      # ---- DigitalOcean ----
+      - "dop_v1_[a-f0-9]{64}"
+
+      # ---- Cloudflare ----
+      - "\"X-Auth-Key\"\\s*:\\s*\"[a-f0-9]{37}\""
+
+report:
+  title: "Cloud Provider Access Keys Exposed in Response"
+  description: |
+    The API response contains plaintext cloud provider access keys or secrets
+    (AWS, GCP, Azure, or others). An attacker with these credentials can access,
+    modify, or destroy cloud infrastructure and all data stored within it.
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-312"
+  severity: critical
+  cvssScore: "10.0"
+  mitigation: |
+    1. Immediately rotate all exposed cloud credentials.
+    2. Store cloud credentials in a secrets manager — never in code, responses, or logs.
+    3. Use IAM roles and short-lived credentials via STS/Workload Identity instead of static keys.
+    4. Enable CloudTrail / audit logging to detect unauthorized use of exposed keys.
+    5. Apply least-privilege IAM policies to all service accounts.
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response for cloud key patterns (AKIA..., AIza..., Azure connection strings).
+  tags: "aws,gcp,azure,cloud,credentials,secrets,critical,iam"
+  impact: "Full cloud infrastructure takeover, data breach, resource abuse, ransomware deployment."

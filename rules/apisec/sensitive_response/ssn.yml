@@ -1,0 +1,56 @@
+rule_name: Social Security Number (SSN) Exposure in Response
+description: "Detects plaintext Social Security Numbers and equivalent national identity numbers in API responses."
+
+single_match: true
+
+match_on:
+  status:
+    notIn: [404, 301, 302]
+  body:
+    contains:
+      # US SSN: XXX-XX-XXXX (with dashes)
+      - "\\b(?!000|666|9[0-9]{2})[0-9]{3}-(?!00)[0-9]{2}-(?!0000)[0-9]{4}\\b"
+      # US SSN: XXXXXXXXX (no dashes, must exclude 000, 666, 9xx)
+      - "\\b(?!000|666|9[0-9]{2})(?!0{3})[0-9]{3}(?!0{2})[0-9]{2}(?!0{4})[0-9]{4}\\b"
+      # JSON field patterns for SSN
+      - "\"ssn\"\\s*:\\s*\"[0-9\\-]{9,11}\""
+      - "\"social_security\"\\s*:\\s*\"[0-9\\-]{9,11}\""
+      - "\"social_security_number\"\\s*:\\s*\"[0-9\\-]{9,11}\""
+      - "\"sin\"\\s*:\\s*\"[0-9 \\-]{9,11}\""
+      # UK National Insurance Number: AB123456C
+      - "\\b[A-CEGHJ-PR-TW-Z]{1}[A-CEGHJ-NPR-TW-Z]{1}[0-9]{6}[A-D]{1}\\b"
+      - "\"nino\"\\s*:\\s*\"[A-Z]{2}[0-9]{6}[A-D]\""
+      - "\"national_insurance\"\\s*:\\s*\"[A-Z]{2}[0-9]{6}[A-D]\""
+      # Canadian SIN: XXX-XXX-XXX
+      - "\\b[0-9]{3}-[0-9]{3}-[0-9]{3}\\b"
+      # Indian Aadhaar: 12 digits (groups of 4)
+      - "\\b[2-9][0-9]{3}[\\s]?[0-9]{4}[\\s]?[0-9]{4}\\b"
+      - "\"aadhaar\"\\s*:\\s*\"[0-9 ]{12,14}\""
+      - "\"aadhar\"\\s*:\\s*\"[0-9 ]{12,14}\""
+
+report:
+  title: "Social Security Number (SSN) / National Identity Number Exposed in Response"
+  description: |
+    The API response contains a plaintext Social Security Number (SSN) or equivalent
+    national identity number (NIN, SIN, Aadhaar). This is direct PII exposure that
+    constitutes a data breach under GDPR, CCPA, and sector-specific regulations.
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-312"
+  severity: critical
+  cvssScore: "9.9"
+  mitigation: |
+    1. Never return SSN / national ID numbers in full via API responses.
+    2. Mask to last 4 digits (e.g., ***-**-6789) at the serialization layer.
+    3. Apply field-level encryption for all stored national identity numbers.
+    4. Implement strict access controls — only authenticated and authorized roles.
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response body for SSN patterns (XXX-XX-XXXX) or labeled identity fields.
+  tags: "ssn,national-id,pii,identity,gdpr,ccpa,critical,compliance"
+  impact: "Identity theft, fraudulent tax filing, unauthorized credit applications, regulatory penalties."

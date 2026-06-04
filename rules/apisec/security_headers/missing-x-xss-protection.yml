@@ -1,0 +1,32 @@
+rule_name: Missing X-XSS-Protection Header
+
+single_match: true
+
+match_on:
+  header:
+    x-xss-protection:
+      notExists: true
+
+report:
+  title: "Missing X-XSS-Protection Header"
+  description: |
+    The response does not include an X-XSS-Protection header.
+
+    This header stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response Headers:
+    {{res.headers}}
+
+  cwe: "CWE-693"
+  severity: "low"
+  cvssScore: "4.3"
+  impact: |
+    Older browsers may execute reflected XSS attacks that could have been blocked by the browser's XSS filter.
+  mitigation: |
+    Enable the XSS filter.
+    Example:
+    X-XSS-Protection: 1; mode=block
+  tags: "security-headers,xss,legacy"

@@ -1,0 +1,49 @@
+rule_name: SSH / Private Key Material in Response
+description: "Detects plaintext SSH, RSA, EC, PGP, or OPENSSH private key material returned in API responses."
+
+single_match: true
+
+match_on:
+  status:
+    notIn: [404, 301, 302]
+  body:
+    contains:
+      - "-----BEGIN RSA PRIVATE KEY-----"
+      - "-----BEGIN EC PRIVATE KEY-----"
+      - "-----BEGIN DSA PRIVATE KEY-----"
+      - "-----BEGIN PRIVATE KEY-----"
+      - "-----BEGIN OPENSSH PRIVATE KEY-----"
+      - "-----BEGIN PGP PRIVATE KEY BLOCK-----"
+      - "-----BEGIN ENCRYPTED PRIVATE KEY-----"
+      # Proc-Type line indicates encrypted PEM key
+      - "Proc-Type: 4,ENCRYPTED"
+      # SSH key file content fragment
+      - "AAAAB3NzaC1yc2E"
+      - "AAAAB3NzaC1yc2EAAAADAQAB"
+
+report:
+  title: "SSH / Private Key Material Exposed in Response"
+  description: |
+    The API response contains private key material (SSH, RSA, EC, PGP, or OPENSSH).
+    Exposing private keys allows an attacker to impersonate the server, decrypt
+    TLS traffic, or gain unauthorized shell access to systems.
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-312"
+  severity: critical
+  cvssScore: "10.0"
+  mitigation: |
+    1. Never store or return private keys via API responses.
+    2. Use a secrets manager (AWS Secrets Manager, Vault) for all key material.
+    3. Immediately rotate any exposed key.
+    4. Audit all API serializers to ensure file/key fields are excluded.
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response body for PEM headers (-----BEGIN ... PRIVATE KEY-----).
+  tags: "ssh,private-key,pem,secrets,crypto,critical"
+  impact: "Full server compromise, TLS decryption, unauthorized remote access."

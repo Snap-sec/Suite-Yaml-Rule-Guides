@@ -1,0 +1,73 @@
+rule_name: File System Path Exposure in Response
+description: "Detects absolute file system paths leaked in API responses, revealing server directory structure."
+
+single_match: true
+
+match_on:
+  status:
+    notIn: [404, 301, 302]
+  body:
+    contains:
+      # Linux / Unix absolute paths in common sensitive directories
+      - "/etc/passwd"
+      - "/etc/shadow"
+      - "/etc/hosts"
+      - "/var/www/"
+      - "/var/log/"
+      - "/home/[a-z_][a-z0-9_\\-]*/\\.ssh"
+      - "/root/"
+      - "/tmp/"
+      - "/proc/self/"
+      # App server paths
+      - "/usr/local/lib/"
+      - "/usr/share/"
+      - "/opt/app"
+      - "/srv/www"
+      # Common framework paths in errors
+      - "/app/controllers/"
+      - "/app/models/"
+      - "/resources/views/"
+      - "/src/main/java/"
+      - "site-packages/"
+      # Generic Unix absolute path (starts with / followed by word chars)
+      - "\"path\"\\s*:\\s*\"\\/[a-zA-Z0-9_\\-\\/\\.]{8,}\""
+      - "\"file\"\\s*:\\s*\"\\/[a-zA-Z0-9_\\-\\/\\.]{8,}\""
+      - "\"filename\"\\s*:\\s*\"\\/[a-zA-Z0-9_\\-\\/\\.]{8,}\""
+      - "\"base_path\"\\s*:\\s*\"\\/[a-zA-Z0-9_\\-\\/\\.]{8,}\""
+      - "\"root_path\"\\s*:\\s*\"\\/[a-zA-Z0-9_\\-\\/\\.]{8,}\""
+      # Windows absolute paths
+      - "C:\\\\Windows\\\\"
+      - "C:\\\\Users\\\\"
+      - "C:\\\\inetpub\\\\wwwroot"
+      - "C:\\\\Program Files"
+      - "D:\\\\websites\\\\"
+      - "\"path\"\\s*:\\s*\"[A-Z]:\\\\\\\\"
+      # UNC paths
+      - "\\\\\\\\[A-Za-z0-9_\\-]+\\\\"
+
+report:
+  title: "File System Path Exposed in Response"
+  description: |
+    The API response contains absolute file system paths, revealing the server's
+    directory structure. This information helps attackers craft targeted path
+    traversal, LFI, and file upload attacks with precise target paths.
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-200"
+  severity: medium
+  cvssScore: "5.3"
+  mitigation: |
+    1. Sanitize all error messages to exclude file system paths before sending to clients.
+    2. Use relative paths internally and never expose server directory structure in responses.
+    3. Enable generic error handling middleware in production.
+    4. Review all JSON serializers for path-type fields that should be excluded.
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response body for absolute Unix (/var/www/, /etc/) or Windows (C:\\) paths.
+  tags: "path-disclosure,information-leakage,lfi,traversal,medium"
+  impact: "Aids targeted path traversal and LFI attacks, reveals server directory structure."

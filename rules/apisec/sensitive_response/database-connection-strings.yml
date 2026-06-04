@@ -1,0 +1,69 @@
+rule_name: Database Connection String Exposure in Response
+description: "Detects database connection strings with embedded credentials returned in API responses."
+
+single_match: true
+
+match_on:
+  status:
+    notIn: [404, 301, 302]
+  body:
+    contains:
+      # MongoDB URI with credentials
+      - "mongodb://[^:]+:[^@]+@"
+      - "mongodb\\+srv://[^:]+:[^@]+@"
+      # MySQL / MariaDB
+      - "mysql://[^:]+:[^@]+@"
+      - "mysql2://[^:]+:[^@]+@"
+      # PostgreSQL
+      - "postgresql://[^:]+:[^@]+@"
+      - "postgres://[^:]+:[^@]+@"
+      # Redis with password
+      - "redis://:?[^@]+@[^/]+"
+      - "rediss://[^:]+:[^@]+@"
+      # AMQP (RabbitMQ)
+      - "amqp://[^:]+:[^@]+@"
+      - "amqps://[^:]+:[^@]+@"
+      # SQL Server / MSSQL connection strings
+      - "Server=[^;]+;Database=[^;]+;User Id=[^;]+;Password=[^;]+"
+      - "Data Source=[^;]+;Initial Catalog=[^;]+;User ID=[^;]+;Password=[^;]+"
+      - "Driver=\\{.*?\\};Server=[^;]+;Uid=[^;]+;Pwd=[^;]+"
+      # Oracle
+      - "jdbc:oracle:thin:[^@]+@"
+      - "jdbc:mysql://[^:]+:[^@]+@"
+      - "jdbc:postgresql://[^:]+:[^@]+@"
+      # Generic DSN with password
+      - "DSN=[^;]+;.*Password=[^;]+"
+      # SQLite path exposure
+      - "sqlite:///[^\"'\\s]+"
+      # Cassandra / ScyllaDB
+      - "\"contactPoints\"\\s*:\\s*.*\"password\"\\s*:\\s*\""
+      # ElasticSearch with credentials
+      - "https?://[^:]+:[^@]+@[^/]+:[0-9]+"
+
+report:
+  title: "Database Connection String with Credentials Exposed in Response"
+  description: |
+    The API response contains a database connection string including embedded credentials.
+    An attacker with this information can directly connect to the database and exfiltrate,
+    modify, or delete all application data.
+
+    Affected Endpoint:
+    {{req.url}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-312"
+  severity: critical
+  cvssScore: "10.0"
+  mitigation: |
+    1. Never include database credentials in API responses, logs, or error messages.
+    2. Store connection strings in environment variables or a secrets manager.
+    3. Use short-lived, scoped database credentials.
+    4. Implement IP allowlisting on database servers.
+    5. Rotate all exposed credentials immediately.
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response for database URI patterns (e.g., mongodb://user:pass@host).
+  tags: "database,credentials,connection-string,critical,secrets"
+  impact: "Full database compromise — data exfiltration, deletion, or ransom."
