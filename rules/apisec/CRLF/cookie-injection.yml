@@ -2,20 +2,14 @@ rule_name: Parameter Based Cookie Injection
 description: "Detects reflection of query parameters into the Set-Cookie header."
 
 transform:
-  query:
-    transformations:
-      - replace_all_values_one_by_one: "cookie_injection"
-  body:
-    transformations:
-      - replace_all_values_one_by_one: "cookie_injection"
-  header:
+  all:
     transformations:
       - replace_all_values_one_by_one: "cookie_injection"
 
 match_on:
   header:
     set-cookie:
-      regex: "(?i)cookie_injection"
+      regex: 'cookie_injection'
 
 report:
   title: "Parameter Based Cookie Injection"

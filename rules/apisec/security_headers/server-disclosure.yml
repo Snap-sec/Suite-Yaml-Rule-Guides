@@ -7,7 +7,7 @@ match_on:
   status: 200
   header:
     Server: 
-      regex: ".*\\d+\\.\\d+.*" 
+      regex: '.*\d+\.\d+.*'
 report:
   title: "Information Disclosure: Server Version"
   description: |

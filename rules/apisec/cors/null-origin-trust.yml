@@ -3,7 +3,7 @@ single_match: true
 description: "Detects acceptance of 'null' as a valid origin in CORS configuration."
 transform:
   header:
-    modify:
+    add:
       Origin: "null"
 match_on:
   status: 200

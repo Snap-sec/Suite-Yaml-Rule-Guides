@@ -2,21 +2,7 @@ rule_name: Angular Client-Side Template Injection
 description: "Detects Angular Client-Side Template Injection vulnerabilities."
 
 transform:
-  query:
-    transformations:
-      - replace_all_values_one_by_one:
-          - "{{13337*7}}"
-          - "{{constructor.constructor('alert(1)')()}}"
-          - "w{{'a'+'it'}}for{{'i'+'t'}}"
-          - "{{'angular'+'csti'}}"
-  body:
-    transformations:
-      - replace_all_values_one_by_one:
-          - "{{13337*7}}"
-          - "{{constructor.constructor('alert(1)')()}}"
-          - "w{{'a'+'it'}}for{{'i'+'t'}}"
-          - "{{'angular'+'csti'}}"
-  header:
+  all:
     transformations:
       - replace_all_values_one_by_one:
           - "{{13337*7}}"

@@ -1,6 +1,5 @@
 rule_name: Missing Strict-Transport-Security Header
 
-# HSTS is a host-wide policy → one finding is enough
 single_match: true
 
 match_on:
@@ -39,3 +38,6 @@ report:
 
     Ensure this header is only served over HTTPS.
   tags: "security-headers,hsts,transport-security,hardening"
+  stepsToReproduce: |
+    1. Send a request to {{req.url}} over HTTPS.
+    2. Inspect the response headers for the absence of Strict-Transport-Security.

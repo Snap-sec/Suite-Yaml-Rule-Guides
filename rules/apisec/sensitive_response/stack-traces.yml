@@ -8,49 +8,86 @@ match_on:
     notIn: [404, 301, 302]
   body:
     contains:
-      # ---- Java / Spring ----
-      - "at org\\.springframework\\."
-      - "at java\\.lang\\."
-      - "at javax\\.servlet\\."
-      - "java\\.lang\\.NullPointerException"
-      - "java\\.lang\\.RuntimeException"
-      - "java\\.lang\\.IllegalArgumentException"
-      - "java\\.io\\.IOException"
+      - value: 'at org\.springframework\.'
+        options:
+          regex: true
+      - value: 'at java\.lang\.'
+        options:
+          regex: true
+      - value: 'at javax\.servlet\.'
+        options:
+          regex: true
+      - value: 'java\.lang\.NullPointerException'
+        options:
+          regex: true
+      - value: 'java\.lang\.RuntimeException'
+        options:
+          regex: true
+      - value: 'java\.lang\.IllegalArgumentException'
+        options:
+          regex: true
+      - value: 'java\.io\.IOException'
+        options:
+          regex: true
       - "Caused by:"
       - "Exception in thread"
 
-      # ---- Python / Django / Flask ----
-      - "Traceback (most recent call last):"
+      - value: 'Traceback (most recent call last):'
+        options:
+          regex: true
       - "in <module>"
-      - "File \"/.*\\.py\", line [0-9]+"
-      - "django\\.core\\.exceptions"
-      - "flask\\.exceptions"
+      - value: 'File \"/.*\.py\", line [0-9]+'
+        options:
+          regex: true
+      - value: 'django\.core\.exceptions'
+        options:
+          regex: true
+      - value: 'flask\.exceptions'
+        options:
+          regex: true
       - "raise ValueError"
       - "AttributeError:"
       - "KeyError:"
       - "ModuleNotFoundError:"
 
-      # ---- Node.js / Express ----
-      - "at Object\\.<anonymous>"
-      - "at Module\\._compile"
-      - "at Function\\.Module\\._load"
-      - "at process\\.EventEmitter\\.emit"
+      - value: 'at Object\.<anonymous>'
+        options:
+          regex: true
+      - value: 'at Module\._compile'
+        options:
+          regex: true
+      - value: 'at Function\.Module\._load'
+        options:
+          regex: true
+      - value: 'at process\.EventEmitter\.emit'
+        options:
+          regex: true
       - "UnhandledPromiseRejectionWarning"
       - "TypeError: Cannot read propert"
       - "ReferenceError:"
       - "node_modules/express"
 
-      # ---- .NET / C# / ASP.NET ----
-      - "System\\.NullReferenceException"
-      - "System\\.ArgumentException"
-      - "System\\.InvalidOperationException"
-      - "Microsoft\\.AspNetCore"
-      - "at Microsoft\\.AspNetCore\\."
-      - "at System\\.Web\\.HttpApplication"
+      - value: 'System\.NullReferenceException'
+        options:
+          regex: true
+      - value: 'System\.ArgumentException'
+        options:
+          regex: true
+      - value: 'System\.InvalidOperationException'
+        options:
+          regex: true
+      - value: 'Microsoft\.AspNetCore'
+        options:
+          regex: true
+      - value: 'at Microsoft\.AspNetCore\.'
+        options:
+          regex: true
+      - value: 'at System\.Web\.HttpApplication'
+        options:
+          regex: true
       - "Server Error in '/' Application"
       - "Stack Trace:"
 
-      # ---- PHP ----
       - "PHP Fatal error:"
       - "PHP Parse error:"
       - "PHP Warning:"
@@ -60,15 +97,17 @@ match_on:
       - "Stack trace:"
       - "thrown in /"
 
-      # ---- Ruby / Rails ----
       - "ActionController::RoutingError"
       - "ActionView::MissingTemplate"
       - "ActiveRecord::RecordNotFound"
       - "app/controllers/"
       - "app/models/"
-      # ---- Go ----
-      - "goroutine [0-9]+ \\[running\\]"
-      - "runtime\\.goexit"
+      - value: 'goroutine [0-9]+ \[running\]'
+        options:
+          regex: true
+      - value: 'runtime\.goexit'
+        options:
+          regex: true
       - "panic: runtime error"
 
 report:

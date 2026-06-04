@@ -2,70 +2,80 @@ rule_name: Command Injection - single command (uname -a)
 description: "Detects OS command injection vulnerabilities by attempting to execute system commands."
 
 transform:
-  query:
+  all:
     transformations:
-      - replace_all_values_one_by_one: "; uname -a"
-      - replace_all_values_one_by_one: "&& uname -a"
-      - replace_all_values_one_by_one: "| uname -a"
-      - replace_all_values_one_by_one: "`uname -a`"
-      - replace_all_values_one_by_one: "$(uname -a)"
-      - replace_all_values_one_by_one: "|| uname -a"
-      - replace_all_values_one_by_one: "; /bin/uname -a"
-      - replace_all_values_one_by_one: "&& /bin/uname -a"
-
-  body:
-    transformations:
-      - replace_all_values_one_by_one: "; uname -a"
-      - replace_all_values_one_by_one: "&& uname -a"
-      - replace_all_values_one_by_one: "| uname -a"
-      - replace_all_values_one_by_one: "`uname -a`"
-      - replace_all_values_one_by_one: "$(uname -a)"
-      - replace_all_values_one_by_one: "|| uname -a"
-      - replace_all_values_one_by_one: "; /bin/uname -a"
-
-  header:
-    transformations:
-      - replace_all_values_one_by_one: "; uname -a"
-      - replace_all_values_one_by_one: "&& uname -a"
-      - replace_all_values_one_by_one: "`uname -a`"
-      - replace_all_values_one_by_one: "$(uname -a)"
+      - replace_all_values_one_by_one:
+          - "; uname -a"
+          - "&& uname -a"
+          - "| uname -a"
+          - "`uname -a`"
+          - "$(uname -a)"
+          - "|| uname -a"
+          - "; /bin/uname -a"
+          - "&& /bin/uname -a"
 
 match_on:
   body:
     contains:
-      - "Linux"
-      - "Darwin"
-      - "FreeBSD"
-      - "SunOS"
-      - "uname -a"
-      - "kernel"
-      - "GNU/Linux"
-      - "MINGW"
-      - "CYGWIN"
-      - "Windows"
-      - "Microsoft"
-  header:
-    contains:
-      - "Linux"
-      - "Darwin"
-      - "FreeBSD"
-      - "SunOS"
-      - "uname -a"
-      - "kernel"
-      - "GNU/Linux"
-      - "MINGW"
-      - "CYGWIN"
-      - "Windows"
-      - "Microsoft"
+      - " SMP "
+      - "x86_64 GNU/Linux"
+      - "aarch64 GNU/Linux"
+      - "#1 SMP"
+      - "x86_64 x86_64 x86_64"
+      - "-generic #"
+      - "-amd64 #"
+      - "Linux version "
+
+      - "armv7l GNU/Linux"
+      - "armv6l GNU/Linux"
+      - "armv5tel GNU/Linux"
+      - "i686 GNU/Linux"
+      - "i386 GNU/Linux"
+      - "riscv64 GNU/Linux"
+      - "ppc64le GNU/Linux"
+      - "ppc64 GNU/Linux"
+      - "s390x GNU/Linux"
+      - "mips GNU/Linux"
+      - "mips64 GNU/Linux"
+
+      - "Darwin Kernel Version"
+      - "RELEASE_X86_64 x86_64"
+      - "RELEASE_ARM64_T"
+
+      - "-RELEASE FreeBSD"
+      - "FreeBSD 1"
+      - "FreeBSD 9"
+      - "FreeBSD 8"
+      - "OpenBSD "
+      - "NetBSD "
+
+      - value: 'SunOS 5\.'
+        options:
+          regex: true
+
+      - "AIX "
+
+      - "HP-UX "
+
+      - "Microsoft Windows [Version"
+      - "OS Name:                   Microsoft Windows"
+      - "CYGWIN_NT-"
+      - "MINGW64_NT-"
+      - "MINGW32_NT-"
+      - "MSYS_NT-"
 
 report:
   title: "Possible Command Injection — `uname -a` output detected"
   description: >-
     Injecting `uname -a` (via various shell wrappers) into request parameters
-    produced responses containing operating-system identifiers or kernel
-    information (e.g., "Linux", "Darwin", "GNU/Linux", "kernel", or "Microsoft").
-    This indicates the application may be executing OS commands with unsanitized
-    input.
+    produced responses containing structured kernel output markers — such as
+    " SMP ", "x86_64 GNU/Linux", "Darwin Kernel Version", "CYGWIN_NT-", or
+    "Microsoft Windows [Version" — that are only present when the injected
+    command was actually executed by the server. These patterns are derived from
+    the real output format of `uname -a` across Linux (x86_64, ARM, i686,
+    RISC-V, POWER, Z, MIPS), macOS, FreeBSD, OpenBSD, NetBSD, Solaris, AIX,
+    HP-UX, and Windows (Cygwin/MinGW/MSYS2), not from generic OS name strings
+    that commonly appear in normal page content.
     Original: {{original.method}} {{original.url}}
     Tested:   {{req.method}} {{req.url}}
     Matched:  {{match.criteria}}
@@ -81,7 +91,7 @@ report:
   stepsToReproduce: |
     1) Send the baseline request: {{original.method}} {{original.url}}
     2) Re-send while replacing a single parameter value with one of the transformations above (e.g. "; uname -a" or "`uname -a`").
-    3) Observe response body for OS/kernel identifiers (e.g., "Linux", "Darwin", "GNU/Linux", "Microsoft").
+    3) Observe response body for structured kernel output markers (e.g., "x86_64 GNU/Linux", "Darwin Kernel Version", "Microsoft Windows [Version").
     4) Confirm across multiple parameters to determine scope.
   tags: "command-injection,os-command,critical"
   impact: >-

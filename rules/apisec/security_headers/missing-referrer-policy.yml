@@ -30,3 +30,6 @@ report:
     Example:
     Referrer-Policy: strict-origin-when-cross-origin
   tags: "security-headers,referrer-policy,privacy"
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response headers for the absence of Referrer-Policy.

@@ -3,7 +3,7 @@ single_match: true
 description: "Detects reflection of arbitrary origins in Access-Control-Allow-Origin with credentials allowed."
 transform:
   header:
-    modify:
+    add:
       Origin: "https://evil-attacker.com"
 match_on:
   status: 200

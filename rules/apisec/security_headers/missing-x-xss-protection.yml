@@ -30,3 +30,6 @@ report:
     Example:
     X-XSS-Protection: 1; mode=block
   tags: "security-headers,xss,legacy"
+  stepsToReproduce: |
+    1. Send a request to {{req.url}}.
+    2. Inspect the response headers for the absence of X-XSS-Protection.

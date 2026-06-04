@@ -2,23 +2,7 @@ rule_name: Remote File Inclusion (Linux/Generic)
 description: "Detects Remote File Inclusion vulnerabilities by attempting to include remote URLs."
 
 transform:
-  query:
-    transformations:
-      - replace_all_values_one_by_one:
-          - "http://example.com"
-          - "http://example.com/index.html"
-          - "https://example.com"
-          - "http://example.com%00"
-          - "http://example.com/index.html%00"
-  body:
-    transformations:
-      - replace_all_values_one_by_one:
-          - "http://example.com"
-          - "http://example.com/index.html"
-          - "https://example.com"
-          - "http://example.com%00"
-          - "http://example.com/index.html%00"
-  header:
+  all:
     transformations:
       - replace_all_values_one_by_one:
           - "http://example.com"

