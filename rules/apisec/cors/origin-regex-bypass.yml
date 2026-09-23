@@ -4,12 +4,15 @@ description: "Detects weak regex validation in Origin header allowing unauthoriz
 transform:
   header:
     modify:
-      Origin: "https://snapsec.evil.com" 
+      Origin: "https://nexusbank.com.evil.com" 
 match_on:
   status: 200
   header:
     Access-Control-Allow-Origin: 
-      regex: '.*\.evil\.com'
+      contains:
+        - value: ".*\\.evil\\.com"
+          options:
+            regex: true
     Access-Control-Allow-Credentials: "true"
 report:
   title: "CORS: Weak Regex Origin Validation"

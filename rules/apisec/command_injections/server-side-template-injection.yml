@@ -1,0 +1,61 @@
+rule_name: Server-Side Template Injection (SSTI)
+description: "Detects Server-Side Template Injection vulnerabilities by injecting math expressions into parameters and checking if the engine evaluates them."
+
+transform:
+  query:
+    transformations:
+      - replace_all_values_one_by_one:
+          - "${1337*1337}"
+          - "{{1337*1337}}"
+          - "<%= 1337*1337 %>"
+          - "#{1337*1337}"
+          - "*{1337*1337}"
+  body:
+    transformations:
+      - replace_all_values_one_by_one:
+          - "${1337*1337}"
+          - "{{1337*1337}}"
+          - "<%= 1337*1337 %>"
+          - "#{1337*1337}"
+          - "*{1337*1337}"
+
+match_on:
+  status:
+    notIn: [404, 400]
+  body:
+    contains:
+      - "1787569"
+
+report:
+  title: "Server-Side Template Injection (SSTI)"
+  description: |
+    The application is vulnerable to Server-Side Template Injection (SSTI).
+    A math expression (1337 * 1337) was injected into a parameter using various template 
+    engine syntaxes (e.g., Freemarker, Jinja2, ERB, Twig, Velocity) and the server 
+    evaluated it, returning the result (1787569) in the response.
+    
+    This indicates that user input is being directly embedded into a server-side template 
+    and executed, which almost always leads to Remote Code Execution (RCE).
+
+    Original Request:
+    {{original}}
+
+    Transformed Request:
+    {{req}}
+
+    Response:
+    {{res}}
+
+  cwe: "CWE-1336"
+  severity: critical
+  cvssScore: "9.8"
+  mitigation: |
+    1. Never concatenate user input directly into template strings.
+    2. Pass user input into templates strictly as data/context variables.
+    3. Use a logic-less template engine if possible (e.g., Mustache).
+    4. Run template engines in a sandboxed or restricted environment.
+  stepsToReproduce: |
+    1. Send a request injecting a template expression like {{1337*1337}} into a parameter.
+    2. Observe the server evaluating the expression and returning the result (1787569).
+  tags: "ssti,injection,rce,critical,vuln"
+  impact: "Remote Code Execution (RCE) and full server compromise."

@@ -4,12 +4,15 @@ description: "Detects excessive trust of arbitrary subdomains in CORS configurat
 transform:
   header:
     modify:
-      Origin: "https://evil.snapsec.co"
+      Origin: "https://evil.nexusbank.com"
 match_on:
   status: 200
   header:
     Access-Control-Allow-Origin: 
-      regex: 'https://evil\..*'
+      contains:
+        - value: "https://evil\\..*"
+          options:
+            regex: true
     Access-Control-Allow-Credentials: "true"
 report:
   title: "CORS: Arbitrary Subdomain Trusted"

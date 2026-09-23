@@ -1,0 +1,28 @@
+name: Alert on New subdomain Releases
+description: tish is test rule creatinon
+enabled: true
+match:
+  and:
+    conditions:
+      - field: adapters
+        operator: ==
+        value: xyz
+actions:
+  - type: classify
+    config:
+      set:
+        - field: adapter_sync_sessions.$*
+          value: ""
+  - type: alert
+    config:
+      channels:
+        - type: email
+          config:
+            to: []
+            subject: ""
+            template: ""
+            cc: []
+            bcc: []
+  - type: trigger
+    config:
+      action: vs_scan.run

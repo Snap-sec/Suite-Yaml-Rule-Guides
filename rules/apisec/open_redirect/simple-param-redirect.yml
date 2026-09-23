@@ -1,6 +1,8 @@
 rule_name: Open Redirect - high confidence (absolute external targets)
+description: "Detects Open Redirect vulnerabilities by injecting external absolute URLs."
+
 transform:
-  all:
+  query:
     transformations:
       - replace_all_values_one_by_one: "https://example.com/"
       - replace_all_values_one_by_one: "http://example.com/"
@@ -10,6 +12,17 @@ transform:
       - replace_all_values_one_by_one: "https:%2F%2Fexample.com"
       - replace_all_values_one_by_one: "https://%65xample.com/"
       - replace_all_values_one_by_one: "///example.com"
+  body:
+    transformations:
+      - replace_all_values_one_by_one: "https://example.com/"
+      - replace_all_values_one_by_one: "http://example.com/"
+      - replace_all_values_one_by_one: "//example.com/"
+      - replace_all_values_one_by_one: "https://example.com/evil"
+      - replace_all_values_one_by_one: "//example.com/evil"
+      - replace_all_values_one_by_one: "https:%2F%2Fexample.com"
+      - replace_all_values_one_by_one: "https://%65xample.com/"
+      - replace_all_values_one_by_one: "///example.com"
+
 match_on:
   status: [301, 302, 303, 307, 308, 200]
   header:
@@ -18,6 +31,7 @@ match_on:
         - value: "(?i)^(https?:)?//([^/]*\\.)?example\\.com(/|$)"
           options:
             regex: true
+
 report:
   title: "Open Redirect — external absolute URL accepted"
   description: >-
