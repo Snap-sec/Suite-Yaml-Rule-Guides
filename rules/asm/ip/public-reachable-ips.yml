@@ -9,11 +9,12 @@ description: >-
 product: asm
 severity: critical
 isUniversal: true
+impact: >-
+  Unintended public exposure of IP addresses can bypass security controls like CDNs or WAFs, leaving the underlying infrastructure vulnerable to direct attacks.
 remediation: >-
-  Evaluate whether the IP address needs to be publicly reachable. If not, place it
-  behind a firewall, NAT gateway, or private subnet to remove direct internet exposure.
-  For IPs that must remain public, harden all exposed services, apply strict security
-  group rules, enable intrusion detection, and continuously monitor for anomalous traffic.
+  Audit network security groups and firewalls to ensure only intended services are publicly accessible. Route traffic through managed gateways.
+references:
+  - 'https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-41r1.pdf'
 match:
   conditions:
     - field: type

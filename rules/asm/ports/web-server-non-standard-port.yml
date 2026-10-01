@@ -6,11 +6,12 @@ description: >-
 product: asm
 severity: medium
 isUniversal: true
+impact: >-
+  Exposing web services on non-standard ports can evade some standard scanning but often indicates misconfigured or rogue services that bypass WAF or standard monitoring.
 remediation: >-
-  Migrate web services to standard ports 80 and 443 so they fall under existing WAF,
-  load balancer, and perimeter security controls. If non-standard ports are required,
-  ensure they are covered by the same firewall rules, TLS configuration, and monitoring
-  as standard ports. Investigate whether the service represents shadow IT or a misconfiguration.
+  Restrict access to non-standard ports using firewall rules and ensure all web traffic is routed through standard ports (80/443) behind a WAF.
+references:
+  - 'https://owasp.org/www-project-top-ten/'
 match:
   conditions:
     - field: type

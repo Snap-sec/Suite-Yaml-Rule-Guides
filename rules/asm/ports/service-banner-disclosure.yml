@@ -6,11 +6,12 @@ description: >-
 product: asm
 severity: medium
 isUniversal: true
+impact: >-
+  Information disclosure allows attackers to identify the specific software and version in use, facilitating targeted attacks using known exploits for that version.
 remediation: >-
-  Configure each exposed service to suppress or customize its banner so that software
-  name, version, and platform details are not disclosed. For web servers, set
-  server-header directives to minimal values. Use reverse proxies to normalize responses
-  and strip identifying headers before they reach external clients.
+  Configure services to suppress banner information or return generic responses. Update server configurations to disable version exposure.
+references:
+  - 'https://cwe.mitre.org/data/definitions/200.html'
 match:
   conditions:
     - field: type

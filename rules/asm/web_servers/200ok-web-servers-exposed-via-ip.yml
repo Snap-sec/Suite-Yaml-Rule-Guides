@@ -8,11 +8,12 @@ description: >-
 product: asm
 severity: critical
 isUniversal: true
+impact: >-
+  Web servers responding directly to IP requests rather than domain names may bypass WAF protections and reveal origin infrastructure.
 remediation: >-
-  Route the web server through a domain name fronted by a CDN and WAF to eliminate
-  direct IP exposure. Restrict inbound HTTP/HTTPS traffic at the firewall to only
-  CDN or load balancer IP ranges. Investigate why the service returns 200 OK without
-  a domain and whether it represents an undocumented or forgotten internet-facing asset.
+  Configure web servers to only respond to valid host headers (domain names). Drop requests that use raw IP addresses in the host header.
+references:
+  - 'https://portswigger.net/web-security/host-header'
 match:
   conditions:
     - field: type

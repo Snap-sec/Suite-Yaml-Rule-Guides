@@ -6,6 +6,12 @@ description: >-
 product: asm
 severity: medium
 isUniversal: true
+impact: >-
+  Failing to renew a certificate before it expires can lead to sudden service outages and security warnings for users.
+remediation: >-
+  Implement monitoring and alerting for certificate expiration within 30 days. Automate the renewal process where possible.
+references:
+  - 'https://letsencrypt.org/docs/expiration-emails/'
 match:
   and:
     - conditions:

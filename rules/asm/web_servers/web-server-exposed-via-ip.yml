@@ -4,6 +4,12 @@ description: >-
 product: asm
 severity: high
 isUniversal: true
+impact: >-
+  Similar to 200 OK via IP, this exposes the origin server, potentially bypassing CDN/WAF rules and revealing backend infrastructure.
+remediation: >-
+  Restrict inbound traffic to only allow connections from approved CDN or WAF IP ranges. Enforce host header validation.
+references:
+  - 'https://www.cloudflare.com/learning/security/threats/origin-ip-exposure/'
 match:
   conditions:
     - field: type

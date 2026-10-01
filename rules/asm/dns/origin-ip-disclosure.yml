@@ -8,11 +8,12 @@ description: >-
 product: asm
 severity: high
 isUniversal: false
+impact: >-
+  Disclosing the origin IP allows attackers to bypass DDoS protection and WAFs (like Cloudflare) by directly attacking the origin server.
 remediation: >-
-  Rotate or change the origin server's IP address and ensure it is never referenced
-  in public DNS. Configure your CDN to proxy all traffic and restrict origin server
-  firewall rules to accept connections only from CDN IP ranges. Audit DNS history
-  via services like SecurityTrails to confirm the original IP is no longer discoverable.
+  Change the origin server IP and update firewall rules to only accept traffic from the CDN/WAF provider's IP ranges.
+references:
+  - 'https://www.cloudflare.com/learning/security/threats/origin-ip-exposure/'
 match:
   conditions:
     - field: type

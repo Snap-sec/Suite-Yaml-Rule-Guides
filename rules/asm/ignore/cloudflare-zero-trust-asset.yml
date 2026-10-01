@@ -6,6 +6,12 @@ description: >-
 product: asm
 severity: info
 isUniversal: true
+impact: >-
+  While generally secure, misconfigurations in Zero Trust policies could lead to unauthorized access if identity providers are compromised.
+remediation: >-
+  Regularly review Zero Trust access policies, ensure least privilege, and enforce MFA for all users accessing the asset.
+references:
+  - 'https://www.cloudflare.com/learning/security/glossary/what-is-zero-trust/'
 match:
   conditions:
     - field: type

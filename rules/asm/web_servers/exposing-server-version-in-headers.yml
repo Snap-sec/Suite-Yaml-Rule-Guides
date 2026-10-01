@@ -9,11 +9,12 @@ description: >-
 product: asm
 severity: info
 isUniversal: false
+impact: >-
+  Revealing the server version allows attackers to easily identify known vulnerabilities (CVEs) associated with that specific version, accelerating exploit attempts.
 remediation: >-
-  Configure the web server or reverse proxy to suppress or genericize the Server
-  response header. In Apache use ServerTokens Prod, in Nginx use server_tokens off,
-  and in IIS remove the header via URL Rewrite rules. Validate the change with a
-  curl request and incorporate the setting into infrastructure-as-code templates.
+  Configure the web server (e.g., Nginx, Apache) to hide version information by setting `server_tokens off;` or equivalent directives.
+references:
+  - 'https://owasp.org/www-project-secure-headers/'
 match:
   conditions:
     - field: type

@@ -10,11 +10,12 @@ description: >-
 product: asm
 severity: medium
 isUniversal: false
+impact: >-
+  Rogue IPs in the infrastructure can indicate unauthorized deployments or misconfigurations, potentially leading to unauthorized data flows.
 remediation: >-
-  Investigate the origin and purpose of the non-Oracle IP address. If the asset
-  is unauthorized, migrate the workload to an approved Oracle Cloud region or
-  decommission it. Update procurement and provisioning policies to prevent future
-  deployments on unapproved providers and enforce tagging for continuous visibility.
+  Investigate and decommission unauthorized IP addresses. Implement strict change control for network infrastructure provisioning.
+references:
+  - 'https://www.cisecurity.org/controls/inventory-and-control-of-enterprise-assets'
 match:
   conditions:
     - field: type

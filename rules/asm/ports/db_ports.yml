@@ -9,11 +9,12 @@ description: >-
 product: asm
 severity: high
 isUniversal: true
+impact: >-
+  Direct internet exposure of databases significantly increases the risk of unauthorized access, data breaches, and ransomware attacks.
 remediation: >-
-  Immediately restrict database ports from public access using firewall rules or
-  security groups. Place database services behind a VPN or private subnet with no
-  direct internet exposure. Enable strong authentication, enforce encrypted connections,
-  and audit access logs regularly to detect unauthorized connection attempts.
+  Block external access to database ports (3306, 5432, etc.) at the network perimeter. Require VPN or bastion host access for database management.
+references:
+  - 'https://www.cisa.gov/news-events/alerts/2019/10/22/securing-databases'
 match:
   conditions:
     - field: type

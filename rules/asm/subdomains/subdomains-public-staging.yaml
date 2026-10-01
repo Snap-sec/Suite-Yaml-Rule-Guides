@@ -9,11 +9,12 @@ description: >-
 product: asm
 severity: high
 isUniversal: true
+impact: >-
+  Staging environments often lack production-grade security, use default credentials, or contain debugging tools, making them prime targets for attackers.
 remediation: >-
-  Restrict staging, development, and test subdomains from public internet access using
-  VPN, IP allowlists, or authentication gateways. Disable debug modes, verbose error
-  pages, and default credentials on all non-production environments. If public access
-  is unavoidable, apply the same security hardening standards used in production.
+  Restrict access to staging and development environments using IP allowlists, VPNs, or strong HTTP basic authentication.
+references:
+  - 'https://owasp.org/www-project-top-ten/2017/A5_2017-Broken_Access_Control'
 match:
   conditions:
     - field: type

@@ -8,11 +8,12 @@ description: >-
 product: asm
 severity: medium
 isUniversal: false
+impact: >-
+  External CNAMEs inherently trust third-party infrastructure. If the third-party is compromised or the service is abandoned, it creates a takeover risk.
 remediation: >-
-  Audit CNAME records pointing to external domains and verify that the target services
-  are still active and owned by the organization. Remove dangling CNAMEs that reference
-  decommissioned or unclaimed resources to prevent subdomain takeover. Maintain an
-  inventory of third-party DNS delegations and review them periodically.
+  Audit external CNAMEs regularly. Ensure contracts and SLAs with third parties include security requirements. Remove unused records.
+references:
+  - 'https://portswigger.net/web-security/ssrf'
 match:
   conditions:
     - field: type

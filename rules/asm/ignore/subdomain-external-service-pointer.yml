@@ -6,11 +6,12 @@ description: >-
 product: asm
 severity: high
 isUniversal: true
+impact: >-
+  Dangling DNS records pointing to unclaimed external services are vulnerable to Subdomain Takeover, allowing attackers to serve malicious content under your domain.
 remediation: >-
-  Verify that the external service referenced by the CNAME is still actively claimed
-  and controlled by the organization. Remove DNS records pointing to deprovisioned or
-  unclaimed third-party resources to eliminate subdomain takeover risk. Maintain a
-  registry of external service dependencies and audit CNAME records on a regular schedule.
+  Regularly audit and remove stale CNAME records pointing to decommissioned external services (e.g., S3 buckets, GitHub Pages, Heroku).
+references:
+  - 'https://github.com/EdOverflow/can-i-take-over-xyz'
 match:
   conditions:
     - field: type

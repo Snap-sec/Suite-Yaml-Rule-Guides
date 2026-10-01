@@ -8,11 +8,12 @@ description: >-
 product: asm
 severity: high
 isUniversal: false
+impact: >-
+  Assets hosted in unexpected geographic locations may violate data sovereignty regulations or indicate a compromised system communicating with foreign infrastructure.
 remediation: >-
-  Verify whether the asset's geographic location is intentional. If unauthorized,
-  migrate the workload to an approved region or decommission the resource. Update
-  infrastructure-as-code templates to enforce region constraints and implement cloud
-  provider policies that prevent future deployments outside sanctioned geographies.
+  Verify the legitimate need for the asset in the specific geographic region. If unauthorized, isolate the asset and review network access logs.
+references:
+  - 'https://www.cisecurity.org/controls/v8'
 match:
   conditions:
     - field: type

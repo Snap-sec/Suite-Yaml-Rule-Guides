@@ -8,12 +8,12 @@ description: >-
 product: asm
 severity: medium
 isUniversal: false
+impact: >-
+  Expired certificates result in browser warnings, degraded user trust, and potential man-in-the-middle (MitM) attacks due to failed validation.
 remediation: >-
-  Renew or replace the expired certificate immediately using a trusted certificate
-  authority. Implement automated certificate lifecycle management with tools like
-  Let's Encrypt or ACME-based solutions to prevent future expirations. Set up
-  monitoring alerts well before expiry dates and decommission any abandoned services
-  still presenting stale certificates.
+  Renew expired certificates immediately and implement automated certificate lifecycle management (e.g., Let's Encrypt, AWS ACM).
+references:
+  - 'https://www.cisa.gov/news-events/alerts/2017/02/09/understanding-digital-signatures'
 match:
   conditions:
     - field: type

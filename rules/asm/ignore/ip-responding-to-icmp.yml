@@ -5,6 +5,12 @@ description: >-
 product: asm
 severity: low
 isUniversal: true
+impact: >-
+  Responding to ICMP (ping) requests allows attackers to perform network reconnaissance and map live hosts on the internet.
+remediation: >-
+  Configure firewalls and security groups to drop inbound ICMP echo requests (ping) from the internet unless explicitly required for monitoring.
+references:
+  - 'https://www.cisa.gov/news-events/alerts/2015/09/25/understanding-denial-service-attacks'
 match:
   conditions:
     - field: type

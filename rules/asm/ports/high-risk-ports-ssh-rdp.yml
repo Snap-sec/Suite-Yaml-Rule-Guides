@@ -8,11 +8,12 @@ description: >-
 product: asm
 severity: high
 isUniversal: true
+impact: >-
+  Exposed management ports like SSH and RDP are frequent targets for brute-force attacks and credential stuffing, leading to potential system compromise.
 remediation: >-
-  Block public access to SSH and RDP ports using firewall rules or security groups.
-  Require connections through a VPN, bastion host, or zero-trust network access solution.
-  Enforce key-based authentication for SSH, enable network-level authentication for RDP,
-  and apply multi-factor authentication to all remote access sessions.
+  Disable public access to SSH and RDP. Enforce access via VPN, Zero Trust Network Access (ZTNA), and require multi-factor authentication (MFA).
+references:
+  - 'https://www.cisa.gov/news-events/alerts/2019/12/17/securing-remote-desktop-protocol-rdp'
 match:
   conditions:
     - field: type

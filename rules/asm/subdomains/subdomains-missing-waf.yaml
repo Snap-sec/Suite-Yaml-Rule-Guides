@@ -8,11 +8,12 @@ description: >-
 product: asm
 severity: high
 isUniversal: true
+impact: >-
+  Subdomains without WAF protection are exposed to common application-layer attacks like SQLi, XSS, and botnets without automated mitigation.
 remediation: >-
-  Deploy a Web Application Firewall in front of all externally facing subdomains to
-  filter malicious traffic before it reaches the application. Use managed WAF services
-  from your CDN or cloud provider for rapid rollout. Configure rulesets to block OWASP
-  Top 10 attack patterns and enable logging to monitor blocked requests continuously.
+  Ensure all public-facing subdomains are routed through a Web Application Firewall (WAF) and enforce standard security policies.
+references:
+  - 'https://www.cloudflare.com/learning/ddos/glossary/web-application-firewall-waf/'
 match:
   conditions:
     - field: type
