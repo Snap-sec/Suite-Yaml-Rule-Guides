@@ -1,8 +1,9 @@
 name: 'Web Server on Non-Standard HTTP Port'
 description: >-
-  Detects web servers responding on non-standard HTTP/HTTPS ports (other than 80 and 443).
-  Web services on unexpected ports may bypass security controls, WAF rules, or indicate
-  shadow IT and misconfigured deployments.
+  The web server is responding on a non-standard HTTP/HTTPS port (other than 80 and 443).
+  Web services running on non-standard ports often bypass basic security monitoring,
+  lack automated vulnerability scanning, and may indicate misconfigured infrastructure,
+  shadow IT, or unauthorized services attempting to evade detection.
 product: asm
 severity: medium
 isUniversal: true

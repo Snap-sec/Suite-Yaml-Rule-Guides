@@ -1,12 +1,9 @@
 name: 'Non Oracle IP used in Infrastructure'
 description: >-
-  Identifies IP addresses within the organization's asset inventory whose
-  registered organization is not Oracle Corporation. In environments that
-  standardize on Oracle Cloud Infrastructure, the presence of non-Oracle IPs
-  may indicate shadow IT, unauthorized third-party hosting, misconfigured
-  network routes, or infrastructure drift from approved cloud providers.
-  Detecting these assets ensures adherence to vendor consolidation policies
-  and reduces supply-chain risk from unvetted providers.
+  This IP address within the organization's asset inventory has a
+  registered organization that is not Oracle Cloud (OCI). This helps identify infrastructure
+  hosted outside the expected primary cloud provider, potentially highlighting shadow IT,
+  multi-cloud sprawl, or misattributed assets.
 product: asm
 severity: medium
 isUniversal: false

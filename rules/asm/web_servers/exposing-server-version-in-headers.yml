@@ -1,6 +1,6 @@
 name: 'Exposing Server Version in Headers'
 description: >-
-  Detects web servers that disclose their software name or version through the
+  This web server discloses its software name or version through the
   HTTP Server response header. Revealing server technology and version details
   enables attackers to fingerprint the stack and quickly identify known CVEs,
   default credentials, or platform-specific exploit techniques. Suppressing

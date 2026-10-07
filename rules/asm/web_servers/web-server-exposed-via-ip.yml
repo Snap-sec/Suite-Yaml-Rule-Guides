@@ -1,6 +1,10 @@
 name: 'Web Server Directly Exposed via Public IP Address'
 description: >-
-  Detects web servers that are externally reachable and whose asset value resolves directly to a public IP address rather than a domain name. Hosting a web server on a bare IP bypasses DNS-based security controls, CDN protection, and WAF coverage. It also exposes the server to automated scanners targeting raw IP ranges and makes it harder to rotate infrastructure without breaking access.
+  This web server is externally reachable and its asset value resolves
+  directly to a public IP address rather than a domain name. Hosting a web server
+  on a bare IP bypasses DNS-based security controls, CDN protection, and WAF coverage.
+  It also exposes the server to automated scanners targeting raw IP ranges
+  and makes it harder to rotate infrastructure without breaking access.
 product: asm
 severity: high
 isUniversal: true

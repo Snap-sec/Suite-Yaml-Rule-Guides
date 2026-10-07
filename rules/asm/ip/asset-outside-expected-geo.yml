@@ -1,10 +1,8 @@
 name: 'Asset Outside Expected Geo Location'
 description: >-
-  Detects IP assets hosted in geographic regions outside the organization's approved
-  or expected country list. Assets in unexpected locations may indicate unauthorized
-  infrastructure, shadow IT, compromised resources being re-routed, or violations of
-  data residency and sovereignty regulations. Identifying these assets helps enforce
-  compliance with geographic policies and reduces exposure from unmonitored regions.
+  This IP asset is hosted in a geographic region outside the organization's approved
+  or expected countries. This may indicate unauthorized cloud deployments, compromised
+  infrastructure, or data sovereignty and compliance violations (e.g., GDPR, CCPA).
 product: asm
 severity: high
 isUniversal: false

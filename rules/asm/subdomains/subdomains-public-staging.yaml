@@ -1,6 +1,6 @@
 name: 'Publicly Exposed Staging/Development Subdomain'
 description: >-
-  Detects live, externally reachable subdomains matching staging, development, or test
+  This live, externally reachable subdomain matches staging, development, or test
   naming patterns (stg, dev, test). Non-production environments frequently run with
   debug modes enabled, weaker authentication, verbose error output, and unpatched
   dependencies. Public exposure of these environments gives attackers access to

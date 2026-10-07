@@ -1,10 +1,10 @@
 name: 'Origin IP Address Disclosure via DNS'
 description: >-
-  Detects DNS A or AAAA records that expose the true origin IP address of an asset
-  that is expected to be fronted by a CDN or proxy (e.g., Cloudflare). When the
-  direct-to-origin IP is publicly resolvable, attackers can bypass CDN-level protections
-  such as DDoS mitigation and WAF rules, and launch targeted attacks against the
-  unprotected origin server directly.
+  A DNS A or AAAA record was found that exposes the true origin IP address of this asset,
+  which is expected to be masked behind a CDN or Web Application Firewall (WAF).
+  Origin IP disclosure allows attackers to bypass edge security controls (like Cloudflare
+  or AWS Shield) and launch direct DDoS attacks or targeted exploits against the
+  unprotected backend infrastructure.
 product: asm
 severity: high
 isUniversal: false

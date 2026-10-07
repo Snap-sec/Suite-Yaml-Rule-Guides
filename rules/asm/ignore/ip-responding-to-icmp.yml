@@ -1,7 +1,9 @@
 name: 'IP Responding to Ping/ICMP Requests'
 description: >-
-  Detects public-facing IP addresses that respond to ICMP (ping) requests. This reveals
-  asset existence to external attackers and can facilitate network reconnaissance.
+  This public-facing IP address responds to ICMP (ping) requests. This reveals
+  asset existence to basic network sweepers, aiding attacker reconnaissance. While often
+  required for diagnostic monitoring, widespread ICMP exposure unnecessarily increases
+  the visible footprint of the attack surface.
 product: asm
 severity: low
 isUniversal: true

@@ -1,8 +1,9 @@
 name: 'Certificate About to Expire'
 description: >-
-  Detects TLS/SSL certificates that are valid but will expire within 30 days.
-  Expiring certificates can lead to service outages and browser security warnings
-  if not renewed in time.
+  The TLS/SSL certificate on this host is valid but will expire within 30 days.
+  Expiring certificates provide an early warning mechanism to proactively renew
+  infrastructure before a hard outage occurs and browser security warnings break
+  user trust.
 product: asm
 severity: medium
 isUniversal: true

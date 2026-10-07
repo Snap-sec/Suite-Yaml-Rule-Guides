@@ -1,8 +1,10 @@
 name: 'Service with Banner Disclosure'
 description: >-
-  Detects open ports broadcasting a service banner that exposes software name, version,
-  or platform details. Banner disclosure assists attackers in fingerprinting services
-  and targeting known CVEs.
+  An open port on this host is broadcasting a service banner that exposes the software name, version,
+  or platform details (e.g., OpenSSH 8.2p1, Apache 2.4.41). Attackers heavily rely on
+  banner grabbing during the reconnaissance phase to rapidly map the attack surface and
+  match running services against known vulnerability databases (CVEs) or automated
+  exploitation tools.
 product: asm
 severity: medium
 isUniversal: true

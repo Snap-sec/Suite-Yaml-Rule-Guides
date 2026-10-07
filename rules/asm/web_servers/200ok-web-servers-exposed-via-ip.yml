@@ -1,7 +1,7 @@
 name: 'Live Web Server Responding on Public IP Address'
 description: >-
-  Detects externally reachable web servers that return an HTTP 200 OK response and
-  are accessed directly via a public IP address rather than a domain name. These
+  An externally reachable web server was found that returns an HTTP 200 OK response and
+  is accessed directly via its public IP address rather than a domain name. These
   live, actively-serving endpoints lack CDN and WAF coverage, are indexed by automated
   IP-range scanners, and expose the true origin server — making them easy targets for
   exploitation, DDoS attacks, and credential brute-forcing.

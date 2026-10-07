@@ -1,11 +1,9 @@
 name: 'Externally Exposed IP Address'
 description: >-
-  Detects IP addresses within the organization's asset inventory that are directly
-  reachable from the public internet. Externally exposed IPs expand the attack surface
-  by allowing adversaries to perform reconnaissance, port scanning, and service
-  enumeration. Without proper hardening, firewall rules, or network segmentation,
-  these IPs can become entry points for exploitation of vulnerable services,
-  lateral movement, or denial-of-service attacks.
+  This IP address within the organization's asset inventory is directly
+  reachable from the public internet. This helps identify the true size of the external
+  attack surface, distinguishing between internal-only subnets and internet-facing
+  infrastructure that requires robust perimeter security monitoring.
 product: asm
 severity: critical
 isUniversal: true

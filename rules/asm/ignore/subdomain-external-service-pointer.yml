@@ -1,8 +1,9 @@
 name: 'Subdomain Pointing to External Service'
 description: >-
-  Detects live subdomains whose DNS CNAME records resolve to external third-party services
-  (e.g., AWS, GitHub Pages, Heroku). If the external service is unclaimed this may be
-  vulnerable to subdomain takeover.
+  This live subdomain has DNS CNAME records that resolve to external third-party services
+  (e.g., AWS S3, Zendesk, GitHub Pages). Tracking these is critical for preventing
+  Subdomain Takeover vulnerabilities, which occur when the external service is deleted
+  or expires, but the DNS pointer remains active.
 product: asm
 severity: high
 isUniversal: true
